@@ -5,10 +5,12 @@
  */
 package com.metrolink.validatorservice.db.controller;
 
+import java.sql.Connection;
+
 /**
  *
- * @author USUARIO
+ * @author Gabriel Ortega
  */
-public class DBController {
-    
+public interface IDatabaseController {
+    Connection getConnection() throws Exception;;
 }

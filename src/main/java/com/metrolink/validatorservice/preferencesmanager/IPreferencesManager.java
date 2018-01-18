@@ -10,9 +10,11 @@ package com.metrolink.validatorservice.preferencesmanager;
  * @author Gabriel Ortega
  */
 public interface IPreferencesManager {
-    String getUsername()throws Exception;
-    String getPasword()throws Exception;
-    String getServiceEndPoint()throws Exception;
+    String getDBUsername()throws Exception;
+    String getDBPasword()throws Exception;
+    String getDBUrl()throws Exception;
+    String getDBPort()throws Exception;
+    String getDBDriver()throws Exception;
     void setConfigFilePath(String configFilePath) throws Exception;
     String getConfigFilePath() throws Exception;
 }

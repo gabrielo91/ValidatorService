@@ -17,42 +17,56 @@ import org.json.simple.parser.ParseException;
  */
 public class PreferencesManager implements IPreferencesManager{
         
-    public final static String USERNAME = "username";
-    public final static String PASSWORD = "password";
-    public final static String CREDENTIALS = "credentials";
-    public final static String SERVICE = "service";
-    public final static String SERVICE_ENDPOINT = "service-endpoint";
+    public final static String DB_USERNAME = "username";
+    public final static String DB_PASSWORD = "password";
+    public final static String DB_CONFIGURATION = "db_params";
+    public final static String DB_URL = "url";
+    public final static String DB_PORT = "port";
+    public final static String DB_DRIVER = "driver";
 
     private String configFilePath;
-    private String username;
-    private String password;
-    private String serviceEndPoint;
-   
+    private String dbUsername;
+    private String dbPassword;
+    private String dbUrl;
+    private String dbPort;
+    private String dbDriver;
+    
     public PreferencesManager(String configFilePath) throws FileNotFoundException, IOException, ParseException {
         this.configFilePath = configFilePath;
         JSONParser parser = new JSONParser();
         Object object = parser.parse(new FileReader(configFilePath));
         JSONObject configData = (JSONObject) object;
-        JSONObject credentials = (JSONObject) configData.get(CREDENTIALS);
-        JSONObject serviceInfo = (JSONObject) configData.get(SERVICE);
-        username = (String) credentials.get(USERNAME);
-        password = (String) credentials.get(PASSWORD);
-        serviceEndPoint = (String) serviceInfo.get(SERVICE_ENDPOINT);
+        JSONObject dbConfiguration = (JSONObject) configData.get(DB_CONFIGURATION);
+        dbUsername = (String) dbConfiguration.get(DB_USERNAME);
+        dbPassword = (String) dbConfiguration.get(DB_PASSWORD);
+        dbUrl = (String) dbConfiguration.get(DB_URL);
+        dbPort = (String) dbConfiguration.get(DB_PORT);
+        dbDriver = (String) dbConfiguration.get(DB_DRIVER);
     }
     
     @Override
-    public String getUsername() throws Exception {
-        return this.username;
+    public String getDBUsername() throws Exception {
+        return this.dbUsername;
     }
 
     @Override
-    public String getPasword() throws Exception {
-        return this.password;
+    public String getDBPasword() throws Exception {
+        return this.dbPassword;
     }
 
     @Override
-    public String getServiceEndPoint() throws Exception {
-        return this.serviceEndPoint;
+    public String getDBUrl() throws Exception {
+        return this.dbUrl;
+    }
+    
+    @Override
+    public String getDBPort() throws Exception {
+        return this.dbPort;
+    }
+    
+    @Override
+    public String getDBDriver() throws Exception {
+        return this.dbDriver;
     }
 
     @Override

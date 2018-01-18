@@ -1,0 +1,12 @@
+{
+    "author":"Gabriel Ortega Rosero",
+    "version": "0.1.0",
+
+    "db_params":{
+        "username":"perseo",
+        "password":"perseo",
+        "url":"18.216.205.163",
+        "port":"1521",
+        "driver":"oracle.jdbc.driver.OracleDriver"       
+    }
+}
