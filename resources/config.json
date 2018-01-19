@@ -8,5 +8,7 @@
         "url":"18.216.205.163",
         "port":"1521",
         "driver":"oracle.jdbc.driver.OracleDriver"       
-    }
+    },
+    "logs_path":"C:\\ValidatorService\\Logs"
+    
 }

@@ -5,10 +5,15 @@
  */
 package com.metrolink.validatorservice.db.daos;
 
+import com.metrolink.validatorservice.models.DTOLecturas;
+import java.sql.Date;
+import java.util.ArrayList;
+
 /**
  *
  * @author Gabriel
  */
 public interface IDAOLecturas {
-    
+    ArrayList<DTOLecturas> getLecturasBetweenDates(Date startDate, Date endDate);
+    DTOLecturas getLecturaForUpdate(String id);
 }

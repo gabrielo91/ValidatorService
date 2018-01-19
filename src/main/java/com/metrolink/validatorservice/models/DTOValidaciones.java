@@ -10,5 +10,9 @@ package com.metrolink.validatorservice.models;
  * @author Gabriel Ortega
  */
 public class DTOValidaciones {
-    
+    private String idValidacion;
+    private String descripcion;
+
+    public DTOValidaciones() {
+    }
 }

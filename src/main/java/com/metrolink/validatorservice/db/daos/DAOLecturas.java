@@ -5,10 +5,24 @@
  */
 package com.metrolink.validatorservice.db.daos;
 
+import com.metrolink.validatorservice.models.DTOLecturas;
+import java.sql.Date;
+import java.util.ArrayList;
+
 /**
  *
  * @author Gabriel Ortega
  */
 public class DAOLecturas implements IDAOLecturas {
+
+    @Override
+    public ArrayList<DTOLecturas> getLecturasBetweenDates(Date startDate, Date endDate) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public DTOLecturas getLecturaForUpdate(String id) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

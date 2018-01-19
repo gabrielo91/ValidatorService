@@ -23,6 +23,8 @@ public class PreferencesManager implements IPreferencesManager{
     public final static String DB_URL = "url";
     public final static String DB_PORT = "port";
     public final static String DB_DRIVER = "driver";
+    public final static String LOGS_PATH = "logs_path";
+    
 
     private String configFilePath;
     private String dbUsername;
@@ -30,6 +32,7 @@ public class PreferencesManager implements IPreferencesManager{
     private String dbUrl;
     private String dbPort;
     private String dbDriver;
+    private String logsPath;
     
     public PreferencesManager(String configFilePath) throws FileNotFoundException, IOException, ParseException {
         this.configFilePath = configFilePath;
@@ -42,6 +45,7 @@ public class PreferencesManager implements IPreferencesManager{
         dbUrl = (String) dbConfiguration.get(DB_URL);
         dbPort = (String) dbConfiguration.get(DB_PORT);
         dbDriver = (String) dbConfiguration.get(DB_DRIVER);
+        logsPath = (String) configData.get(LOGS_PATH);
     }
     
     @Override
@@ -68,15 +72,9 @@ public class PreferencesManager implements IPreferencesManager{
     public String getDBDriver() throws Exception {
         return this.dbDriver;
     }
-
-    @Override
-    public void setConfigFilePath(String configFilePath) throws Exception {
-        this.configFilePath = configFilePath;
-    }
-
-    @Override
-    public String getConfigFilePath() throws Exception {
-        return configFilePath;
-    }
     
+    @Override
+    public String getLogsPath() throws Exception {
+        return logsPath;
+    }
 }

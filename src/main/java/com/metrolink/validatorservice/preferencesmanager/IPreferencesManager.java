@@ -15,6 +15,5 @@ public interface IPreferencesManager {
     String getDBUrl()throws Exception;
     String getDBPort()throws Exception;
     String getDBDriver()throws Exception;
-    void setConfigFilePath(String configFilePath) throws Exception;
-    String getConfigFilePath() throws Exception;
+    String getLogsPath() throws Exception;
 }

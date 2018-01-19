@@ -7,6 +7,7 @@ package com.metrolink.validatorservice;
 
 import com.metrolink.validatorservice.db.controller.DatabaseController;
 import com.metrolink.validatorservice.db.controller.IDatabaseController;
+import com.metrolink.validatorservice.logger.DataLogger;
 import com.metrolink.validatorservice.preferencesmanager.IPreferencesManager;
 import com.metrolink.validatorservice.preferencesmanager.PreferencesManager;
 import java.io.IOException;
@@ -21,10 +22,12 @@ import org.json.simple.parser.ParseException;
  */
 public class Main {
 
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+
         try {
             System.out.println("Empezamos");
             String configFilePath = "resources/config.json";
@@ -32,12 +35,15 @@ public class Main {
             IDatabaseController databaseController = new DatabaseController(preferencesManager);
             Connection con = databaseController.getConnection();
             System.out.println("Funcionamos: "+ databaseController);
-        } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            int a = 4/0;
+            
+        } catch (IOException ex) {      
+            DataLogger.Log(ex, "Error leyendo el archivo de configuracion");
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Error leyendo el archivo de configuracion", ex);             
         } catch (ParseException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            DataLogger.Log(ex, "Error analizando el archivo de configuracion");
         } catch (Exception ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            DataLogger.Log(ex, "Error en la ejecuciòn de la función principal");
         }
     }
     
