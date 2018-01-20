@@ -7,7 +7,6 @@ package com.metrolink.validatorservice.controller;
 
 import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
 import com.metrolink.validatorservice.bussinesvalidations.IValidations;
-import com.metrolink.validatorservice.bussinesvalidations.Validations;
 import com.metrolink.validatorservice.db.daos.DAOLecturas;
 import com.metrolink.validatorservice.db.daos.IDAOLecturas;
 import com.metrolink.validatorservice.models.DTOLecturas;
@@ -51,7 +50,7 @@ public class Controller {
             System.out.println("el nombre del metodo es: "+ bussinesValidation.getName());
             System.out.println("el nombre del los argumentos son: " + bussinesValidation.getParameterCount());
             Method validation = validations.getMethod(bussinesValidation.getName(), List.class, int.class);
-            validation.invoke(validations.newInstance(), listaLecturasValidar, indexToValidate);
+            validation.invoke(validationsClass, listaLecturasValidar, indexToValidate);
         }
     }
 }
