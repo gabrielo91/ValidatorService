@@ -14,7 +14,6 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.json.simple.parser.ParseException;
 /**
  *
@@ -30,12 +29,12 @@ public class DataLogger {
             IPreferencesManager preferencesManager = new PreferencesManager(CONFIGURATION_FILE_PATH);
             String eventTime = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss").format( Calendar.getInstance().getTime());
             String date = new SimpleDateFormat("MM_dd_yyyy").format( Calendar.getInstance().getTime());
-            //String fileName = String.format("%s\\%s.txt", preferencesManager.getLogsPath(), date);                        
-            String fileName = String.format("%s\\ValidatorLogs.txt", preferencesManager.getLogsPath());                        
+            String fileName = String.format("%s\\%s.txt", preferencesManager.getLogsPath(), date);                        
+            //String fileName = String.format("%s\\ValidatorLogs.txt", preferencesManager.getLogsPath());                        
             File file = new File(fileName);
             
             if (!file.exists()) {
-                file.getParentFile().mkdirs();;
+                file.getParentFile().mkdirs();
             }                      
             
             try(FileWriter  fileWritter = new FileWriter(fileName,true);){
@@ -46,9 +45,7 @@ public class DataLogger {
                 e.printStackTrace(printWriter);                
             }       
                        
-        } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(DataLogger.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
+        } catch (IOException | ParseException ex) {
             java.util.logging.Logger.getLogger(DataLogger.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             java.util.logging.Logger.getLogger(DataLogger.class.getName()).log(Level.SEVERE, null, ex);

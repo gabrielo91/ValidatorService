@@ -6,11 +6,15 @@
 package com.metrolink.validatorservice.controller;
 
 import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
+import com.metrolink.validatorservice.bussinesvalidations.IValidations;
+import com.metrolink.validatorservice.bussinesvalidations.Validations;
 import com.metrolink.validatorservice.db.daos.DAOLecturas;
 import com.metrolink.validatorservice.db.daos.IDAOLecturas;
 import com.metrolink.validatorservice.models.DTOLecturas;
-import java.sql.Date;
-import java.util.ArrayList;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+
 
 /**
  *
@@ -19,20 +23,35 @@ import java.util.ArrayList;
 public class Controller {
     
     
-    IDAOLecturas daoLecturas;
-    IAlarmsManager alarmsManager;
+    private IDAOLecturas daoLecturas;
+    private IAlarmsManager alarmsManager;
+    private List<DTOLecturas> listaLecturasValidar; 
+    private final IValidations validationsClass;
+
+    public Controller(IValidations validationsClass) {
+        this.validationsClass = validationsClass;
+    }
         
-    public void performValidations(Date startDate, Date endDate){
+    public void performValidations() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException{
         
         daoLecturas = new DAOLecturas();
-        ArrayList<DTOLecturas> listaLecturasValdar = daoLecturas.getLecturasBetweenDates(startDate, endDate);
-        
-        for (DTOLecturas dTOLecturas : listaLecturasValdar) {
-            realizarValidaciones(dTOLecturas);
+        listaLecturasValidar = daoLecturas.getLecturasNoValidadas();
+
+        for (int i = 0; i < listaLecturasValidar.size(); i++) {
+            validateValue(i);
         }
+
     }
 
-    private void realizarValidaciones(DTOLecturas dTOLecturas) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void validateValue(int indexToValidate) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException {
+        
+        Class validations = validationsClass.getClass();   
+        
+        for (Method bussinesValidation : IValidations.class.getMethods()) {
+            System.out.println("el nombre del metodo es: "+ bussinesValidation.getName());
+            System.out.println("el nombre del los argumentos son: " + bussinesValidation.getParameterCount());
+            Method validation = validations.getMethod(bussinesValidation.getName(), List.class, int.class);
+            validation.invoke(validations.newInstance(), listaLecturasValidar, indexToValidate);
+        }
     }
 }

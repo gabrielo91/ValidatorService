@@ -14,6 +14,6 @@ import java.util.ArrayList;
  * @author Gabriel
  */
 public interface IDAOLecturas {
-    ArrayList<DTOLecturas> getLecturasBetweenDates(Date startDate, Date endDate);
+    ArrayList<DTOLecturas> getLecturasNoValidadas();
     DTOLecturas getLecturaForUpdate(String id);
 }
