@@ -33,8 +33,10 @@ public class Main {
     public static void main(String[] args) {
         try {
             
+            String configFilePath = "resources/config.json";
+            IPreferencesManager preferencesManager = new PreferencesManager(configFilePath);
             IValidations validations = new Validations();
-            Controller controller = new Controller(validations);
+            Controller controller = new Controller(validations, preferencesManager);
             controller.performValidations();
             
         } catch (IllegalAccessException ex) {
@@ -46,6 +48,12 @@ public class Main {
         } catch (InstantiationException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSuchMethodException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
         

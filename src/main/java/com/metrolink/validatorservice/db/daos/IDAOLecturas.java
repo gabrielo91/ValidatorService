@@ -6,7 +6,7 @@
 package com.metrolink.validatorservice.db.daos;
 
 import com.metrolink.validatorservice.models.DTOLecturas;
-import java.sql.Date;
+import com.metrolink.validatorservice.models.MovLectConsu;
 import java.util.ArrayList;
 
 /**
@@ -14,6 +14,6 @@ import java.util.ArrayList;
  * @author Gabriel
  */
 public interface IDAOLecturas {
-    ArrayList<DTOLecturas> getLecturasNoValidadas();
-    DTOLecturas getLecturaForUpdate(String id);
+    ArrayList<MovLectConsu> getLecturasNoValidadas()  throws Exception;
+    MovLectConsu getLecturaForUpdate(String id)  throws Exception;
 }

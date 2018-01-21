@@ -6,9 +6,13 @@
 package com.metrolink.validatorservice.controller;
 
 import com.metrolink.validatorservice.bussinesvalidations.IValidations;
+import com.metrolink.validatorservice.db.controller.DatabaseController;
+import com.metrolink.validatorservice.db.controller.IDatabaseController;
 import com.metrolink.validatorservice.db.daos.DAOLecturas;
 import com.metrolink.validatorservice.db.daos.IDAOLecturas;
 import com.metrolink.validatorservice.models.DTOLecturas;
+import com.metrolink.validatorservice.models.MovLectConsu;
+import com.metrolink.validatorservice.preferencesmanager.IPreferencesManager;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -20,11 +24,13 @@ import java.util.List;
 public class Controller {
     
     private IDAOLecturas daoLecturas;
-    private List<DTOLecturas> listaLecturasValidar; 
+    private List<MovLectConsu> listaLecturasValidar; 
     private final IValidations validationsClass;
+    private IPreferencesManager preferencesManager;
 
-    public Controller(IValidations validationsClass) {
+    public Controller(IValidations validationsClass, IPreferencesManager preferencesManager) {
         this.validationsClass = validationsClass;
+        this.preferencesManager  = preferencesManager;
     }
         
     /**
@@ -35,9 +41,10 @@ public class Controller {
      * @throws InstantiationException
      * @throws NoSuchMethodException 
      */
-    public void performValidations() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException{
+    public void performValidations() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException, Exception{
         
-        daoLecturas = new DAOLecturas();
+        IDatabaseController databaseController = new DatabaseController(preferencesManager);
+        daoLecturas = new DAOLecturas(databaseController);
         listaLecturasValidar = daoLecturas.getLecturasNoValidadas();
 
         for (int i = 0; i < listaLecturasValidar.size(); i++) {

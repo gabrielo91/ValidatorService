@@ -63,7 +63,7 @@ public class MovLectConsu implements Serializable {
     @Column(name = "VCPROGRAMA")
     private String vcprograma;
     @Column(name = "TSFECHA_TRAN")
-    private String tsfechaTran;
+    private Date tsfechaTran;
     @Column(name = "LGEN_ALARMA")
     private Short lgenAlarma;
     @Column(name = "LCERTIFICADA")
@@ -205,11 +205,11 @@ public class MovLectConsu implements Serializable {
         this.vcprograma = vcprograma;
     }
 
-    public String getTsfechaTran() {
+    public Date getTsfechaTran() {
         return tsfechaTran;
     }
 
-    public void setTsfechaTran(String tsfechaTran) {
+    public void setTsfechaTran(Date tsfechaTran) {
         this.tsfechaTran = tsfechaTran;
     }
 
