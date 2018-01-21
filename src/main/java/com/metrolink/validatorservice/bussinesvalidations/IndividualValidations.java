@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author Gabriel Ortega
  */
-public class Validations implements IValidations {
+public class IndividualValidations implements IIndividualValidations {
 
     @Override
     public boolean validation1(List<DTOLecturas> listaLecuras, int currentIndexToValidate) {

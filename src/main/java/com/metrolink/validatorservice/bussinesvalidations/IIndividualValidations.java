@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author Gabriel Ortega
  */
-public interface IValidations {
+public interface IIndividualValidations {
     public boolean validation1(List<DTOLecturas> listaLecuras, int currentIndexToValidate);
     public boolean validation2(List<DTOLecturas> listaLecuras, int currentIndexToValidate);
     public boolean validation3(List<DTOLecturas> listaLecuras, int currentIndexToValidate);
