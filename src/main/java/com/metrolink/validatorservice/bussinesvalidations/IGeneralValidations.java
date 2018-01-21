@@ -5,7 +5,7 @@
  */
 package com.metrolink.validatorservice.bussinesvalidations;
 
-import com.metrolink.validatorservice.models.DTOLecturas;
+import com.metrolink.validatorservice.models.MovLectConsu;
 import java.util.List;
 
 /**
@@ -13,7 +13,7 @@ import java.util.List;
  * @author Gabriel Ortega
  */
 public interface IGeneralValidations {
-    public boolean validation1(List<DTOLecturas> listaLecuras);
-    public boolean validation2(List<DTOLecturas> listaLecuras);
-    public boolean validation3(List<DTOLecturas> listaLecuras);
+    public boolean validation1(List<MovLectConsu> listaLecuras);
+    public boolean validation2(List<MovLectConsu> listaLecuras);
+    public boolean validation3(List<MovLectConsu> listaLecuras);
 }

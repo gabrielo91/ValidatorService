@@ -7,7 +7,6 @@ package com.metrolink.validatorservice.db.daos;
 
 import com.metrolink.validatorservice.db.controller.IDatabaseController;
 import com.metrolink.validatorservice.models.MovLectConsu;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,7 +22,7 @@ public class DAOLecturas implements IDAOLecturas {
     static final int LECTURA_VALIDA = 1;
     static final int LECTURA_NO_VALIDA = 2;
     
-    private IDatabaseController databaseController;
+    private final IDatabaseController databaseController;
     
     public DAOLecturas (IDatabaseController databaseController){
         this.databaseController = databaseController;

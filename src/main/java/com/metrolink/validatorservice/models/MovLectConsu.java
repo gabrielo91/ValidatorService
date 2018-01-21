@@ -78,6 +78,8 @@ public class MovLectConsu implements Serializable {
     @Column(name = "VCNIC")
     private String vcnic;
 
+    private CausasRechazo causasRechazo;
+    
     public MovLectConsu() {
     }
 
@@ -93,6 +95,14 @@ public class MovLectConsu implements Serializable {
         this.nconsProceso = nconsProceso;
     }
 
+    public CausasRechazo getCausasRechazo() {
+        return causasRechazo;
+    }
+
+    public void setCausasRechazo(CausasRechazo causasRechazo) {
+        this.causasRechazo = causasRechazo;
+    }
+    
     public int getNcodProv() {
         return ncodProv;
     }

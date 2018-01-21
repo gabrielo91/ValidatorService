@@ -5,7 +5,7 @@
  */
 package com.metrolink.validatorservice.bussinesvalidations;
 
-import com.metrolink.validatorservice.models.DTOLecturas;
+import com.metrolink.validatorservice.models.MovLectConsu;
 import java.util.List;
 
 /**
@@ -14,38 +14,40 @@ import java.util.List;
  */
 public class IndividualValidations implements IIndividualValidations {
 
+    //TODO check that every reading has not been invalidated 
+    
     @Override
-    public boolean validation1(List<DTOLecturas> listaLecuras, int currentIndexToValidate) {
+    public boolean validation1(List<MovLectConsu> listaLecuras, int currentIndexToValidate) {
         System.out.println("com.metrolink.validatorservice.bussinesvalidations.Validations.validation1()");
         return true;
     }
 
     @Override
-    public boolean validation2(List<DTOLecturas> listaLecuras, int currentIndexToValidate) {
+    public boolean validation2(List<MovLectConsu> listaLecuras, int currentIndexToValidate) {
         System.out.println("com.metrolink.validatorservice.bussinesvalidations.Validations.validation2()");
         return true;
     }
 
     @Override
-    public boolean validation3(List<DTOLecturas> listaLecuras, int currentIndexToValidate) {
+    public boolean validation3(List<MovLectConsu> listaLecuras, int currentIndexToValidate) {
         System.out.println("com.metrolink.validatorservice.bussinesvalidations.Validations.validation3()");
         return true;
     }
 
     @Override
-    public boolean validation4(List<DTOLecturas> listaLecuras, int currentIndexToValidate) {
+    public boolean validation4(List<MovLectConsu> listaLecuras, int currentIndexToValidate) {
         System.out.println("com.metrolink.validatorservice.bussinesvalidations.Validations.validation4()");
         return true;
     }
 
     @Override
-    public boolean validation5(List<DTOLecturas> listaLecuras, int currentIndexToValidate) {
+    public boolean validation5(List<MovLectConsu> listaLecuras, int currentIndexToValidate) {
         System.out.println("com.metrolink.validatorservice.bussinesvalidations.Validations.validation5()");
         return true;
     }
     
     @Override
-    public boolean validation6(List<DTOLecturas> listaLecuras, int currentIndexToValidate) {
+    public boolean validation6(List<MovLectConsu> listaLecuras, int currentIndexToValidate) {
         System.out.println("ganamos");
         System.out.println("listaLecuras: "+listaLecuras.size());
         return true;

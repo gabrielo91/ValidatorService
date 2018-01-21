@@ -5,13 +5,13 @@
  */
 package com.metrolink.validatorservice.db.daos;
 
-import com.metrolink.validatorservice.models.MovLectConsu;
+import com.metrolink.validatorservice.models.MParametrosAdm;
 import java.util.ArrayList;
 
 /**
  *
  * @author Gabriel Ortega
  */
-public interface IDAOLogAlterno {
-    boolean insertLecturas(ArrayList<MovLectConsu> lecturas) throws Exception;
+public interface IDAOParametrosAdmin {
+    ArrayList<MParametrosAdm> getParametrosAdm () throws  Exception;
 }
