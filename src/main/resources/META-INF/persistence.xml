@@ -8,6 +8,18 @@
     <class>com.metrolink.validatorservice.models.AgendaLectura</class>
     <class>com.metrolink.validatorservice.models.MParametrosAdm</class>
     <class>com.metrolink.validatorservice.models.CausasRechazo</class>
+    <class>com.metrolink.validatorservice.models.MTipoconsumo</class>
+    <class>com.metrolink.validatorservice.models.MCalTou</class>
+    <class>com.metrolink.validatorservice.models.MJurisdicciones</class>
+    <class>com.metrolink.validatorservice.models.MProveedores</class>
+    <class>com.metrolink.validatorservice.models.MAreas</class>
+    <class>com.metrolink.validatorservice.models.MTarifas</class>
+    <class>com.metrolink.validatorservice.models.MTipoTarifas</class>
+    <class>com.metrolink.validatorservice.models.MMarcasmedidor</class>
+    <class>com.metrolink.validatorservice.models.MovSuministros</class>
+    <class>com.metrolink.validatorservice.models.MDelegaciones</class>
+    <class>com.metrolink.validatorservice.models.MovAlarmas</class>
+    <class>com.metrolink.validatorservice.models.MAlarmas</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@18.216.205.163:1521:XE"/>
       <property name="javax.persistence.jdbc.user" value="perseo"/>

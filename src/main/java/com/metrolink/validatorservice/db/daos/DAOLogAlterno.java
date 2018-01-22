@@ -30,7 +30,7 @@ public class DAOLogAlterno implements IDAOLogAlterno {
         String sql = "INSERT INTO MOV_LECT_CONSU ("
                 + "CONS, "
                 + "VCTIPO_VAL, "
-                + "VCNIC, "
+                + "NNIC, "
                 + "VCNISRAD, "
                 + "VCNUM_MED, "
                 + "VCCODMARCA, "
@@ -50,18 +50,20 @@ public class DAOLogAlterno implements IDAOLogAlterno {
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             
             for (MovLectConsu lectura : lecturas) {
+                
+                //Arreglar TODO falta agregar el campo causa rechazo
                 preparedStatement.setBigDecimal(1, lectura.getId());
-                preparedStatement.setInt(2, lectura.getTipoLectura);
-                preparedStatement.setString(3, lectura.getVcnic());
-                preparedStatement.setString(4, lectura.getNnisRad());
+                preparedStatement.setString(2, lectura.getMovSuministros().getVctipoEnergia());
+                //preparedStatement.setString(3, lectura.getMovSuministros().getVc getVcnic());
+                //preparedStatement.setString(4, lectura.getNnisRad());
                 preparedStatement.setString(5, lectura.getVcnumMed());
                 preparedStatement.setString(6, lectura.getVccodmarca());
                 preparedStatement.setString(7, lectura.getVctipoLec());
                 preparedStatement.setDate(8, new java.sql.Date(lectura.getTsfechaLec().getTime()));
-                preparedStatement.setInt(9, lectura.getNlectura());
+                //preparedStatement.setInt(9, lectura.getNlectura());
                 preparedStatement.setBigDecimal(10, lectura.getNconsumoOri());
                 preparedStatement.setBigDecimal(11, lectura.getNconsumoMod());
-                preparedStatement.setInt(12, lectura.getNcodProv());
+                //preparedStatement.setInt(12, lectura.getNcodProv());
                 preparedStatement.setString(13, lectura.getCausasRechazo().getVadescripcion());
                 preparedStatement.setString(14, lectura.getVccoduser());
                 preparedStatement.setString(15, lectura.getVcprograma());

@@ -5,10 +5,12 @@
  */
 package com.metrolink.validatorservice.alarmsmanager;
 
+import com.metrolink.validatorservice.models.MovAlarmas;
+
 /**
  *
  * @author Gabriel Ortega
  */
 public interface IAlarmsManager {
-    
+    void reportarAlarma(MovAlarmas alarma);
 }

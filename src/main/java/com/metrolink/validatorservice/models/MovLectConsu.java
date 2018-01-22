@@ -7,11 +7,15 @@ package com.metrolink.validatorservice.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -30,12 +34,6 @@ public class MovLectConsu implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Basic(optional = false)
-    @Column(name = "NCOD_PROV")
-    private int ncodProv;
-    @Basic(optional = false)
-    @Column(name = "NNIS_RAD")
-    private String nnisRad;
-    @Basic(optional = false)
     @Column(name = "TSFECHA_LEC")
     @Temporal(TemporalType.TIMESTAMP)
     private Date tsfechaLec;
@@ -47,9 +45,9 @@ public class MovLectConsu implements Serializable {
     private String vccodmarca;
     @Column(name = "VCTIPO_LEC")
     private String vctipoLec;
-    @Column(name = "NLECTURA")
-    private Integer nlectura;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "NLECTURA")
+    private BigDecimal nlectura;
     @Column(name = "NCONSUMO_ORI")
     private BigDecimal nconsumoOri;
     @Column(name = "NCONSUMO_MOD")
@@ -63,6 +61,7 @@ public class MovLectConsu implements Serializable {
     @Column(name = "VCPROGRAMA")
     private String vcprograma;
     @Column(name = "TSFECHA_TRAN")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date tsfechaTran;
     @Column(name = "LGEN_ALARMA")
     private Short lgenAlarma;
@@ -75,11 +74,39 @@ public class MovLectConsu implements Serializable {
     @Basic(optional = false)
     @Column(name = "ID")
     private BigDecimal id;
-    @Column(name = "VCNIC")
-    private String vcnic;
-
+    @Column(name = "NNIC")
+    private BigInteger nnic;
+    @JoinColumns({
+        @JoinColumn(name = "NCOD_PROV", referencedColumnName = "NCOD_PROV")
+        , @JoinColumn(name = "NNIS_RAD", referencedColumnName = "NNIS_RAD")
+        , @JoinColumn(name = "VCCODTCONSUMO", referencedColumnName = "VCCODTCONSUMO")})
+    @ManyToOne(optional = false)
+    private MovSuministros movSuministros;
     private CausasRechazo causasRechazo;
-    
+
+    public MovLectConsu(Date tsfechaLec, String vcnumMed, String vctipoMed, String vccodmarca, String vctipoLec, BigDecimal nlectura, BigDecimal nconsumoOri, BigDecimal nconsumoMod, Short lbloqueado, Short lenviado, String vccoduser, String vcprograma, Date tsfechaTran, Short lgenAlarma, Short lcertificada, int nconsProceso, BigDecimal id, BigInteger nnic, MovSuministros movSuministros, CausasRechazo causasRechazo) {
+        this.tsfechaLec = tsfechaLec;
+        this.vcnumMed = vcnumMed;
+        this.vctipoMed = vctipoMed;
+        this.vccodmarca = vccodmarca;
+        this.vctipoLec = vctipoLec;
+        this.nlectura = nlectura;
+        this.nconsumoOri = nconsumoOri;
+        this.nconsumoMod = nconsumoMod;
+        this.lbloqueado = lbloqueado;
+        this.lenviado = lenviado;
+        this.vccoduser = vccoduser;
+        this.vcprograma = vcprograma;
+        this.tsfechaTran = tsfechaTran;
+        this.lgenAlarma = lgenAlarma;
+        this.lcertificada = lcertificada;
+        this.nconsProceso = nconsProceso;
+        this.id = id;
+        this.nnic = nnic;
+        this.movSuministros = movSuministros;
+        this.causasRechazo = causasRechazo;
+    }
+
     public MovLectConsu() {
     }
 
@@ -87,10 +114,8 @@ public class MovLectConsu implements Serializable {
         this.id = id;
     }
 
-    public MovLectConsu(BigDecimal id, int ncodProv, String nnisRad, Date tsfechaLec, int nconsProceso) {
+    public MovLectConsu(BigDecimal id, Date tsfechaLec, int nconsProceso) {
         this.id = id;
-        this.ncodProv = ncodProv;
-        this.nnisRad = nnisRad;
         this.tsfechaLec = tsfechaLec;
         this.nconsProceso = nconsProceso;
     }
@@ -101,24 +126,8 @@ public class MovLectConsu implements Serializable {
 
     public void setCausasRechazo(CausasRechazo causasRechazo) {
         this.causasRechazo = causasRechazo;
-    }
+    }    
     
-    public int getNcodProv() {
-        return ncodProv;
-    }
-
-    public void setNcodProv(int ncodProv) {
-        this.ncodProv = ncodProv;
-    }
-
-    public String getNnisRad() {
-        return nnisRad;
-    }
-
-    public void setNnisRad(String nnisRad) {
-        this.nnisRad = nnisRad;
-    }
-
     public Date getTsfechaLec() {
         return tsfechaLec;
     }
@@ -159,11 +168,11 @@ public class MovLectConsu implements Serializable {
         this.vctipoLec = vctipoLec;
     }
 
-    public Integer getNlectura() {
+    public BigDecimal getNlectura() {
         return nlectura;
     }
 
-    public void setNlectura(Integer nlectura) {
+    public void setNlectura(BigDecimal nlectura) {
         this.nlectura = nlectura;
     }
 
@@ -255,12 +264,20 @@ public class MovLectConsu implements Serializable {
         this.id = id;
     }
 
-    public String getVcnic() {
-        return vcnic;
+    public BigInteger getNnic() {
+        return nnic;
     }
 
-    public void setVcnic(String vcnic) {
-        this.vcnic = vcnic;
+    public void setNnic(BigInteger nnic) {
+        this.nnic = nnic;
+    }
+
+    public MovSuministros getMovSuministros() {
+        return movSuministros;
+    }
+
+    public void setMovSuministros(MovSuministros movSuministros) {
+        this.movSuministros = movSuministros;
     }
 
     @Override
