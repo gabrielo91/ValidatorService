@@ -13,6 +13,8 @@ import com.metrolink.validatorservice.models.MovAlarmas;
  */
 public class AlarmsManager implements IAlarmsManager{
 
+    //DEBE SER UN SINGLETON CON UN MÈTODO PARA INSERTAR TODAS LAS ALARMAS AL FINAL
+    
     @Override
     public void reportarAlarma(MovAlarmas alarma) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

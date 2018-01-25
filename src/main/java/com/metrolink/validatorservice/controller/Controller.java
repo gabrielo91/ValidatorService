@@ -50,7 +50,11 @@ public class Controller {
         listaLecturasValidar = daoLecturas.getLecturasNoValidadas();
         
         performGeneralValidations();
+       //SI ALGUNA VALIDACIN RECHAZA UN VALOR EVITARLO EN LA SIGUENTE
        
+       
+       //NO EVITARLO, AGREGARLOS EN UNA PILA, COMO AHCER EN JAVA UNA PILA ACCESIBLE DESDE OTRAS CLASES
+       //un arraylisto con singleton donde agrege todos los datos que deben generar alarmas
         for (int i = 0; i < listaLecturasValidar.size(); i++) {
             performIndividualValidations(i);
         }
