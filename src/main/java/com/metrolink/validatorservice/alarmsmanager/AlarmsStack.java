@@ -9,7 +9,8 @@ import com.metrolink.validatorservice.models.MovAlarmas;
 import java.util.ArrayList;
 
 /**
- *
+ * Singleton on charge of managing the alarms stack. In this way the program can iterate over such stack in order 
+ * to avoid sending repeated alarms corresponding to the same discarded alarm
  * @author Gabriel Ortega
  */
 public class AlarmsStack {
