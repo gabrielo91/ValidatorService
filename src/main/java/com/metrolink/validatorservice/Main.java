@@ -5,6 +5,7 @@
  */
 package com.metrolink.validatorservice;
 
+import com.metrolink.validatorservice.alarmsmanager.AlarmsStack;
 import com.metrolink.validatorservice.bussinesvalidations.GeneralValidations;
 import com.metrolink.validatorservice.bussinesvalidations.IGeneralValidations;
 import com.metrolink.validatorservice.bussinesvalidations.IndividualValidations;
@@ -21,6 +22,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.parser.ParseException;
 import com.metrolink.validatorservice.bussinesvalidations.IIndividualValidations;
+import com.metrolink.validatorservice.models.MovAlarmas;
+import java.util.ArrayList;
 
 /**
  *
@@ -33,8 +36,13 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        
+        
+    }
+    
+    private void test2(){
         try {
-            
+
             String configFilePath = "resources/config.json";
             IPreferencesManager preferencesManager = new PreferencesManager(configFilePath);
             IIndividualValidations individualValidations = new IndividualValidations();
@@ -59,8 +67,9 @@ public class Main {
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+    
     }
+    
     
     private void test1(){
    

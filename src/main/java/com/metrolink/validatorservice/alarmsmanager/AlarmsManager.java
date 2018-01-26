@@ -6,6 +6,7 @@
 package com.metrolink.validatorservice.alarmsmanager;
 
 import com.metrolink.validatorservice.models.MovAlarmas;
+import java.util.ArrayList;
 
 /**
  *
@@ -13,11 +14,18 @@ import com.metrolink.validatorservice.models.MovAlarmas;
  */
 public class AlarmsManager implements IAlarmsManager{
 
-    //DEBE SER UN SINGLETON CON UN MÈTODO PARA INSERTAR TODAS LAS ALARMAS AL FINAL
     
     @Override
     public void reportarAlarma(MovAlarmas alarma) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        AlarmsStack.getInstance().addAlarmToStack(alarma);
+    }
+    
+    public void saveAlarms(){
+        ArrayList<MovAlarmas> listAlarmas =  AlarmsStack.getInstance().getAlarmsStack();
+    }
+    
+    public void cleanAalrmsStack(){
+         AlarmsStack.getInstance().cleanStack();
     }
     
 }
