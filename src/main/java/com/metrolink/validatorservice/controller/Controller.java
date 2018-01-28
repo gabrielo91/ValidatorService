@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import com.metrolink.validatorservice.bussinesvalidations.IIndividualValidations;
+import java.util.ArrayList;
 
 /**
  *
@@ -24,7 +25,6 @@ import com.metrolink.validatorservice.bussinesvalidations.IIndividualValidations
 public class Controller {
     
     private IDAOLecturas daoLecturas;
-    private List<MovLectConsu> listaLecturasValidar; 
     private final IIndividualValidations idividualValidationsClass;
     private final IGeneralValidations generalValidationsClass;
     private IPreferencesManager preferencesManager;
@@ -47,15 +47,13 @@ public class Controller {
         
         IDatabaseController databaseController = new DatabaseController(preferencesManager);
         daoLecturas = new DAOLecturas(databaseController);
-        listaLecturasValidar = daoLecturas.getLecturasNoValidadas();
-        
-        performGeneralValidations();
-       //SI ALGUNA VALIDACIN RECHAZA UN VALOR EVITARLO EN LA SIGUENTE
+        ArrayList<MovLectConsu> listaLecturasValidar = daoLecturas.getLecturasNoValidadas();
+        ReadingsStack.getInstance().setReadings(listaLecturasValidar);
+                
+        performGeneralValidations();      
        
-       
-       //NO EVITARLO, AGREGARLOS EN UNA PILA, COMO AHCER EN JAVA UNA PILA ACCESIBLE DESDE OTRAS CLASES
        //un arraylisto con singleton donde agrege todos los datos que deben generar alarmas
-        for (int i = 0; i < listaLecturasValidar.size(); i++) {
+        for (int i = 0; i <  ReadingsStack.getInstance().getReadings().size(); i++) {
             performIndividualValidations(i);
         }
     }
@@ -76,7 +74,7 @@ public class Controller {
         for (Method bussinesValidation : IIndividualValidations.class.getMethods()) {
             System.out.println("La validacion a ejecutar es: "+ bussinesValidation.getName());
             Method validation = validations.getMethod(bussinesValidation.getName(), List.class, int.class);
-            validation.invoke(idividualValidationsClass, listaLecturasValidar, indexToValidate);
+            validation.invoke(idividualValidationsClass, ReadingsStack.getInstance().getReadings(), indexToValidate);
         }
     }
 
@@ -87,7 +85,7 @@ public class Controller {
         for (Method bussinesValidation : IGeneralValidations.class.getMethods()) {
             System.out.println("La validacion a ejecutar es: "+ bussinesValidation.getName());
             Method validation = validations.getMethod(bussinesValidation.getName(), List.class);
-            validation.invoke(generalValidationsClass, listaLecturasValidar);
+            validation.invoke(generalValidationsClass, ReadingsStack.getInstance().getReadings());
         }
     }
 }

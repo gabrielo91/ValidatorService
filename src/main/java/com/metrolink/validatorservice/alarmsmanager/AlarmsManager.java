@@ -16,7 +16,7 @@ public class AlarmsManager implements IAlarmsManager{
 
     
     @Override
-    public void reportarAlarma(MovAlarmas alarma) {
+    public void reportAlarm(MovAlarmas alarma) {
         AlarmsStack.getInstance().addAlarmToStack(alarma);
     }
     
