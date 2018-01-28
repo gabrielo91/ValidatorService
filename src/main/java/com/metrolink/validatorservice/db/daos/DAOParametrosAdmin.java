@@ -63,7 +63,7 @@ public class DAOParametrosAdmin implements IDAOParametrosAdmin {
         parametrosAdm.setVcrutaArchivo(resultSet.getString("VCRUTA_ARCHIVO"));
         parametrosAdm.setVcservidorEmail(resultSet.getString("VCSERVIDOR_EMAIL"));
         parametrosAdm.setVcuser(resultSet.getString("VCUSER"));
-        parametrosAdm.setNdiasBusca(resultSet.getShort("NDIAS_ANT"));
+        parametrosAdm.setNdiasBusca(resultSet.getShort("NDIAS_BUSCA"));
 
         return parametrosAdm;
     }
