@@ -13,6 +13,9 @@ import java.util.List;
  * @author Gabriel Ortega
  */
 public interface IGeneralValidations {
+    
+    public boolean verificarCalendarioTOU(List<MovLectConsu> listaLecuras);
+    public boolean verificarExistenciaDatos(List<MovLectConsu> listaLecuras);
     public boolean validation1(List<MovLectConsu> listaLecuras);
     public boolean validation2(List<MovLectConsu> listaLecuras);
     public boolean validation3(List<MovLectConsu> listaLecuras);

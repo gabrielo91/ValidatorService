@@ -31,7 +31,7 @@ public class ReadingsStack {
         if(null != readings){
             readings.addAll(readingsList);
         }else{
-            throw new IllegalStateException ("getInstance method must be called before use setReadings() method");
+            throw new IllegalStateException ("getInstance method must be called before using setReadings() method");
         }
         
     }
@@ -40,7 +40,7 @@ public class ReadingsStack {
         if(null != readings){
             return readings;
         }else{
-            throw new IllegalStateException ("getInstance method must be called before use getReadings() method");
+            throw new IllegalStateException ("getInstance method must be called before using getReadings() method");
         }
     }
     
@@ -49,7 +49,7 @@ public class ReadingsStack {
             readings.clear();
             readings = new ArrayList<>();
         }else{
-            throw new IllegalStateException ("getInstance method must be called before use cleanStack() method");
+            throw new IllegalStateException ("getInstance method must be called before using cleanStack() method");
         }
     }
     

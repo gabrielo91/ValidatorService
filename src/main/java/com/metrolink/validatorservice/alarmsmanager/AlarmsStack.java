@@ -30,16 +30,31 @@ public class AlarmsStack {
     }
     
     public static void addAlarmToStack(MovAlarmas alarma){
-        listAlarmas.add(alarma);
+        if(null != listAlarmas){
+            listAlarmas.add(alarma);
+        }else{
+            throw new IllegalStateException ("getInstance method must be called before using addAlarmToStack() method");
+        }
     }
     
     public static ArrayList<MovAlarmas> getAlarmsStack(){
-        return listAlarmas;
+        if(null != listAlarmas){
+            return listAlarmas;
+        } else{
+            throw new IllegalStateException ("getInstance method must be called before using getAlarmsStack() method");
+        }
     }
     
     public static void cleanStack(){
-        listAlarmas.clear();
-        listAlarmas = null;
+        if(null != listAlarmas){
+            listAlarmas.clear();
+            listAlarmas = null;
+        } else{
+            throw new IllegalStateException ("getInstance method must be called before using cleanStack() method");
+        }
+        
+        
+        
     }
     
 }

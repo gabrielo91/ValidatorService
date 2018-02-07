@@ -6,11 +6,13 @@
 package com.metrolink.validatorservice.alarmsmanager;
 
 import com.metrolink.validatorservice.models.MovAlarmas;
+import com.metrolink.validatorservice.models.MovLectConsu;
 
 /**
  *
  * @author Gabriel Ortega
  */
 public interface IAlarmsManager {
-    void reportAlarm(MovAlarmas alarma);
+    
+    public void reportAlarm(MovLectConsu lectura, String description);
 }

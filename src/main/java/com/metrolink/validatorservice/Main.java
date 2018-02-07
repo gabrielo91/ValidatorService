@@ -5,6 +5,8 @@
  */
 package com.metrolink.validatorservice;
 
+import com.metrolink.validatorservice.alarmsmanager.AlarmsManager;
+import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
 import com.metrolink.validatorservice.bussinesvalidations.GeneralValidations;
 import com.metrolink.validatorservice.bussinesvalidations.IGeneralValidations;
 import com.metrolink.validatorservice.bussinesvalidations.IndividualValidations;
@@ -48,7 +50,8 @@ public class Main {
             String configFilePath = "resources/config.json";
             IPreferencesManager preferencesManager = new PreferencesManager(configFilePath);
             IIndividualValidations individualValidations = new IndividualValidations();
-            IGeneralValidations generalValidations = new GeneralValidations();
+            IAlarmsManager alarmsManager = new AlarmsManager();
+            IGeneralValidations generalValidations = new GeneralValidations(alarmsManager);
             Controller controller = new Controller(individualValidations, generalValidations, preferencesManager);
             controller.performValidations();
             
