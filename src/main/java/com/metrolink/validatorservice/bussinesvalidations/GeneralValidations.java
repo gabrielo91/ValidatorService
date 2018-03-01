@@ -20,24 +20,7 @@ public class GeneralValidations implements IGeneralValidations{
     public GeneralValidations(IAlarmsManager alarmsManager){
         this.alarmsManager = alarmsManager;
     }
-    
-    @Override
-    public boolean validation1(List<MovLectConsu> listaLecuras) {
-        System.out.println("com.metrolink.validatorservice.bussinesvalidations.GeneralValidations.validation1()");
-        return true;
-    }
 
-    @Override
-    public boolean validation2(List<MovLectConsu> listaLecuras) {
-        System.out.println("com.metrolink.validatorservice.bussinesvalidations.GeneralValidations.validation2()");
-        return true;
-    }
-
-    @Override
-    public boolean validation3(List<MovLectConsu> listaLecuras) {
-        System.out.println("com.metrolink.validatorservice.bussinesvalidations.GeneralValidations.validation3()");
-        return true;
-    }
 
     @Override
     public boolean verificarCalendarioTOU(List<MovLectConsu> listaLecuras) {
@@ -62,10 +45,19 @@ public class GeneralValidations implements IGeneralValidations{
         boolean result = true;
         if (listaLecuras.size() < 1) {
             result = false;
-            //Esto debe recibir como argumento los datos que se estan trabajando
             alarmsManager.reportAlarm(new MovLectConsu(), AlarmsManager.EXISTENCIA_DATOS_VALIDATION_ERROR_DESCRIPTION);
         }
         return result;
+    }
+
+    @Override
+    public boolean verificarCompletitudInformacionLecturas(List<MovLectConsu> listaLecuras) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean verificarCompletitudInformacionConsumos(List<MovLectConsu> listaLecuras) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

@@ -7,11 +7,12 @@ package com.metrolink.validatorservice.db.daos;
 
 import com.metrolink.validatorservice.models.AgendaLectura;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
  * @author Gabriel Ortega
  */
 public interface IDAOAgendaLectura {
-    ArrayList<AgendaLectura> listAgenda() throws Exception;
+    ArrayList<AgendaLectura> listAgendaBetweenDates(Date startingDate, Date endingDate) throws Exception;
 }

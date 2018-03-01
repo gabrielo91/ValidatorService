@@ -30,7 +30,7 @@ public class DAOParametrosAdmin implements IDAOParametrosAdmin {
     public ArrayList<MParametrosAdm> getParametrosAdm() throws Exception {
         
         ArrayList<MParametrosAdm> listaParametrosAdms = new ArrayList();
-        String sql  = "SELECT * FROM PARAMETROS_ADMIN";
+        String sql  = "SELECT * FROM M_PARAMETROS_ADM";
 
         try (Connection con = databaseController.getConnection()){
             PreparedStatement preparedStatement = con.prepareStatement(sql);

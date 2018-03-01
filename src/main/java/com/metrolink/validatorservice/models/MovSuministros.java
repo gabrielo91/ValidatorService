@@ -7,6 +7,7 @@ package com.metrolink.validatorservice.models;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -32,9 +33,6 @@ import javax.persistence.TemporalType;
 @NamedQueries({
     @NamedQuery(name = "MovSuministros.findAll", query = "SELECT m FROM MovSuministros m")})
 public class MovSuministros implements Serializable {
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "movSuministros")
-    private Collection<MovLectConsu> movLectConsuCollection;
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -76,6 +74,12 @@ public class MovSuministros implements Serializable {
     private String vcciclo;
     @Column(name = "VCTIPO_ENERGIA")
     private String vctipoEnergia;
+    @Column(name = "NNUM_REGS")
+    private Short nnumRegs;
+    @Column(name = "LBLOQUEADO")
+    private Short lbloqueado;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "movSuministros")
+    private Collection<MovLectConsu> movLectConsuCollection = new ArrayList<MovLectConsu>();
     @JoinColumn(name = "NCOD_CAL_TOU", referencedColumnName = "NCOD_CAL_TOU")
     @ManyToOne
     private MCalTou ncodCalTou;
@@ -85,7 +89,7 @@ public class MovSuministros implements Serializable {
     @JoinColumn(name = "VCCODMARCA", referencedColumnName = "VCCODMARCA")
     @ManyToOne
     private MMarcasmedidor vccodmarca;
-    @JoinColumn(name = "NCOD_PROV", referencedColumnName = "VCCOD_PROV", insertable = false, updatable = false)
+    @JoinColumn(name = "NCOD_PROV", referencedColumnName = "NCOD_PROV", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private MProveedores mProveedores;
     @JoinColumn(name = "VCCODTARIFA", referencedColumnName = "VCCODTARIFA")
@@ -248,6 +252,30 @@ public class MovSuministros implements Serializable {
         this.vctipoEnergia = vctipoEnergia;
     }
 
+    public Short getNnumRegs() {
+        return nnumRegs;
+    }
+
+    public void setNnumRegs(Short nnumRegs) {
+        this.nnumRegs = nnumRegs;
+    }
+
+    public Short getLbloqueado() {
+        return lbloqueado;
+    }
+
+    public void setLbloqueado(Short lbloqueado) {
+        this.lbloqueado = lbloqueado;
+    }
+
+    public Collection<MovLectConsu> getMovLectConsuCollection() {
+        return movLectConsuCollection;
+    }
+
+    public void setMovLectConsuCollection(Collection<MovLectConsu> movLectConsuCollection) {
+        this.movLectConsuCollection = movLectConsuCollection;
+    }
+
     public MCalTou getNcodCalTou() {
         return ncodCalTou;
     }
@@ -319,14 +347,6 @@ public class MovSuministros implements Serializable {
     @Override
     public String toString() {
         return "com.metrolink.validatorservice.models.MovSuministros[ movSuministrosPK=" + movSuministrosPK + " ]";
-    }
-
-    public Collection<MovLectConsu> getMovLectConsuCollection() {
-        return movLectConsuCollection;
-    }
-
-    public void setMovLectConsuCollection(Collection<MovLectConsu> movLectConsuCollection) {
-        this.movLectConsuCollection = movLectConsuCollection;
     }
     
 }

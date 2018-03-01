@@ -16,7 +16,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import com.metrolink.validatorservice.bussinesvalidations.IIndividualValidations;
+import com.metrolink.validatorservice.db.daos.DAOAgendaLectura;
+import com.metrolink.validatorservice.db.daos.DAOParametrosAdmin;
+import com.metrolink.validatorservice.db.daos.IDAOAgendaLectura;
+import com.metrolink.validatorservice.db.daos.IDAOParametrosAdmin;
+import com.metrolink.validatorservice.models.AgendaLectura;
+import com.metrolink.validatorservice.models.MParametrosAdm;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  *
@@ -25,16 +35,19 @@ import java.util.ArrayList;
 public class Controller {
     
     private IDAOLecturas daoLecturas;
+    private IDAOParametrosAdmin daoParametrosAdmin;
+    private IDAOAgendaLectura daoAgendaLectura;
+    
     private final IIndividualValidations idividualValidationsClass;
     private final IGeneralValidations generalValidationsClass;
     private IPreferencesManager preferencesManager;
-
+    
     public Controller(IIndividualValidations idividualValidationsClass, IGeneralValidations generalValidationsClass,IPreferencesManager preferencesManager) {
         this.idividualValidationsClass = idividualValidationsClass;
         this.generalValidationsClass = generalValidationsClass;
         this.preferencesManager  = preferencesManager;
     }
-        
+     
     /**
      * This method gets the un validated readings and performs validations over them
      * @throws IllegalAccessException
@@ -44,6 +57,45 @@ public class Controller {
      * @throws NoSuchMethodException 
      */
     public void performValidations() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException, Exception{
+        
+        IDatabaseController databaseController = new DatabaseController(preferencesManager);
+        daoParametrosAdmin = new DAOParametrosAdmin(databaseController);        
+//        MParametrosAdm parametrosAdm = daoParametrosAdmin.getParametrosAdm().get(0);
+//        short diasABuscar = parametrosAdm.getNdiasBusca();
+//        System.out.println("dias busca es: "+diasABuscar);
+        daoLecturas = new DAOLecturas(databaseController);
+        daoAgendaLectura = new DAOAgendaLectura(databaseController);
+        
+        
+        SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
+
+        Date startingDate = dateformat.parse("01-01-2017");
+        Date endingDate = dateformat.parse("01-01-2019");
+        
+        
+        
+        
+        ArrayList<AgendaLectura> listaAgenda = daoAgendaLectura.listAgendaBetweenDates(startingDate, endingDate);
+        System.out.println("EL TAMANO ES: "+listaAgenda.size());
+
+    }
+    
+    private Date addDays(Date date, int days){
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, days);
+        return cal.getTime();
+    }    
+    
+    /**
+     * This method gets the un validated readings and performs validations over them
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InvocationTargetException
+     * @throws InstantiationException
+     * @throws NoSuchMethodException 
+     */
+    public void performValidations2() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException, Exception{
         
         IDatabaseController databaseController = new DatabaseController(preferencesManager);
         daoLecturas = new DAOLecturas(databaseController);

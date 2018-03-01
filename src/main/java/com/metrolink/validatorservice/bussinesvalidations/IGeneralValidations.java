@@ -16,7 +16,7 @@ public interface IGeneralValidations {
     
     public boolean verificarCalendarioTOU(List<MovLectConsu> listaLecuras);
     public boolean verificarExistenciaDatos(List<MovLectConsu> listaLecuras);
-    public boolean validation1(List<MovLectConsu> listaLecuras);
-    public boolean validation2(List<MovLectConsu> listaLecuras);
-    public boolean validation3(List<MovLectConsu> listaLecuras);
+    public boolean verificarCompletitudInformacionLecturas(List<MovLectConsu> listaLecuras);
+    public boolean verificarCompletitudInformacionConsumos(List<MovLectConsu> listaLecuras);
+    
 }

@@ -6,7 +6,6 @@
 package com.metrolink.validatorservice.db.controller;
 
 import com.metrolink.validatorservice.preferencesmanager.IPreferencesManager;
-import com.metrolink.validatorservice.preferencesmanager.PreferencesManager;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
@@ -46,7 +45,6 @@ public class DatabaseController implements IDatabaseController{
                 connection = DriverManager.getConnection(connectionString, username, password);   
             }
         } catch (Exception e) {
-            e.printStackTrace();
             throw new Exception("No se pudo obtener la conexiòn a la base de datos", e);
         } 
         return connection;

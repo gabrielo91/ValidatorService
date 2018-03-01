@@ -24,9 +24,9 @@ public class AgendaLecturaPK implements Serializable {
     @Column(name = "NPERICONS")
     private long npericons;
     @Basic(optional = false)
-    @Column(name = "DFECHA")
+    @Column(name = "DFECHA_TEO")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date dfecha;
+    private Date dfechaTeo;
     @Basic(optional = false)
     @Column(name = "VCPARAM")
     private String vcparam;
@@ -34,9 +34,9 @@ public class AgendaLecturaPK implements Serializable {
     public AgendaLecturaPK() {
     }
 
-    public AgendaLecturaPK(long npericons, Date dfecha, String vcparam) {
+    public AgendaLecturaPK(long npericons, Date dfechaTeo, String vcparam) {
         this.npericons = npericons;
-        this.dfecha = dfecha;
+        this.dfechaTeo = dfechaTeo;
         this.vcparam = vcparam;
     }
 
@@ -48,12 +48,12 @@ public class AgendaLecturaPK implements Serializable {
         this.npericons = npericons;
     }
 
-    public Date getDfecha() {
-        return dfecha;
+    public Date getDfechaTeo() {
+        return dfechaTeo;
     }
 
-    public void setDfecha(Date dfecha) {
-        this.dfecha = dfecha;
+    public void setDfechaTeo(Date dfechaTeo) {
+        this.dfechaTeo = dfechaTeo;
     }
 
     public String getVcparam() {
@@ -68,7 +68,7 @@ public class AgendaLecturaPK implements Serializable {
     public int hashCode() {
         int hash = 0;
         hash += (int) npericons;
-        hash += (dfecha != null ? dfecha.hashCode() : 0);
+        hash += (dfechaTeo != null ? dfechaTeo.hashCode() : 0);
         hash += (vcparam != null ? vcparam.hashCode() : 0);
         return hash;
     }
@@ -83,7 +83,7 @@ public class AgendaLecturaPK implements Serializable {
         if (this.npericons != other.npericons) {
             return false;
         }
-        if ((this.dfecha == null && other.dfecha != null) || (this.dfecha != null && !this.dfecha.equals(other.dfecha))) {
+        if ((this.dfechaTeo == null && other.dfechaTeo != null) || (this.dfechaTeo != null && !this.dfechaTeo.equals(other.dfechaTeo))) {
             return false;
         }
         if ((this.vcparam == null && other.vcparam != null) || (this.vcparam != null && !this.vcparam.equals(other.vcparam))) {
@@ -94,7 +94,7 @@ public class AgendaLecturaPK implements Serializable {
 
     @Override
     public String toString() {
-        return "com.metrolink.validatorservice.models.AgendaLecturaPK[ npericons=" + npericons + ", dfecha=" + dfecha + ", vcparam=" + vcparam + " ]";
+        return "com.metrolink.validatorservice.models.AgendaLecturaPK[ npericons=" + npericons + ", dfechaTeo=" + dfechaTeo + ", vcparam=" + vcparam + " ]";
     }
     
 }

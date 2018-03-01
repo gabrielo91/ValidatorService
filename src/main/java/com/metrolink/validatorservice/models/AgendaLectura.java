@@ -6,6 +6,7 @@
 package com.metrolink.validatorservice.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -35,6 +36,8 @@ public class AgendaLectura implements Serializable {
     private String vcruta;
     @Column(name = "VCITINERARIO")
     private String vcitinerario;
+    
+    private ArrayList<MovSuministros> listaSuministros = new ArrayList<>();
 
     public AgendaLectura() {
     }
@@ -43,8 +46,8 @@ public class AgendaLectura implements Serializable {
         this.agendaLecturaPK = agendaLecturaPK;
     }
 
-    public AgendaLectura(long npericons, Date dfecha, String vcparam) {
-        this.agendaLecturaPK = new AgendaLecturaPK(npericons, dfecha, vcparam);
+    public AgendaLectura(long npericons, Date dfechaTeo, String vcparam) {
+        this.agendaLecturaPK = new AgendaLecturaPK(npericons, dfechaTeo, vcparam);
     }
 
     public AgendaLecturaPK getAgendaLecturaPK() {
@@ -111,5 +114,9 @@ public class AgendaLectura implements Serializable {
     public String toString() {
         return "com.metrolink.validatorservice.models.AgendaLectura[ agendaLecturaPK=" + agendaLecturaPK + " ]";
     }
+
+    public ArrayList<MovSuministros> getListaSuministros() {
+        return listaSuministros;
+    }  
     
 }

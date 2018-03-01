@@ -24,7 +24,7 @@ import javax.persistence.TemporalType;
 
 /**
  *
- * @author Gabriel Ortega
+ * @author USUARIO
  */
 @Entity
 @Table(name = "MOV_LECT_CONSU")
@@ -33,6 +33,14 @@ import javax.persistence.TemporalType;
 public class MovLectConsu implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Id
+    @Basic(optional = false)
+    @Column(name = "ID")
+    private BigDecimal id;
+    @Basic(optional = false)
+    @Column(name = "NCONS_PROCESO")
+    private int nconsProceso;
     @Basic(optional = false)
     @Column(name = "TSFECHA_LEC")
     @Temporal(TemporalType.TIMESTAMP)
@@ -45,7 +53,6 @@ public class MovLectConsu implements Serializable {
     private String vccodmarca;
     @Column(name = "VCTIPO_LEC")
     private String vctipoLec;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "NLECTURA")
     private BigDecimal nlectura;
     @Column(name = "NCONSUMO_ORI")
@@ -67,13 +74,6 @@ public class MovLectConsu implements Serializable {
     private Short lgenAlarma;
     @Column(name = "LCERTIFICADA")
     private Short lcertificada;
-    @Basic(optional = false)
-    @Column(name = "NCONS_PROCESO")
-    private int nconsProceso;
-    @Id
-    @Basic(optional = false)
-    @Column(name = "ID")
-    private BigDecimal id;
     @Column(name = "NNIC")
     private BigInteger nnic;
     @JoinColumns({
@@ -82,30 +82,6 @@ public class MovLectConsu implements Serializable {
         , @JoinColumn(name = "VCCODTCONSUMO", referencedColumnName = "VCCODTCONSUMO")})
     @ManyToOne(optional = false)
     private MovSuministros movSuministros;
-    private CausasRechazo causasRechazo;
-
-    public MovLectConsu(Date tsfechaLec, String vcnumMed, String vctipoMed, String vccodmarca, String vctipoLec, BigDecimal nlectura, BigDecimal nconsumoOri, BigDecimal nconsumoMod, Short lbloqueado, Short lenviado, String vccoduser, String vcprograma, Date tsfechaTran, Short lgenAlarma, Short lcertificada, int nconsProceso, BigDecimal id, BigInteger nnic, MovSuministros movSuministros, CausasRechazo causasRechazo) {
-        this.tsfechaLec = tsfechaLec;
-        this.vcnumMed = vcnumMed;
-        this.vctipoMed = vctipoMed;
-        this.vccodmarca = vccodmarca;
-        this.vctipoLec = vctipoLec;
-        this.nlectura = nlectura;
-        this.nconsumoOri = nconsumoOri;
-        this.nconsumoMod = nconsumoMod;
-        this.lbloqueado = lbloqueado;
-        this.lenviado = lenviado;
-        this.vccoduser = vccoduser;
-        this.vcprograma = vcprograma;
-        this.tsfechaTran = tsfechaTran;
-        this.lgenAlarma = lgenAlarma;
-        this.lcertificada = lcertificada;
-        this.nconsProceso = nconsProceso;
-        this.id = id;
-        this.nnic = nnic;
-        this.movSuministros = movSuministros;
-        this.causasRechazo = causasRechazo;
-    }
 
     public MovLectConsu() {
     }
@@ -114,20 +90,28 @@ public class MovLectConsu implements Serializable {
         this.id = id;
     }
 
-    public MovLectConsu(BigDecimal id, Date tsfechaLec, int nconsProceso) {
+    public MovLectConsu(BigDecimal id, int nconsProceso, Date tsfechaLec) {
         this.id = id;
+        this.nconsProceso = nconsProceso;
         this.tsfechaLec = tsfechaLec;
+    }
+
+    public BigDecimal getId() {
+        return id;
+    }
+
+    public void setId(BigDecimal id) {
+        this.id = id;
+    }
+
+    public int getNconsProceso() {
+        return nconsProceso;
+    }
+
+    public void setNconsProceso(int nconsProceso) {
         this.nconsProceso = nconsProceso;
     }
 
-    public CausasRechazo getCausasRechazo() {
-        return causasRechazo;
-    }
-
-    public void setCausasRechazo(CausasRechazo causasRechazo) {
-        this.causasRechazo = causasRechazo;
-    }    
-    
     public Date getTsfechaLec() {
         return tsfechaLec;
     }
@@ -246,22 +230,6 @@ public class MovLectConsu implements Serializable {
 
     public void setLcertificada(Short lcertificada) {
         this.lcertificada = lcertificada;
-    }
-
-    public int getNconsProceso() {
-        return nconsProceso;
-    }
-
-    public void setNconsProceso(int nconsProceso) {
-        this.nconsProceso = nconsProceso;
-    }
-
-    public BigDecimal getId() {
-        return id;
-    }
-
-    public void setId(BigDecimal id) {
-        this.id = id;
     }
 
     public BigInteger getNnic() {

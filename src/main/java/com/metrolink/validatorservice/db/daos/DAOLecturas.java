@@ -143,7 +143,7 @@ public class DAOLecturas implements IDAOLecturas {
         movSuministros.setVccodmarca(vccodmarca);
         
         MProveedores mProveedores = new MProveedores();
-        mProveedores.setVccodProv(resultSet.getInt("NCOD_PROV"));
+        mProveedores.setNcodProv(resultSet.getInt("NCOD_PROV"));
         movSuministros.setMProveedores(mProveedores);
         
         MTarifas vccodtarifa = new MTarifas();

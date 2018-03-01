@@ -30,8 +30,8 @@ public class MProveedores implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "VCCOD_PROV")
-    private Integer vccodProv;
+    @Column(name = "NCOD_PROV")
+    private Integer ncodProv;
     @Basic(optional = false)
     @Column(name = "VCDESCRIPCION")
     private String vcdescripcion;
@@ -63,21 +63,21 @@ public class MProveedores implements Serializable {
     public MProveedores() {
     }
 
-    public MProveedores(Integer vccodProv) {
-        this.vccodProv = vccodProv;
+    public MProveedores(Integer ncodProv) {
+        this.ncodProv = ncodProv;
     }
 
-    public MProveedores(Integer vccodProv, String vcdescripcion) {
-        this.vccodProv = vccodProv;
+    public MProveedores(Integer ncodProv, String vcdescripcion) {
+        this.ncodProv = ncodProv;
         this.vcdescripcion = vcdescripcion;
     }
 
-    public Integer getVccodProv() {
-        return vccodProv;
+    public Integer getNcodProv() {
+        return ncodProv;
     }
 
-    public void setVccodProv(Integer vccodProv) {
-        this.vccodProv = vccodProv;
+    public void setNcodProv(Integer ncodProv) {
+        this.ncodProv = ncodProv;
     }
 
     public String getVcdescripcion() {
@@ -187,7 +187,7 @@ public class MProveedores implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (vccodProv != null ? vccodProv.hashCode() : 0);
+        hash += (ncodProv != null ? ncodProv.hashCode() : 0);
         return hash;
     }
 
@@ -198,7 +198,7 @@ public class MProveedores implements Serializable {
             return false;
         }
         MProveedores other = (MProveedores) object;
-        if ((this.vccodProv == null && other.vccodProv != null) || (this.vccodProv != null && !this.vccodProv.equals(other.vccodProv))) {
+        if ((this.ncodProv == null && other.ncodProv != null) || (this.ncodProv != null && !this.ncodProv.equals(other.ncodProv))) {
             return false;
         }
         return true;
@@ -206,7 +206,7 @@ public class MProveedores implements Serializable {
 
     @Override
     public String toString() {
-        return "com.metrolink.validatorservice.models.MProveedores[ vccodProv=" + vccodProv + " ]";
+        return "com.metrolink.validatorservice.models.MProveedores[ ncodProv=" + ncodProv + " ]";
     }
     
 }

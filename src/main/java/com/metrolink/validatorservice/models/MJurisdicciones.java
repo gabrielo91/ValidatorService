@@ -45,7 +45,7 @@ public class MJurisdicciones implements Serializable {
     @JoinColumn(name = "NCOD_DELEGACION", referencedColumnName = "NCOD_DELEGACION")
     @ManyToOne
     private MDelegaciones ncodDelegacion;
-    @JoinColumn(name = "NCOD_PROV", referencedColumnName = "VCCOD_PROV")
+    @JoinColumn(name = "NCOD_PROV", referencedColumnName = "NCOD_PROV")
     @ManyToOne
     private MProveedores ncodProv;
 
