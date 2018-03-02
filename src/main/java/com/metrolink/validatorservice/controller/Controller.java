@@ -60,9 +60,9 @@ public class Controller {
         
         IDatabaseController databaseController = new DatabaseController(preferencesManager);
         daoParametrosAdmin = new DAOParametrosAdmin(databaseController);        
-//        MParametrosAdm parametrosAdm = daoParametrosAdmin.getParametrosAdm().get(0);
-//        short diasABuscar = parametrosAdm.getNdiasBusca();
-//        System.out.println("dias busca es: "+diasABuscar);
+        MParametrosAdm parametrosAdm = daoParametrosAdmin.getParametrosAdm().get(0);
+        short diasABuscar = parametrosAdm.getNdiasBusca();
+        System.out.println("dias busca es: "+diasABuscar);
         daoLecturas = new DAOLecturas(databaseController);
         daoAgendaLectura = new DAOAgendaLectura(databaseController);
         

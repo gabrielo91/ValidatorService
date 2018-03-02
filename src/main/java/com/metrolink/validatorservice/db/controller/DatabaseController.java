@@ -32,9 +32,7 @@ public class DatabaseController implements IDatabaseController{
         String driver;
         String connectionString;
 
-        try {
-            if(null == connection){
-                
+        try {                
                 driver = preferencesManager.getDBDriver();
                 url = preferencesManager.getDBUrl();
                 port = preferencesManager.getDBPort();
@@ -43,7 +41,6 @@ public class DatabaseController implements IDatabaseController{
                 Class.forName(driver);  
                 connectionString = String.format("jdbc:oracle:thin:@%s:%s:xe", url, port);
                 connection = DriverManager.getConnection(connectionString, username, password);   
-            }
         } catch (Exception e) {
             throw new Exception("No se pudo obtener la conexiòn a la base de datos", e);
         } 

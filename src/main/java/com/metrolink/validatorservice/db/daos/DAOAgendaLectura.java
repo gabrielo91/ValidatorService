@@ -80,12 +80,14 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
         //TESTING
         int contador = 0;
         
+        AgendaLectura agendaLectura = new AgendaLectura();
+        
         while (result.next()) {
             long npericonsCurr = result.getLong("NPERICONS");;
             Date dfechaTeoCurr = result.getDate("DFECHA_TEO");;
             String vcparamCurr = result.getString("VCPARAM");
             AgendaLecturaPK agendaLecturaPKCurr = new AgendaLecturaPK(npericonsCurr, dfechaTeoCurr, vcparamCurr);
-            AgendaLectura agendaLectura = new AgendaLectura();
+
  
             int ncodProvCurr; 
             BigInteger nnisRadCurr; 
