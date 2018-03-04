@@ -11,6 +11,7 @@ import com.metrolink.validatorservice.models.MJurisdicciones;
 import com.metrolink.validatorservice.models.MMarcasmedidor;
 import com.metrolink.validatorservice.models.MProveedores;
 import com.metrolink.validatorservice.models.MTarifas;
+import com.metrolink.validatorservice.models.MTipoconsumo;
 import com.metrolink.validatorservice.models.MovSuministros;
 import com.metrolink.validatorservice.models.MovSuministrosPK;
 import java.math.BigInteger;
@@ -46,6 +47,9 @@ public class DAOSuministros implements IDAOSuministros{
             
             for (MovSuministros suministro : listSuministros) {
                 preparedStatement.setShort(1, lockStatus);
+                preparedStatement.setInt(2, suministro.getMovSuministrosPK().getNcodProv());
+                preparedStatement.setLong(3, suministro.getMovSuministrosPK().getNnisRad().longValue());
+                preparedStatement.setString(4, suministro.getMovSuministrosPK().getVccodtconsumo());
                 preparedStatement.addBatch();
             }
             resultList  = preparedStatement.executeBatch();
@@ -57,54 +61,57 @@ public class DAOSuministros implements IDAOSuministros{
         return result;
     }
     
-    public static MovSuministros createSuministrosEntity(ResultSet result) throws SQLException{
-        MovSuministros suministro = new MovSuministros();
+    public static MovSuministros createMovSuministrosEntity(ResultSet resultSet) throws SQLException {
+        MovSuministros movSuministros = new MovSuministros();
+
+        MovSuministrosPK movSuministrosPK = new MovSuministrosPK();
+        movSuministrosPK.setNcodProv(resultSet.getInt("NCOD_PROV"));
+        movSuministrosPK.setNnisRad(BigInteger.valueOf(resultSet.getLong("NNIS_RAD")));
+        movSuministrosPK.setVccodtconsumo(resultSet.getString("VCCODTCONSUMO"));
+        movSuministros.setMovSuministrosPK(movSuministrosPK);
+
+        movSuministros.setVcnumMed(resultSet.getString("VCNUM_MED"));
+        movSuministros.setVctipoMed(resultSet.getString("VCTIPO_MED"));
+        movSuministros.setVctipoLec(resultSet.getString("VCTIPO_LEC"));
+        movSuministros.setVccentTec(resultSet.getString("VCCENT_TEC"));
+        movSuministros.setTsful(resultSet.getDate("TSFUL"));
+        movSuministros.setTsflt(resultSet.getDate("TSFLT"));
+        movSuministros.setTsfla(resultSet.getDate("TSFLA"));
+        movSuministros.setNnic(resultSet.getInt("NNIC"));
+        movSuministros.setVctipoVal(resultSet.getString("VCTIPO_VAL"));
+        movSuministros.setLestado(resultSet.getShort("LESTADO"));
+        movSuministros.setVcnif(resultSet.getString("LESTADO"));
+        movSuministros.setNunicom(BigInteger.valueOf(resultSet.getInt("NUNICOM")));
+        movSuministros.setVcruta(resultSet.getString("VCRUTA"));
+        movSuministros.setVcitinerario(resultSet.getString("VCITINERARIO"));
+        movSuministros.setVcciclo(resultSet.getString("VCCICLO"));
+        movSuministros.setVctipoEnergia(resultSet.getString("VCTIPO_ENERGIA"));
+        
+        MCalTou ncodCalTou = new MCalTou();
+        ncodCalTou.setNcodCalTou(resultSet.getInt("NCOD_CAL_TOU"));
+        movSuministros.setNcodCalTou(ncodCalTou);
+        
+        MJurisdicciones ncodJurisdiccion = new MJurisdicciones();
+        ncodJurisdiccion.setNcodJurisdiccion(resultSet.getInt("NCOD_JURISDICCION"));
+        movSuministros.setNcodJurisdiccion(ncodJurisdiccion);
+        
+        MMarcasmedidor vccodmarca = new MMarcasmedidor();
+        vccodmarca.setVccodmarca(resultSet.getString("VCCODMARCA"));
+        movSuministros.setVccodmarca(vccodmarca);
         
         MProveedores mProveedores = new MProveedores();
-        mProveedores.setNcodProv(result.getInt("NCOD_PROV"));
-        suministro.setMProveedores(mProveedores);
+        mProveedores.setNcodProv(resultSet.getInt("NCOD_PROV"));
+        movSuministros.setMProveedores(mProveedores);
         
-        MovSuministrosPK movSuministrosPK = new MovSuministrosPK();
-        movSuministrosPK.setNnisRad(BigInteger.valueOf(result.getLong("NNIS_RAD")));
-        movSuministrosPK.setNcodProv(result.getInt("NCOD_PROV"));
-        movSuministrosPK.setVccodtconsumo(result.getString("VCCODTCONSUMO"));
-        suministro.setMovSuministrosPK(movSuministrosPK);
+        MTarifas vccodtarifa = new MTarifas();
+        vccodtarifa.setVccodtarifa(resultSet.getString("VCCODTARIFA"));
+        movSuministros.setVccodtarifa(vccodtarifa);
         
-        suministro.setVcnumMed(result.getString("VCNUM_MED"));
-        suministro.setVctipoMed(result.getString("VCTIPO_MED")); 
-        MMarcasmedidor mMarcasmedidor = new MMarcasmedidor();
-        mMarcasmedidor.setVccodmarca(result.getString("VCCODMARCA"));
-        suministro.setVccodmarca(mMarcasmedidor);
-        
-        suministro.setVctipoLec(result.getString("VCTIPO_LEC")); 
-        suministro.setVccentTec(result.getString("VCCENT_TEC"));
-        
-        MCalTou mCalTou = new MCalTou();
-        mCalTou.setNcodCalTou(result.getInt("NCOD_CAL_TOU"));
-        suministro.setTsful(result.getTimestamp("TSFUL")); 
-        suministro.setTsfla(result.getTimestamp("TSFLA")); 
-        
-        suministro.setNnic(result.getInt("NNIC"));
-        MJurisdicciones mJurisdicciones = new MJurisdicciones();
-        mJurisdicciones.setNcodJurisdiccion(result.getInt("NCOD_JURISDICCION"));
-        suministro.setNcodJurisdiccion(mJurisdicciones);
-        
-        suministro.setVctipoVal(result.getString("VCTIPO_VAL"));
-        suministro.setLestado(result.getShort("LESTADO")); 
-        
-        MTarifas mTarifas = new MTarifas();
-        mTarifas.setVccodtarifa(result.getString("VCCODTARIFA"));
-        suministro.setVcnif(result.getString("VCNIF")); 
-        suministro.setNunicom(BigInteger.valueOf(result.getInt("NUNICOM"))); 
-        suministro.setVcruta(result.getString("VCRUTA")); 
-        suministro.setVcitinerario(result.getString("VCITINERARIO")); 
-        suministro.setVcciclo(result.getString("VCCICLO")); 
-        suministro.setVctipoEnergia(result.getString("VCTIPO_ENERGIA")); 
-        suministro.setNnumRegs(result.getShort("NNUM_REGS")); 
-        suministro.setLbloqueado(result.getShort("LBLOQUEADO")); 
-        suministro.setTsflt(result.getTimestamp("TSFLT"));
-        
-        return suministro;
+        MTipoconsumo mTipoconsumo = new MTipoconsumo();
+        mTipoconsumo.setVccodtconsumo(resultSet.getString("VCCODTCONSUMO"));
+        movSuministros.setMTipoconsumo(mTipoconsumo);
+
+        return movSuministros;
     }
     
 }

@@ -11,7 +11,6 @@ import com.metrolink.validatorservice.models.AgendaLecturaPK;
 import com.metrolink.validatorservice.models.MovLectConsu;
 import com.metrolink.validatorservice.models.MovSuministros;
 import com.metrolink.validatorservice.models.MovSuministrosPK;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -112,12 +111,12 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
                 
                 //Iterates over each distinc row of Suministros
                 if (null == movSuministrosPKPrev || !movSuministrosPKPrev.equals(suministrosPKCurr)){
-                    suministro = createSuministrosEntity(result);
+                    suministro = DAOSuministros.createMovSuministrosEntity(result);
                     agendaLectura.getListaSuministros().add(suministro);
                     contador++;
                 } else if (movSuministrosPKPrev.equals(suministrosPKCurr)){
                                         
-                    MovLectConsu movLectConsu = createLecuraEntity(result);   
+                    MovLectConsu movLectConsu = DAOLecturas.createMovLecConsuEntity(result);   
                     int lastElementIndex = agendaLectura.getListaSuministros().size()-1;
                     agendaLectura.getListaSuministros().get(lastElementIndex).getMovLectConsuCollection().add(movLectConsu);
                 
@@ -151,24 +150,10 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
         agendaLectura.setVcciclo(result.getString("VCCICLO"));
         agendaLectura.setVcitinerario(result.getString("VCITINERARIO"));
         agendaLectura.setVcruta(result.getString("VCRUTA"));
-        MovSuministros movSuministros = createSuministrosEntity(result);
+        MovSuministros movSuministros = DAOSuministros.createMovSuministrosEntity(result);
         agendaLectura.getListaSuministros().add(movSuministros);
         return agendaLectura;
     }
 
-    private MovSuministros createSuministrosEntity(ResultSet result) {
-        MovSuministros movSuministros = new MovSuministros();
-        
-        //debe agregar la primer lectura
-        // aqui debe hacerse lo mismo que en la linea de getListaSuminsitros.add().....
-        MovLectConsu movLectConsu = new MovLectConsu();
-        movSuministros.getMovLectConsuCollection().add(movLectConsu);
-        return movSuministros;
-    }
-
-    private MovLectConsu createLecuraEntity(ResultSet result) {
-        MovLectConsu movLectConsu = new MovLectConsu();
-        return movLectConsu;
-    }
 
 }

@@ -26,7 +26,7 @@ import javax.persistence.TemporalType;
 
 /**
  *
- * @author USUARIO
+ * @author Gabriel Ortega
  */
 @Entity
 @Table(name = "MOV_SUMINISTROS")
