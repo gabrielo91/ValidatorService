@@ -109,8 +109,9 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
                 
                 //Iterates over each distinc row of Suministros
                 if (null == movSuministrosPKPrev || !movSuministrosPKPrev.equals(suministrosPKCurr)){
-                    suministro = DAOSuministros.createMovSuministrosEntity(result);
+                    suministro = DAOSuministros.createMovSuministrosEntity(result);                                        
                     agendaLectura.getListaSuministros().add(suministro);
+
                 } else if (movSuministrosPKPrev.equals(suministrosPKCurr)){
                                         
                     MovLectConsu movLectConsu = DAOLecturas.createMovLecConsuEntity(result);   

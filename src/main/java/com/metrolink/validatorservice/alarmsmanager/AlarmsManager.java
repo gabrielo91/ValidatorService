@@ -8,7 +8,7 @@ package com.metrolink.validatorservice.alarmsmanager;
 import com.metrolink.validatorservice.models.AgendaLectura;
 import com.metrolink.validatorservice.models.MovAlarmas;
 import com.metrolink.validatorservice.models.MovAlarmasPK;
-import com.metrolink.validatorservice.models.MovLectConsu;
+import com.metrolink.validatorservice.models.MovSuministros;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -18,13 +18,9 @@ import java.util.Date;
  */
 public class AlarmsManager implements IAlarmsManager{
 
-    public final static String CALENDARIO_TOU_VALIDATION_ERROR_DESCRIPTION = "La lectura no contiene calendario TOU";
-    public final static String EXISTENCIA_DATOS_VALIDATION_ERROR_DESCRIPTION = "No hay datos en el periodo selecionado";
     public final static Integer CALENDARIO_TOU_VALIDATION_ERROR_CODE = 0;
     public final static Short ACTIVE_ALARM = 1;
     public final static Short INACTIVE_ALARM = 0;
-    
-
     
     public void saveAlarms(){
         ArrayList<MovAlarmas> listAlarmas =  AlarmsStack.getInstance().getAlarmsStack();
@@ -36,32 +32,36 @@ public class AlarmsManager implements IAlarmsManager{
     }
 
     @Override
-    public void reportAlarm(AgendaLectura suministro, String description) {
-        MovAlarmas alarm = createAlarm(suministro, description);
+    public void reportAlarm(MovSuministros suministro, int codigoAlarma) {
+        System.out.println("REPORTANDO ALARMA ------------------------------------------------------------------ TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+        MovAlarmas alarm = createAlarm(suministro, codigoAlarma);
         AlarmsStack.getInstance().addAlarmToStack(alarm);
     }
 
     //TODO lo mas probable es qwue necesite otro dato de  suministros para sacar los datos de la alarma
-    private MovAlarmas createAlarm(AgendaLectura suministro, String description) {
+    private MovAlarmas createAlarm(MovSuministros suministro, int codigoAlarma) {
         MovAlarmas alarm = new MovAlarmas();
         alarm.setDfechaVal(new Date());
          
         MovAlarmasPK alarmasPK = new MovAlarmasPK();
-        alarmasPK.setNcodAlarma(CALENDARIO_TOU_VALIDATION_ERROR_CODE);
+        alarmasPK.setNcodAlarma(codigoAlarma);
         alarmasPK.setNconsProceso(0);
         alarmasPK.setNnisRad(0);
         alarm.setMovAlarmasPK(alarmasPK);
-        
-//        alarm.setNnic(lecturaInformation.getNnic().intValue());
-//        
-//        //TODO where this value does come from? ******
-//        alarm.setNperiodo(0);
-//        alarm.setNunicom(lecturaInformation.getMovSuministros().getNunicom().shortValue());
-//        alarm.setVcitinerario(lecturaInformation.getMovSuministros().getVcitinerario());
-//        alarm.setVcruta(lecturaInformation.getMovSuministros().getVcruta());
-//        alarm.setVctipoEnergia(lecturaInformation.getMovSuministros().getVctipoEnergia());
+        alarm.setNnic(suministro.getNnic().intValue());
+        //TODO where this value does come from? ******
+        alarm.setNperiodo(0);
+        alarm.setNunicom(suministro.getNunicom().shortValue());
+        alarm.setVcitinerario(suministro.getVcitinerario());
+        alarm.setVcruta(suministro.getVcruta());
+        alarm.setVctipoEnergia(suministro.getVctipoEnergia());
         
         return alarm;
+    }
+
+    @Override
+    public void reportAlarm(AgendaLectura agenda, int codigoAlarma) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

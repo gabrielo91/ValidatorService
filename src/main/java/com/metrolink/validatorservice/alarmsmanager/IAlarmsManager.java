@@ -6,6 +6,7 @@
 package com.metrolink.validatorservice.alarmsmanager;
 
 import com.metrolink.validatorservice.models.AgendaLectura;
+import com.metrolink.validatorservice.models.MovSuministros;
 
 /**
  *
@@ -13,5 +14,6 @@ import com.metrolink.validatorservice.models.AgendaLectura;
  */
 public interface IAlarmsManager {
     
-    public void reportAlarm(AgendaLectura intinerarios, String description);
+    public void reportAlarm(MovSuministros suministro, int codigoAlarma);
+    public void reportAlarm(AgendaLectura agenda, int codigoAlarma);
 }

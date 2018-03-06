@@ -5,12 +5,10 @@
  */
 package com.metrolink.validatorservice.controller;
 
-import com.metrolink.validatorservice.bussinesvalidations.IGeneralValidations;
 import com.metrolink.validatorservice.db.controller.DatabaseController;
 import com.metrolink.validatorservice.db.controller.IDatabaseController;
 import com.metrolink.validatorservice.db.daos.DAOLecturas;
 import com.metrolink.validatorservice.db.daos.IDAOLecturas;
-import com.metrolink.validatorservice.models.MovLectConsu;
 import com.metrolink.validatorservice.preferencesmanager.IPreferencesManager;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -22,7 +20,6 @@ import com.metrolink.validatorservice.db.daos.IDAOAgendaLectura;
 import com.metrolink.validatorservice.db.daos.IDAOParametrosAdmin;
 import com.metrolink.validatorservice.models.AgendaLectura;
 import com.metrolink.validatorservice.models.MParametrosAdm;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,12 +36,10 @@ public class Controller {
     private IDAOAgendaLectura daoAgendaLectura;
     
     private final IIndividualValidations idividualValidationsClass;
-    private final IGeneralValidations generalValidationsClass;
     private IPreferencesManager preferencesManager;
     
-    public Controller(IIndividualValidations idividualValidationsClass, IGeneralValidations generalValidationsClass,IPreferencesManager preferencesManager) {
+    public Controller(IIndividualValidations idividualValidationsClass, IPreferencesManager preferencesManager) {
         this.idividualValidationsClass = idividualValidationsClass;
-        this.generalValidationsClass = generalValidationsClass;
         this.preferencesManager  = preferencesManager;
     }
      
@@ -69,16 +64,14 @@ public class Controller {
         Date endingDate = addDays(startingDate, diasABuscar);
 
         ArrayList<AgendaLectura> intinerarios = daoAgendaLectura.listAgendaBetweenDates(startingDate, endingDate);
-        System.out.println("EL TAMANO ES: "+intinerarios.size());
-        
         AgendaStack.getInstance().setAgendaValues(intinerarios);
-        //performGeneralValidations();      
-        int j = 1;
+        
+        int j = 0;
         for (AgendaLectura intinerario :  AgendaStack.getInstance().getIntinerarios()) {
-            System.out.println("******************************* INTINERARIO: "+j);
+            System.out.println("******************************* INTINERARIO: "+intinerario.getVcitinerario());
             for (int i = 0; i <  intinerario.getListaSuministros().size(); i++) {
-                performValidations(i);
-            } 
+                performValidations(j);
+            }
             j++;
         }      
     }
@@ -102,24 +95,11 @@ public class Controller {
      */
     private void performValidations(int indexToValidate) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException {
         
-        System.out.println("INDEX TO VALIDATE: "+indexToValidate);
         Class validations = idividualValidationsClass.getClass();   
-        
         for (Method bussinesValidation : IIndividualValidations.class.getMethods()) {
             System.out.println("La validacion a ejecutar es: "+ bussinesValidation.getName());
             Method validation = validations.getMethod(bussinesValidation.getName(), List.class);
             validation.invoke(idividualValidationsClass, AgendaStack.getInstance().getIntinerarios().get(indexToValidate).getListaSuministros());
-        }
-    }
-
-    
-    private void performGeneralValidations() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        Class validations = generalValidationsClass.getClass();   
-        
-        for (Method bussinesValidation : IGeneralValidations.class.getMethods()) {
-            System.out.println("La validacion a ejecutar es: "+ bussinesValidation.getName());
-            Method validation = validations.getMethod(bussinesValidation.getName(), List.class);
-            validation.invoke(generalValidationsClass, AgendaStack.getInstance().getIntinerarios());
         }
     }
 }
