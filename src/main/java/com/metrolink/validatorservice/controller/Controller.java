@@ -49,7 +49,7 @@ public class Controller {
     }
      
     /**
-     * This method gets the un validated readings and performs validations over them
+     * This method gets agenda values and performs validations over them
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
      * @throws InvocationTargetException
@@ -65,19 +65,18 @@ public class Controller {
         System.out.println("dias busca es: "+diasABuscar);
         daoLecturas = new DAOLecturas(databaseController);
         daoAgendaLectura = new DAOAgendaLectura(databaseController);
-        
-        
-        SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
+        Date startingDate = new Date();
+        Date endingDate = addDays(startingDate, diasABuscar);
 
-        Date startingDate = dateformat.parse("01-01-2017");
-        Date endingDate = dateformat.parse("01-01-2019");
+        ArrayList<AgendaLectura> intinerarios = daoAgendaLectura.listAgendaBetweenDates(startingDate, endingDate);
+        System.out.println("EL TAMANO ES: "+intinerarios.size());
         
-        
-        
-        
-        ArrayList<AgendaLectura> listaAgenda = daoAgendaLectura.listAgendaBetweenDates(startingDate, endingDate);
-        System.out.println("EL TAMANO ES: "+listaAgenda.size());
-
+        AgendaStack.getInstance().setAgendaValues(intinerarios);
+        performGeneralValidations();      
+       
+        for (int i = 0; i <  AgendaStack.getInstance().getIntinerarios().size(); i++) {
+            performIndividualValidations(i);
+        }
     }
     
     private Date addDays(Date date, int days){
@@ -86,29 +85,6 @@ public class Controller {
         cal.add(Calendar.DATE, days);
         return cal.getTime();
     }    
-    
-    /**
-     * This method gets the un validated readings and performs validations over them
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InvocationTargetException
-     * @throws InstantiationException
-     * @throws NoSuchMethodException 
-     */
-    public void performValidations2() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException, Exception{
-        
-        IDatabaseController databaseController = new DatabaseController(preferencesManager);
-        daoLecturas = new DAOLecturas(databaseController);
-        ArrayList<MovLectConsu> listaLecturasValidar = daoLecturas.getLecturasNoValidadas();
-        ReadingsStack.getInstance().setReadings(listaLecturasValidar);
-                
-        performGeneralValidations();      
-       
-       //un arraylisto con singleton donde agrege todos los datos que deben generar alarmas
-        for (int i = 0; i <  ReadingsStack.getInstance().getReadings().size(); i++) {
-            performIndividualValidations(i);
-        }
-    }
 
     /**
      * Iterate over each method declared in IIndividualValidations interface and uses it over each reading. 
@@ -126,7 +102,7 @@ public class Controller {
         for (Method bussinesValidation : IIndividualValidations.class.getMethods()) {
             System.out.println("La validacion a ejecutar es: "+ bussinesValidation.getName());
             Method validation = validations.getMethod(bussinesValidation.getName(), List.class, int.class);
-            validation.invoke(idividualValidationsClass, ReadingsStack.getInstance().getReadings(), indexToValidate);
+            validation.invoke(idividualValidationsClass, AgendaStack.getInstance().getIntinerarios(), indexToValidate);
         }
     }
 
@@ -137,7 +113,7 @@ public class Controller {
         for (Method bussinesValidation : IGeneralValidations.class.getMethods()) {
             System.out.println("La validacion a ejecutar es: "+ bussinesValidation.getName());
             Method validation = validations.getMethod(bussinesValidation.getName(), List.class);
-            validation.invoke(generalValidationsClass, ReadingsStack.getInstance().getReadings());
+            validation.invoke(generalValidationsClass, AgendaStack.getInstance().getIntinerarios());
         }
     }
 }

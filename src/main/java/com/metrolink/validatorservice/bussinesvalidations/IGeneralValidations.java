@@ -5,7 +5,7 @@
  */
 package com.metrolink.validatorservice.bussinesvalidations;
 
-import com.metrolink.validatorservice.models.MovLectConsu;
+import com.metrolink.validatorservice.models.AgendaLectura;
 import java.util.List;
 
 /**
@@ -14,9 +14,9 @@ import java.util.List;
  */
 public interface IGeneralValidations {
     
-    public boolean verificarCalendarioTOU(List<MovLectConsu> listaLecuras);
-    public boolean verificarExistenciaDatos(List<MovLectConsu> listaLecuras);
-    public boolean verificarCompletitudInformacionLecturas(List<MovLectConsu> listaLecuras);
-    public boolean verificarCompletitudInformacionConsumos(List<MovLectConsu> listaLecuras);
+    public boolean verificarCalendarioTOU(List<AgendaLectura> listaLecuras);
+    public boolean verificarExistenciaDatos(List<AgendaLectura> listaLecuras);
+    public boolean verificarCompletitudInformacionLecturas(List<AgendaLectura> listaLecuras);
+    public boolean verificarCompletitudInformacionConsumos(List<AgendaLectura> listaLecuras);
     
 }

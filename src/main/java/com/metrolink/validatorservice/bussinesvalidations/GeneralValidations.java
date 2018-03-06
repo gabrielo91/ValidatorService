@@ -7,6 +7,7 @@ package com.metrolink.validatorservice.bussinesvalidations;
 
 import com.metrolink.validatorservice.alarmsmanager.AlarmsManager;
 import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
+import com.metrolink.validatorservice.models.AgendaLectura;
 import com.metrolink.validatorservice.models.MovLectConsu;
 import java.util.List;
 
@@ -23,27 +24,27 @@ public class GeneralValidations implements IGeneralValidations{
 
 
     @Override
-    public boolean verificarCalendarioTOU(List<MovLectConsu> listaLecuras) {
+    public boolean verificarCalendarioTOU(List<AgendaLectura> intinerarios) {
         boolean result = true;
-        Integer calendarioTOU = listaLecuras.get(0).getMovSuministros().getNcodCalTou().getNcodCalTou();
-        
-        if(null == calendarioTOU || calendarioTOU < 1){
-            result = false;
-            alarmsManager.reportAlarm(listaLecuras.get(0), AlarmsManager.CALENDARIO_TOU_VALIDATION_ERROR_DESCRIPTION);
-        }  
+//        Integer calendarioTOU = intinerarios.get(0).getMovSuministros().getNcodCalTou().getNcodCalTou();
+//        
+//        if(null == calendarioTOU || calendarioTOU < 1){
+//            result = false;
+//            alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.CALENDARIO_TOU_VALIDATION_ERROR_DESCRIPTION);
+//        }  
         
         return result;
     }
 
     /**
      * TODO: Check how data is passed to this methos in order to  accomplish with the validation requirement
-     * @param listaLecuras
+     * @param intinerarios
      * @return 
      */
     @Override
-    public boolean verificarExistenciaDatos(List<MovLectConsu> listaLecuras) {
+    public boolean verificarExistenciaDatos(List<AgendaLectura> intinerarios) {
         boolean result = true;
-        if (listaLecuras.size() < 1) {
+        if (intinerarios.size() < 1) {
             result = false;
             alarmsManager.reportAlarm(new MovLectConsu(), AlarmsManager.EXISTENCIA_DATOS_VALIDATION_ERROR_DESCRIPTION);
         }
@@ -51,13 +52,13 @@ public class GeneralValidations implements IGeneralValidations{
     }
 
     @Override
-    public boolean verificarCompletitudInformacionLecturas(List<MovLectConsu> listaLecuras) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean verificarCompletitudInformacionLecturas(List<AgendaLectura> intinerarios) {
+        return true;
     }
 
     @Override
-    public boolean verificarCompletitudInformacionConsumos(List<MovLectConsu> listaLecuras) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean verificarCompletitudInformacionConsumos(List<AgendaLectura> intinerarios) {
+        return true;
     }
     
 }

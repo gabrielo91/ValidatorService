@@ -9,9 +9,7 @@ package com.metrolink.validatorservice.bussinesvalidations;
 import com.metrolink.validatorservice.alarmsmanager.AlarmsManager;
 import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
 import com.metrolink.validatorservice.db.controller.IDatabaseController;
-import com.metrolink.validatorservice.models.MCalTou;
-import com.metrolink.validatorservice.models.MovLectConsu;
-import com.metrolink.validatorservice.models.MovSuministros;
+import com.metrolink.validatorservice.models.AgendaLectura;
 import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,7 +17,6 @@ import org.junit.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import org.mockito.MockitoAnnotations;
@@ -39,17 +36,17 @@ public class GeneralValidationsTest {
     
     GeneralValidations generalValidations;
     
-    private  ArrayList<MovLectConsu> createUniqueElementReadingsArray(){
+    private  ArrayList<AgendaLectura> createUniqueElementAgendaArray(){
         Integer calTouNumber = 12345;
-        ArrayList<MovLectConsu> listLecturas = new ArrayList<>();
-        MovLectConsu lectura = new MovLectConsu();
-        MovSuministros movSuministros = new MovSuministros();
-        MCalTou mCalTou = new MCalTou();
-        mCalTou.setNcodCalTou(calTouNumber);
-        movSuministros.setNcodCalTou(mCalTou);
-        lectura.setMovSuministros(movSuministros);
-        listLecturas.add(lectura);
-        return listLecturas;
+        ArrayList<AgendaLectura> intinerarios = new ArrayList<>();
+//        AgendaLectura lectura = new AgendaLectura();
+//        MovSuministros movSuministros = new MovSuministros();
+//        MCalTou mCalTou = new MCalTou();
+//        mCalTou.setNcodCalTou(calTouNumber);
+//        movSuministros.setNcodCalTou(mCalTou);
+//        intinerarios.setMovSuministros(movSuministros);
+//        intinerarios.add(lectura);
+        return intinerarios;
     }
     
     @Before
@@ -58,16 +55,16 @@ public class GeneralValidationsTest {
          alarmsManager = mock(AlarmsManager.class);
          generalValidations = new GeneralValidations(alarmsManager);         
          //Alarms Mockc createAlarm
-         MovLectConsu lectura = new MovLectConsu();
-         Mockito.doNothing().when(alarmsManager).reportAlarm(lectura, "");
+         AgendaLectura lectura = new AgendaLectura();
+         //Mockito.doNothing().when(alarmsManager).reportAlarm(lectura, "");
          
     }
 
     @Test
     public void verificarCalendarioTOUTestSuccess() throws Exception{
         boolean result = false;        
-        ArrayList<MovLectConsu> listaLecturas = createUniqueElementReadingsArray();               
-        result = generalValidations.verificarCalendarioTOU(listaLecturas);
+        ArrayList<AgendaLectura> intineriarios = createUniqueElementAgendaArray();               
+        //result = generalValidations.verificarCalendarioTOU(intinerarios);
         Assert.assertTrue(result);
     }
     
@@ -75,18 +72,18 @@ public class GeneralValidationsTest {
     public void verificarCalendarioTOUTestFailAndAlarmSending() throws Exception{
         boolean result = false;
         Integer calTouNumber = -1;
-        ArrayList<MovLectConsu> listaLecturas = createUniqueElementReadingsArray();  
-        listaLecturas.get(0).getMovSuministros().getNcodCalTou().setNcodCalTou(calTouNumber);      
-        result = generalValidations.verificarCalendarioTOU(listaLecturas);
+        ArrayList<AgendaLectura> intinerarios = createUniqueElementAgendaArray();  
+        //intinerarios.get(0).getMovSuministros().getNcodCalTou().setNcodCalTou(calTouNumber);      
+        result = generalValidations.verificarCalendarioTOU(intinerarios);
         Assert.assertFalse(result);
-        verify(alarmsManager).reportAlarm(any(MovLectConsu.class), anyString());
+        verify(alarmsManager).reportAlarm(any(AgendaLectura.class), anyString());
     }
     
     @Test
     public void verificarExistenciaDatosTestSucces() throws Exception{
         boolean result = false;
-        ArrayList<MovLectConsu> listaLecturas = createUniqueElementReadingsArray();  
-        result = generalValidations.verificarExistenciaDatos(listaLecturas);
+        ArrayList<AgendaLectura> intinerarios = createUniqueElementAgendaArray();  
+        result = generalValidations.verificarExistenciaDatos(intinerarios);
         Assert.assertTrue(result);
     }
     
@@ -94,10 +91,10 @@ public class GeneralValidationsTest {
     @Test
     public void verificarExistenciaDatosestFailAndAlarmSending() throws Exception{
         boolean result = false;
-        ArrayList<MovLectConsu> listaLecturas = new ArrayList<>(); 
-        result = generalValidations.verificarExistenciaDatos(listaLecturas);
+        ArrayList<AgendaLectura> intinerarios = new ArrayList<>(); 
+        result = generalValidations.verificarExistenciaDatos(intinerarios);
         Assert.assertFalse(result);
-        verify(alarmsManager).reportAlarm(any(MovLectConsu.class), anyString());
+        verify(alarmsManager).reportAlarm(any(AgendaLectura.class), anyString());
     }
     
 }

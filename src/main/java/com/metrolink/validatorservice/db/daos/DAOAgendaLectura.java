@@ -33,6 +33,8 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
 
     @Override
     public ArrayList<AgendaLectura> listAgendaBetweenDates(Date startingDate, Date endingDate) throws Exception {
+        System.out.println("DATES ARE: "+startingDate.toString() + " AND "+endingDate.toString());
+        
         ArrayList<AgendaLectura> listAgenda = new ArrayList<>();
         String sql = "SELECT  AL.*,  MSUM.*, MLEC.*  FROM AGENDA_LECTURA AL  \n"
                 + "LEFT OUTER JOIN MOV_SUMINISTROS MSUM\n"
@@ -74,11 +76,7 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
         MovSuministrosPK movSuministrosPKPrev = null;
         int ncodProvPrev; 
         BigInteger nnisRadPrev; 
-        String vccodtconsumoPrev;
-
-        //TESTING
-        int contador = 0;
-        
+        String vccodtconsumoPrev;        
         AgendaLectura agendaLectura = new AgendaLectura();
         
         while (result.next()) {
@@ -113,7 +111,6 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
                 if (null == movSuministrosPKPrev || !movSuministrosPKPrev.equals(suministrosPKCurr)){
                     suministro = DAOSuministros.createMovSuministrosEntity(result);
                     agendaLectura.getListaSuministros().add(suministro);
-                    contador++;
                 } else if (movSuministrosPKPrev.equals(suministrosPKCurr)){
                                         
                     MovLectConsu movLectConsu = DAOLecturas.createMovLecConsuEntity(result);   
@@ -134,7 +131,6 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
             agendaLecturaPKPrev = new AgendaLecturaPK(npericonsPrev, dfechaTeoPrev, vcparamPrev);
             listAgenda.add(agendaLectura);
         }
-        System.out.println("LA CUENTA ES: "+contador);
         return listAgenda;
     }
 
