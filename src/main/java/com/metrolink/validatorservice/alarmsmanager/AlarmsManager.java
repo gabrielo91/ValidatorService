@@ -5,6 +5,7 @@
  */
 package com.metrolink.validatorservice.alarmsmanager;
 
+import com.metrolink.validatorservice.models.AgendaLectura;
 import com.metrolink.validatorservice.models.MovAlarmas;
 import com.metrolink.validatorservice.models.MovAlarmasPK;
 import com.metrolink.validatorservice.models.MovLectConsu;
@@ -35,13 +36,13 @@ public class AlarmsManager implements IAlarmsManager{
     }
 
     @Override
-    public void reportAlarm(MovLectConsu lecturaInformation, String description) {
-        MovAlarmas alarm = createAlarm(lecturaInformation, description);
+    public void reportAlarm(AgendaLectura suministro, String description) {
+        MovAlarmas alarm = createAlarm(suministro, description);
         AlarmsStack.getInstance().addAlarmToStack(alarm);
     }
 
     //TODO lo mas probable es qwue necesite otro dato de  suministros para sacar los datos de la alarma
-    private MovAlarmas createAlarm(MovLectConsu lecturaInformation, String description) {
+    private MovAlarmas createAlarm(AgendaLectura suministro, String description) {
         MovAlarmas alarm = new MovAlarmas();
         alarm.setDfechaVal(new Date());
          
@@ -51,14 +52,14 @@ public class AlarmsManager implements IAlarmsManager{
         alarmasPK.setNnisRad(0);
         alarm.setMovAlarmasPK(alarmasPK);
         
-        alarm.setNnic(lecturaInformation.getNnic().intValue());
-        
-        //TODO where this value does come from? ******
-        alarm.setNperiodo(0);
-        alarm.setNunicom(lecturaInformation.getMovSuministros().getNunicom().shortValue());
-        alarm.setVcitinerario(lecturaInformation.getMovSuministros().getVcitinerario());
-        alarm.setVcruta(lecturaInformation.getMovSuministros().getVcruta());
-        alarm.setVctipoEnergia(lecturaInformation.getMovSuministros().getVctipoEnergia());
+//        alarm.setNnic(lecturaInformation.getNnic().intValue());
+//        
+//        //TODO where this value does come from? ******
+//        alarm.setNperiodo(0);
+//        alarm.setNunicom(lecturaInformation.getMovSuministros().getNunicom().shortValue());
+//        alarm.setVcitinerario(lecturaInformation.getMovSuministros().getVcitinerario());
+//        alarm.setVcruta(lecturaInformation.getMovSuministros().getVcruta());
+//        alarm.setVctipoEnergia(lecturaInformation.getMovSuministros().getVctipoEnergia());
         
         return alarm;
     }

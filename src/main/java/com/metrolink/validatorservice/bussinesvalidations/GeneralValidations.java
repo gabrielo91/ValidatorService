@@ -46,7 +46,7 @@ public class GeneralValidations implements IGeneralValidations{
         boolean result = true;
         if (intinerarios.size() < 1) {
             result = false;
-            alarmsManager.reportAlarm(new MovLectConsu(), AlarmsManager.EXISTENCIA_DATOS_VALIDATION_ERROR_DESCRIPTION);
+            alarmsManager.reportAlarm(new AgendaLectura(), AlarmsManager.EXISTENCIA_DATOS_VALIDATION_ERROR_DESCRIPTION);
         }
         return result;
     }

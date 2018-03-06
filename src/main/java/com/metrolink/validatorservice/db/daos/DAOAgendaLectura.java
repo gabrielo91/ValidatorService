@@ -78,7 +78,7 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
         BigInteger nnisRadPrev; 
         String vccodtconsumoPrev;        
         AgendaLectura agendaLectura = new AgendaLectura();
-        
+
         while (result.next()) {
             long npericonsCurr = result.getLong("NPERICONS");;
             Date dfechaTeoCurr = result.getDate("DFECHA_TEO");;
@@ -94,11 +94,11 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
             
             //Iterates over each distinc row of AgendaLectura
             if(null == agendaLecturaPKPrev || !agendaLecturaPKPrev.equals(agendaLecturaPKCurr)){
-               
                 agendaLectura = createAgendaEntity(result);    
                 suministro = null;
                 suministrosPKCurr = null;
                 movSuministrosPKPrev = null;
+                listAgenda.add(agendaLectura);
                 
             } else if (agendaLecturaPKPrev.equals(agendaLecturaPKCurr)){
                 
@@ -129,7 +129,7 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
             dfechaTeoPrev = new Date(dfechaTeoCurr.getTime());
             vcparamPrev = vcparamCurr;
             agendaLecturaPKPrev = new AgendaLecturaPK(npericonsPrev, dfechaTeoPrev, vcparamPrev);
-            listAgenda.add(agendaLectura);
+            
         }
         return listAgenda;
     }

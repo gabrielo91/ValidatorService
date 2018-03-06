@@ -4,8 +4,8 @@
  * and open the template in the editor.
  */
 package com.metrolink.validatorservice.bussinesvalidations;
-
-import com.metrolink.validatorservice.models.AgendaLectura;
+import com.metrolink.validatorservice.models.MCalTou;
+import com.metrolink.validatorservice.models.MovSuministros;
 import java.util.List;
 
 /**
@@ -15,43 +15,14 @@ import java.util.List;
 public class IndividualValidations implements IIndividualValidations {
 
     //TODO check that every reading has not been invalidated 
-    
-    @Override
-    public boolean validation1(List<AgendaLectura> intinerarios, int currentIndexToValidate) {
-        System.out.println("com.metrolink.validatorservice.bussinesvalidations.Validations.validation1()");
-        return true;
-    }
 
     @Override
-    public boolean validation2(List<AgendaLectura> intinerarios, int currentIndexToValidate) {
-        System.out.println("com.metrolink.validatorservice.bussinesvalidations.Validations.validation2()");
-        return true;
+    public boolean verificarCalendarioTOU(List<MovSuministros> intinerarios) {
+        System.out.println("El total de intinerarios es: " + intinerarios.size());
+        boolean result = false;
+        MCalTou calTou = intinerarios.get(0).getNcodCalTou();
+        result = null != calTou;
+        return result;
     }
-
-    @Override
-    public boolean validation3(List<AgendaLectura> intinerarios, int currentIndexToValidate) {
-        System.out.println("com.metrolink.validatorservice.bussinesvalidations.Validations.validation3()");
-        return true;
-    }
-
-    @Override
-    public boolean validation4(List<AgendaLectura> intinerarios, int currentIndexToValidate) {
-        System.out.println("com.metrolink.validatorservice.bussinesvalidations.Validations.validation4()");
-        return true;
-    }
-
-    @Override
-    public boolean validation5(List<AgendaLectura> intinerarios, int currentIndexToValidate) {
-        System.out.println("com.metrolink.validatorservice.bussinesvalidations.Validations.validation5()");
-        return true;
-    }
-    
-    @Override
-    public boolean validation6(List<AgendaLectura> intinerarios, int currentIndexToValidate) {
-        System.out.println("ganamos");
-        System.out.println("intinerarios: "+intinerarios.size());
-        return true;
-    }
-
-    
+       
 }

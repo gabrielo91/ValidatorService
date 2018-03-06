@@ -5,7 +5,7 @@
  */
 package com.metrolink.validatorservice.bussinesvalidations;
 
-import com.metrolink.validatorservice.models.AgendaLectura;
+import com.metrolink.validatorservice.models.MovSuministros;
 import java.util.List;
 
 /**
@@ -13,10 +13,6 @@ import java.util.List;
  * @author Gabriel Ortega
  */
 public interface IIndividualValidations {
-    public boolean validation1(List<AgendaLectura> listaLecuras, int currentIndexToValidate);
-    public boolean validation2(List<AgendaLectura> listaLecuras, int currentIndexToValidate);
-    public boolean validation3(List<AgendaLectura> listaLecuras, int currentIndexToValidate);
-    public boolean validation4(List<AgendaLectura> listaLecuras, int currentIndexToValidate);
-    public boolean validation5(List<AgendaLectura> listaLecuras, int currentIndexToValidate);
-    public boolean validation6(List<AgendaLectura> listaLecuras, int currentIndexToValidate);
+    
+    public boolean verificarCalendarioTOU(List<MovSuministros> intinerarios);
 }

@@ -72,11 +72,15 @@ public class Controller {
         System.out.println("EL TAMANO ES: "+intinerarios.size());
         
         AgendaStack.getInstance().setAgendaValues(intinerarios);
-        performGeneralValidations();      
-       
-        for (int i = 0; i <  AgendaStack.getInstance().getIntinerarios().size(); i++) {
-            performIndividualValidations(i);
-        }
+        //performGeneralValidations();      
+        int j = 1;
+        for (AgendaLectura intinerario :  AgendaStack.getInstance().getIntinerarios()) {
+            System.out.println("******************************* INTINERARIO: "+j);
+            for (int i = 0; i <  intinerario.getListaSuministros().size(); i++) {
+                performValidations(i);
+            } 
+            j++;
+        }      
     }
     
     private Date addDays(Date date, int days){
@@ -87,7 +91,7 @@ public class Controller {
     }    
 
     /**
-     * Iterate over each method declared in IIndividualValidations interface and uses it over each reading. 
+     * Iterate over each method declared in IIndividualValidations interface and uses it over each suministros object. 
      * It uses the full array in order to perfom validations which uses previous values
      * @param indexToValidate
      * @throws IllegalAccessException
@@ -96,13 +100,15 @@ public class Controller {
      * @throws InstantiationException
      * @throws NoSuchMethodException 
      */
-    private void performIndividualValidations(int indexToValidate) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException {
+    private void performValidations(int indexToValidate) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException {
+        
+        System.out.println("INDEX TO VALIDATE: "+indexToValidate);
         Class validations = idividualValidationsClass.getClass();   
         
         for (Method bussinesValidation : IIndividualValidations.class.getMethods()) {
             System.out.println("La validacion a ejecutar es: "+ bussinesValidation.getName());
-            Method validation = validations.getMethod(bussinesValidation.getName(), List.class, int.class);
-            validation.invoke(idividualValidationsClass, AgendaStack.getInstance().getIntinerarios(), indexToValidate);
+            Method validation = validations.getMethod(bussinesValidation.getName(), List.class);
+            validation.invoke(idividualValidationsClass, AgendaStack.getInstance().getIntinerarios().get(indexToValidate).getListaSuministros());
         }
     }
 
