@@ -15,4 +15,5 @@ import java.util.List;
 public interface IIndividualValidations {
     
     public boolean verificarCalendarioTOU(List<MovSuministros> intinerarios);
+    public boolean verificarExistenciaDatos(List<MovSuministros> intinerarios);
 }

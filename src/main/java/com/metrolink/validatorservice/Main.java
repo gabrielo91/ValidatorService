@@ -47,7 +47,8 @@ public class Main {
             IAlarmsManager alarmsManager = new AlarmsManager();
             IIndividualValidations individualValidations = new IndividualValidations(alarmsManager);
             Controller controller = new Controller(individualValidations, preferencesManager);
-            controller.performValidations();
+            //controller.performValidations();
+            controller.startValidationProcess();
             
         } catch (IllegalAccessException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);

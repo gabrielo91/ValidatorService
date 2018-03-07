@@ -79,7 +79,7 @@ public class MovSuministros implements Serializable {
     @Column(name = "LBLOQUEADO")
     private Short lbloqueado;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "movSuministros")
-    private Collection<MovLectConsu> movLectConsuCollection = new ArrayList<MovLectConsu>();
+    private ArrayList<MovLectConsu> movLectConsuCollection = new ArrayList<MovLectConsu>();
     @JoinColumn(name = "NCOD_CAL_TOU", referencedColumnName = "NCOD_CAL_TOU")
     @ManyToOne
     private MCalTou ncodCalTou;
@@ -268,11 +268,11 @@ public class MovSuministros implements Serializable {
         this.lbloqueado = lbloqueado;
     }
 
-    public Collection<MovLectConsu> getMovLectConsuCollection() {
+    public ArrayList<MovLectConsu> getMovLectConsuCollection() {
         return movLectConsuCollection;
     }
 
-    public void setMovLectConsuCollection(Collection<MovLectConsu> movLectConsuCollection) {
+    public void setMovLectConsuCollection(ArrayList<MovLectConsu> movLectConsuCollection) {
         this.movLectConsuCollection = movLectConsuCollection;
     }
 

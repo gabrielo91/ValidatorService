@@ -60,7 +60,6 @@ public class ValidationsTest {
          individualValidations = new IndividualValidations(alarmsManager);         
          AgendaLectura lectura = new AgendaLectura();
          Mockito.doNothing().when(alarmsManager).reportAlarm(lectura, 0);
-         
     }
 
     @Test

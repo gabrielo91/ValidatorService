@@ -34,5 +34,10 @@ public class IndividualValidations implements IIndividualValidations {
                
         return result;
     }
+
+    @Override
+    public boolean verificarExistenciaDatos(List<MovSuministros> intinerarios) {
+        return true;
+    }
        
 }
