@@ -16,4 +16,5 @@ public interface IIndividualValidations {
     
     public boolean verificarCalendarioTOU(List<MovSuministros> intinerarios);
     public boolean verificarExistenciaDatos(List<MovSuministros> intinerarios);
+    public boolean comparacionLectuaDiaria(List<MovSuministros> intinerarios);
 }

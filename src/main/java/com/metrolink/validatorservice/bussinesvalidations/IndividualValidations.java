@@ -6,7 +6,9 @@
 package com.metrolink.validatorservice.bussinesvalidations;
 import com.metrolink.validatorservice.alarmsmanager.AlarmsManager;
 import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
+import com.metrolink.validatorservice.models.MovLectConsu;
 import com.metrolink.validatorservice.models.MovSuministros;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -21,12 +23,10 @@ public class IndividualValidations implements IIndividualValidations {
     }
 
     @Override
-    public boolean verificarCalendarioTOU(List<MovSuministros> intinerarios) {
-        System.out.println("El total de intinerarios es: " + intinerarios.size());
+    public boolean verificarCalendarioTOU(List<MovSuministros> intinerarios) {        
         boolean result = true;
         
         Integer calendarioTOU = intinerarios.get(0).getNcodCalTou().getNcodCalTou();
-        System.out.println("Calendario tou es: "+calendarioTOU);
         if(null == calendarioTOU || calendarioTOU < 1){
             result = false;
             alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.CALENDARIO_TOU_VALIDATION_ERROR_CODE);
@@ -37,6 +37,25 @@ public class IndividualValidations implements IIndividualValidations {
 
     @Override
     public boolean verificarExistenciaDatos(List<MovSuministros> intinerarios) {
+        return true;
+    }
+
+    @Override
+    public boolean comparacionLectuaDiaria(List<MovSuministros> intinerarios) {
+        System.out.println("El total de intinerarios es: " + intinerarios.size());
+        int i = 1;
+        System.out.println("empezando "+intinerarios.size());
+        for (MovSuministros intinerario : intinerarios) {
+            List<MovLectConsu> listaLecturas = intinerario.getMovLectConsuCollection();
+            System.out.println("--------------   El tamano de lecturas es: " + listaLecturas.size());
+            if (listaLecturas.size() > 0) {
+                BigDecimal ultimaLectura =  listaLecturas.get(0).getNconsumoOri();
+                System.out.println("cuenta "+i);
+                System.out.println("Fecha lect: "+listaLecturas.get(0).getTsfechaLec());
+                i++;
+            }
+        }
+        
         return true;
     }
        

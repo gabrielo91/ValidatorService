@@ -91,9 +91,6 @@ public class DAOLecturas implements IDAOLecturas {
         lectura.setVcprograma(resultSet.getString("VCPROGRAMA"));
         lectura.setVctipoLec(resultSet.getString("VCTIPO_LEC"));
         lectura.setVctipoMed(resultSet.getString("VCTIPO_MED"));
-
-        MovSuministros movSuministros = DAOSuministros.createMovSuministrosEntity(resultSet);
-        lectura.setMovSuministros(movSuministros);
         return lectura;
     }
 

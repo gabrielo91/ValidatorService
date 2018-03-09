@@ -51,7 +51,16 @@ public class Controller {
         ArrayList<AgendaLectura> intinerarios = getValuesForChecking();
         System.out.println("El tamano es: : "+intinerarios.size());
         AgendaStack.getInstance().setAgendaValues(intinerarios);
-        System.out.println("El tamano2 es: : "+AgendaStack.getInstance().getIntinerarios().size());
+        
+        //Remember: element in index is the newest
+        
+        int i=0;
+        for (AgendaLectura intinerario : AgendaStack.getInstance().getIntinerarios()) {
+            i++;
+            System.out.println("i: "+ i +"La fecha es: "+intinerario.getAgendaLecturaPK().getDfechaTeo() + " vdtcodconsumo: "+intinerario.getAgendaLecturaPK().getVcparam());
+            
+        }
+        
         //lockUnlockSuministros(DAOSuministros.BLOQUEADO);
         performValidations();
         //lockUnlockSuministros(DAOSuministros.DESBLOQUEADO);
@@ -74,13 +83,15 @@ public class Controller {
         daoLecturas = new DAOLecturas(databaseController);
         daoAgendaLectura = new DAOAgendaLectura(databaseController);
         Date startingDate = new Date();
-        Date endingDate = addDays(startingDate, diasABuscar);
-        intinerarios = daoAgendaLectura.listAgendaBetweenDates(startingDate, endingDate);
+        Date endingDate = addDays(startingDate, diasABuscar);//addDays
+        //intinerarios = daoAgendaLectura.listAgendaBetweenDates(startingDate, endingDate);
+        intinerarios = daoAgendaLectura.listAgendaBetweenDates(addDays(startingDate, -3), addDays(endingDate, -3));
         return intinerarios;
     }
     
     /**
      * This method gets agenda values and performs validations over them
+     * 
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
      * @throws InvocationTargetException

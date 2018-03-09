@@ -12,6 +12,7 @@ import com.metrolink.validatorservice.models.MMarcasmedidor;
 import com.metrolink.validatorservice.models.MProveedores;
 import com.metrolink.validatorservice.models.MTarifas;
 import com.metrolink.validatorservice.models.MTipoconsumo;
+import com.metrolink.validatorservice.models.MovLectConsu;
 import com.metrolink.validatorservice.models.MovSuministros;
 import com.metrolink.validatorservice.models.MovSuministrosPK;
 import java.math.BigInteger;
@@ -110,7 +111,13 @@ public class DAOSuministros implements IDAOSuministros{
         MTipoconsumo mTipoconsumo = new MTipoconsumo();
         mTipoconsumo.setVccodtconsumo(resultSet.getString("VCCODTCONSUMO"));
         movSuministros.setMTipoconsumo(mTipoconsumo);
+        
+        MovLectConsu lectConsu = DAOLecturas.createMovLecConsuEntity(resultSet);
 
+        if (null != lectConsu.getId()) {
+            movSuministros.getMovLectConsuCollection().add(lectConsu);
+        }       
+        
         return movSuministros;
     }
     

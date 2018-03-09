@@ -46,7 +46,7 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
                 + "AND MLEC.NNIC = MSUM.NNIC\n"
                 + "AND MLEC.NNIS_RAD = MSUM.NNIS_RAD \n"
                 + "WHERE AL.DFECHA_TEO BETWEEN ? AND ?\n"
-                + "ORDER BY AL.VCPARAM, AL.DFECHA_TEO, AL.NPERICONS";
+                + "ORDER BY AL.DFECHA_TEO, AL.VCPARAM, AL.NPERICONS";
 
         try (Connection con = databaseController.getConnection()) {
             
@@ -84,7 +84,7 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
             Date dfechaTeoCurr = result.getDate("DFECHA_TEO");;
             String vcparamCurr = result.getString("VCPARAM");
             AgendaLecturaPK agendaLecturaPKCurr = new AgendaLecturaPK(npericonsCurr, dfechaTeoCurr, vcparamCurr);
-
+            System.err.println("VCINTINERARIO ES: "+result.getString("VCITINERARIO"));
  
             int ncodProvCurr; 
             BigInteger nnisRadCurr; 
@@ -147,8 +147,16 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
         agendaLectura.setVcciclo(result.getString("VCCICLO"));
         agendaLectura.setVcitinerario(result.getString("VCITINERARIO"));
         agendaLectura.setVcruta(result.getString("VCRUTA"));
+       
         MovSuministros movSuministros = DAOSuministros.createMovSuministrosEntity(result);
-        agendaLectura.getListaSuministros().add(movSuministros);
+        System.err.println("ncodProv es: "+movSuministros.getMovSuministrosPK().getNcodProv());
+        if(0 != movSuministros.getMovSuministrosPK().getNcodProv() 
+                && null != movSuministros.getMovSuministrosPK().getNnisRad() 
+                && null != movSuministros.getMovSuministrosPK().getVccodtconsumo()){
+            agendaLectura.getListaSuministros().add(movSuministros);
+        }
+        
+        
         return agendaLectura;
     }
 
