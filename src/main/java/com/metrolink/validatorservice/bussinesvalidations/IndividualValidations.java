@@ -9,7 +9,6 @@ import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
 import com.metrolink.validatorservice.models.MovLectConsu;
 import com.metrolink.validatorservice.models.MovSuministros;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -85,6 +84,11 @@ public class IndividualValidations implements IIndividualValidations {
         }
         
         return result;
+    }
+
+    @Override
+    public boolean verificarCompletitudInformacion(List<MovSuministros> intinerarios) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
        
 }
