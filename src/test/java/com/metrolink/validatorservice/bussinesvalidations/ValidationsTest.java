@@ -122,7 +122,7 @@ public class ValidationsTest {
     
     @Test
     public void verificarCompletitudInformacionExitoso() throws Exception {
-        boolean result = false;
+        boolean result = true;
     }
     
     @Test
