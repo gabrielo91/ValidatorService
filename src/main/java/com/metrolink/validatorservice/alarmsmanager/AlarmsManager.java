@@ -19,6 +19,11 @@ import java.util.Date;
 public class AlarmsManager implements IAlarmsManager{
 
     public final static Integer CALENDARIO_TOU_VALIDATION_ERROR_CODE = 0;
+    public final static Integer COMPLETITUD_INFO_VALIDATION_ERROR_CODE = 1;
+    public final static Integer DEVOLUCION_DE_REGISTRO_ERROR_CODE = 2;
+    public final static Integer LECTURA_REPETIDA_ERROR_CODE = 3;
+    public final static Integer INCREMENTO_MINIMO_NO_ESPERADO_ERROR_CODE = 4;
+    public final static Integer INCREMENTO_MAXIMO_NO_ESPERADO_ERROR_CODE = 5;
     public final static Short ACTIVE_ALARM = 1;
     public final static Short INACTIVE_ALARM = 0;
     

@@ -6,6 +6,7 @@
 package com.metrolink.validatorservice.db.daos;
 
 import com.metrolink.validatorservice.db.controller.IDatabaseController;
+import com.metrolink.validatorservice.db.controller.ParametrosAdmin;
 import com.metrolink.validatorservice.models.MParametrosAdm;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,6 +22,7 @@ public class DAOParametrosAdmin implements IDAOParametrosAdmin {
 
     
     private final IDatabaseController databaseController;
+        
     
     public DAOParametrosAdmin (IDatabaseController databaseController){
         this.databaseController = databaseController;
@@ -43,7 +45,7 @@ public class DAOParametrosAdmin implements IDAOParametrosAdmin {
                 listaParametrosAdms.add(parametrosAdm);
             }
         }
-        
+        ParametrosAdmin.setParams(listaParametrosAdms.get(0));
         return listaParametrosAdms;
     }
 

@@ -5,6 +5,7 @@
  */
 package com.metrolink.validatorservice.controller;
 
+import com.metrolink.validatorservice.bussinesvalidations.IGeneralValidations;
 import com.metrolink.validatorservice.db.controller.DatabaseController;
 import com.metrolink.validatorservice.db.controller.IDatabaseController;
 import com.metrolink.validatorservice.db.daos.DAOLecturas;
@@ -23,10 +24,9 @@ import com.metrolink.validatorservice.db.daos.IDAOSuministros;
 import com.metrolink.validatorservice.models.AgendaLectura;
 import com.metrolink.validatorservice.models.MParametrosAdm;
 import com.metrolink.validatorservice.models.MovSuministros;
+import com.metrolink.validatorservice.utils.Utils;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  *
@@ -40,10 +40,12 @@ public class Controller {
     private IDAOSuministros dAOSuministros;
     
     private final IIndividualValidations idividualValidationsClass;
+    private final IGeneralValidations generalValidationsClass;
     private IPreferencesManager preferencesManager;
     
-    public Controller(IIndividualValidations idividualValidationsClass, IPreferencesManager preferencesManager) {
+    public Controller(IIndividualValidations idividualValidationsClass, IGeneralValidations generalValidationsClass, IPreferencesManager preferencesManager) {
         this.idividualValidationsClass = idividualValidationsClass;
+        this.generalValidationsClass = generalValidationsClass;
         this.preferencesManager  = preferencesManager;
     }
     
@@ -63,8 +65,9 @@ public class Controller {
         
         //lockUnlockSuministros(DAOSuministros.BLOQUEADO);
         performValidations();
+        //updateLecturas()
         //lockUnlockSuministros(DAOSuministros.DESBLOQUEADO);
-        //save alarmas
+        //saveAlarmas()
     }
     
     
@@ -83,11 +86,14 @@ public class Controller {
         daoLecturas = new DAOLecturas(databaseController);
         daoAgendaLectura = new DAOAgendaLectura(databaseController);
         Date startingDate = new Date();
-        Date endingDate = addDays(startingDate, diasABuscar);//addDays
+        Date endingDate = Utils.addDays(startingDate, diasABuscar);//addDays
         //intinerarios = daoAgendaLectura.listAgendaBetweenDates(startingDate, endingDate);
-        intinerarios = daoAgendaLectura.listAgendaBetweenDates(addDays(startingDate, -3), addDays(endingDate, -3));
+        intinerarios = daoAgendaLectura.listAgendaBetweenDates(Utils.addDays(startingDate, -5), Utils.addDays(endingDate, -5));
         return intinerarios;
     }
+    
+    
+    
     
     /**
      * This method gets agenda values and performs validations over them
@@ -99,24 +105,29 @@ public class Controller {
      * @throws NoSuchMethodException 
      */
     public void performValidations() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException, Exception{
-        
         int j = 0;
         for (AgendaLectura intinerario :  AgendaStack.getInstance().getIntinerarios()) {
             System.out.println("******************************* INTINERARIO: "+intinerario.getVcitinerario());
+            performGeneralValidations();
             for (int i = 0; i <  intinerario.getListaSuministros().size(); i++) {
-                performValidations(j);
+                performIndividualValidations(j);
             }
             j++;
-        }      
+        }  
+    }
+          
+
+    private void performGeneralValidations() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        Class validations = generalValidationsClass.getClass();   
+        
+        for (Method bussinesValidation : IGeneralValidations.class.getMethods()) {
+            System.out.println("La validacion a ejecutar es: "+ bussinesValidation.getName());
+            Method validation = validations.getMethod(bussinesValidation.getName(), List.class);
+            validation.invoke(generalValidationsClass, AgendaStack.getInstance().getIntinerarios());
+        }
     }
     
-    private Date addDays(Date date, int days){
-        GregorianCalendar cal = new GregorianCalendar();
-        cal.setTime(date);
-        cal.add(Calendar.DATE, days);
-        return cal.getTime();
-    }    
-
+    
     /**
      * Iterate over each method declared in IIndividualValidations interface and uses it over each suministros object. 
      * It uses the full array in order to perfom validations which uses previous values
@@ -127,7 +138,7 @@ public class Controller {
      * @throws InstantiationException
      * @throws NoSuchMethodException 
      */
-    private void performValidations(int indexToValidate) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException {
+    private void performIndividualValidations(int indexToValidate) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException {
         
         Class validations = idividualValidationsClass.getClass();   
         for (Method bussinesValidation : IIndividualValidations.class.getMethods()) {
@@ -143,13 +154,10 @@ public class Controller {
         dAOSuministros = new DAOSuministros(databaseController);
         daoLecturas = new DAOLecturas(databaseController);
         
-        System.err.println("ACTUALIZANDOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
         for (AgendaLectura intinerario : AgendaStack.getInstance().getIntinerarios()) {
-            System.out.println("El intinerario es: "+intinerario.getVcitinerario()+ " EL TAMANO SUMINISTROS ES: " + intinerario.getListaSuministros().size());
 
             dAOSuministros.lockUnlockSuministros(intinerario.getListaSuministros(), state);
             for (MovSuministros suministro : intinerario.getListaSuministros()) {
-                System.out.println("El suministro es: "+suministro.getVcitinerario()+ " EL TAMANO LEC ES: " + suministro.getMovLectConsuCollection().size());
                 daoLecturas.lockUnlockLecturas(suministro.getMovLectConsuCollection(), state);
             }
         }

@@ -9,6 +9,7 @@ import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
 import com.metrolink.validatorservice.models.MovLectConsu;
 import com.metrolink.validatorservice.models.MovSuministros;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -40,23 +41,50 @@ public class IndividualValidations implements IIndividualValidations {
         return true;
     }
 
+    
     @Override
     public boolean comparacionLectuaDiaria(List<MovSuministros> intinerarios) {
-        System.out.println("El total de intinerarios es: " + intinerarios.size());
+        boolean result = false;
+        final double MAX_VALUE = 0.9;
+        final double MIN_VALUE = 0.2;
+        
         int i = 1;
         System.out.println("empezando "+intinerarios.size());
         for (MovSuministros intinerario : intinerarios) {
-            List<MovLectConsu> listaLecturas = intinerario.getMovLectConsuCollection();
-            System.out.println("--------------   El tamano de lecturas es: " + listaLecturas.size());
-            if (listaLecturas.size() > 0) {
-                BigDecimal ultimaLectura =  listaLecturas.get(0).getNconsumoOri();
-                System.out.println("cuenta "+i);
-                System.out.println("Fecha lect: "+listaLecturas.get(0).getTsfechaLec());
-                i++;
+            
+            if (!intinerario.getMovLectConsuCollection().isEmpty() && intinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
+                List<MovLectConsu> listaLecturas = intinerario.getMovLectConsuCollection();
+                if (listaLecturas.size() >= 2) {
+                    BigDecimal ultimaLectura =  listaLecturas.get(0).getNconsumoOri();
+                    BigDecimal penUltimaLectura =  listaLecturas.get(1).getNconsumoOri();
+                    BigDecimal vav = ultimaLectura.subtract(penUltimaLectura);                         
+                    
+                    if (vav.signum() == -1) { //Si el valor es negativo
+                        alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.DEVOLUCION_DE_REGISTRO_ERROR_CODE);
+                    } else if(vav.signum() == 0){
+                        alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.LECTURA_REPETIDA_ERROR_CODE);
+                    } else if(vav.signum() == 1){
+                        double porcentaje = vav.doubleValue()/ultimaLectura.doubleValue();
+                        
+                        if(porcentaje < MIN_VALUE){
+                            alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.INCREMENTO_MINIMO_NO_ESPERADO_ERROR_CODE);
+                        } else if (porcentaje > MAX_VALUE) {
+                            alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.INCREMENTO_MAXIMO_NO_ESPERADO_ERROR_CODE);
+                        } else {
+                            //Lecturas cumplen condicion y se certifican
+                            intinerario.certificarLecturas();
+                            result = true;
+                        }
+                    }
+                    
+                    System.out.println("cuenta "+i);
+                    System.out.println("Fecha lect: "+listaLecturas.get(0).getTsfechaLec());
+                    i++;
+                }
             }
         }
         
-        return true;
+        return result;
     }
        
 }

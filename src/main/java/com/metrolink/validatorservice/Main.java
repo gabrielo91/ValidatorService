@@ -7,6 +7,8 @@ package com.metrolink.validatorservice;
 
 import com.metrolink.validatorservice.alarmsmanager.AlarmsManager;
 import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
+import com.metrolink.validatorservice.bussinesvalidations.GeneralValidations;
+import com.metrolink.validatorservice.bussinesvalidations.IGeneralValidations;
 import com.metrolink.validatorservice.bussinesvalidations.IndividualValidations;
 import com.metrolink.validatorservice.controller.Controller;
 import com.metrolink.validatorservice.db.controller.DatabaseController;
@@ -46,7 +48,8 @@ public class Main {
             IPreferencesManager preferencesManager = new PreferencesManager(configFilePath);
             IAlarmsManager alarmsManager = new AlarmsManager();
             IIndividualValidations individualValidations = new IndividualValidations(alarmsManager);
-            Controller controller = new Controller(individualValidations, preferencesManager);
+            IGeneralValidations generalValidations = new GeneralValidations(alarmsManager);
+            Controller controller = new Controller(individualValidations, generalValidations, preferencesManager);
             //controller.performValidations();
             controller.startValidationProcess();
             

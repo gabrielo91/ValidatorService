@@ -8,7 +8,6 @@ package com.metrolink.validatorservice.models;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -35,6 +34,10 @@ import javax.persistence.TemporalType;
 public class MovSuministros implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    public static final String TIPO_LECTURA = "1";
+    public static final String TIPO_CONSUMO = "2";
+    public static final short LECTURA_CERTIFICADA = 1;
+    
     @EmbeddedId
     protected MovSuministrosPK movSuministrosPK;
     @Column(name = "VCNUM_MED")
@@ -347,6 +350,12 @@ public class MovSuministros implements Serializable {
     @Override
     public String toString() {
         return "com.metrolink.validatorservice.models.MovSuministros[ movSuministrosPK=" + movSuministrosPK + " ]";
+    }
+
+    public void certificarLecturas() {
+        for (MovLectConsu movLectConsu : movLectConsuCollection) {
+            movLectConsu.setLcertificada(LECTURA_CERTIFICADA);
+        }
     }
     
 }
