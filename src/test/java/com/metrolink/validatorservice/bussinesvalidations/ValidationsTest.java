@@ -58,13 +58,13 @@ public class ValidationsTest {
         MovLectConsu movLectConsu = new MovLectConsu();
         movLectConsu.setId(BigDecimal.ONE);
         movLectConsu.setTsfechaLec(new SimpleDateFormat("yyyy-MM-dd").parse("2018-03-10"));
-        movLectConsu.setNconsumoOri(BigDecimal.valueOf(160));
+        movLectConsu.setNlectura(BigDecimal.valueOf(160));
         movSuministros.getMovLectConsuCollection().add(movLectConsu);
         
         MovLectConsu movLectConsu2 = new MovLectConsu();
         movLectConsu2.setId(BigDecimal.valueOf(2));
         movLectConsu2.setTsfechaLec(new SimpleDateFormat("yyyy-MM-dd").parse("2018-03-09"));
-        movLectConsu2.setNconsumoOri(BigDecimal.valueOf(100));
+        movLectConsu2.setNlectura(BigDecimal.valueOf(100));
         movSuministros.getMovLectConsuCollection().add(movLectConsu2);
         
         agenda.getListaSuministros().add(movSuministros);
@@ -141,8 +141,8 @@ public class ValidationsTest {
     public void comparacionLectuaDiariaFallidoYEnvioAlarmaDevolucionRegistro() throws Exception {
         //Ocurre cuando el valor de la ultima lectura es menor al de la penultima
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
-        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNconsumoOri(BigDecimal.valueOf(200));
-        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNconsumoOri(BigDecimal.valueOf(300));
+        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNlectura(BigDecimal.valueOf(200));
+        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNlectura(BigDecimal.valueOf(300));
         boolean result = individualValidations.comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.DEVOLUCION_DE_REGISTRO_ERROR_CODE);
@@ -152,8 +152,8 @@ public class ValidationsTest {
     public void comparacionLectuaDiariaFallidoYEnvioAlarmaLecturaRepetida() throws Exception {
         //Ocurre cuando el valor de la ultima lectura es igual al de la penultima
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
-        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNconsumoOri(BigDecimal.ONE);
-        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNconsumoOri(BigDecimal.ONE);
+        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNlectura(BigDecimal.ONE);
+        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNlectura(BigDecimal.ONE);
         boolean result = individualValidations.comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.LECTURA_REPETIDA_ERROR_CODE);
@@ -164,8 +164,8 @@ public class ValidationsTest {
     public void comparacionLectuaDiariaFallidoYEnvioAlarmaIncrementoMinimoNoEsperado() throws Exception {
         //Ocurre cuando el valor de la ultima lectura menos el de la penultima es menor a valor minimo esperado
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
-        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNconsumoOri(BigDecimal.valueOf(120));
-        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNconsumoOri(BigDecimal.valueOf(100));
+        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNlectura(BigDecimal.valueOf(120));
+        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNlectura(BigDecimal.valueOf(100));
         boolean result  = individualValidations.comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         //verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.INCREMENTO_MINIMO_NO_ESPERADO_ERROR_CODE);
@@ -175,8 +175,8 @@ public class ValidationsTest {
     public void comparacionLectuaDiariaFallidoYEnvioAlarmaIncrementoMaximoNoEsperado() throws Exception {
         //Ocurre cuando el valor de la ultima lectura menos el de la penultima es mayor a valor máximo esperado
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
-        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNconsumoOri(BigDecimal.valueOf(1100));
-        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNconsumoOri(BigDecimal.valueOf(100));
+        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNlectura(BigDecimal.valueOf(1100));
+        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNlectura(BigDecimal.valueOf(100));
         boolean result = individualValidations.comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.INCREMENTO_MAXIMO_NO_ESPERADO_ERROR_CODE);

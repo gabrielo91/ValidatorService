@@ -60,8 +60,8 @@ public class IndividualValidations implements IIndividualValidations {
             if (!intinerario.getMovLectConsuCollection().isEmpty() && intinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
                 List<MovLectConsu> listaLecturas = intinerario.getMovLectConsuCollection();
                 if (listaLecturas.size() >= 2) {
-                    BigDecimal ultimaLectura =  listaLecturas.get(0).getNconsumoOri();
-                    BigDecimal penUltimaLectura =  listaLecturas.get(1).getNconsumoOri();
+                    BigDecimal ultimaLectura =  listaLecturas.get(0).getNlectura();//nlectuura
+                    BigDecimal penUltimaLectura =  listaLecturas.get(1).getNlectura();
                     BigDecimal vav = ultimaLectura.subtract(penUltimaLectura);                         
                     
                     if (vav.signum() == -1) { //Si el valor es negativo
