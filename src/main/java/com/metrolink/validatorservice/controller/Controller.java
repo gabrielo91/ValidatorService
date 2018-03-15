@@ -88,7 +88,7 @@ public class Controller {
         Date startingDate = new Date();
         Date endingDate = Utils.addDays(startingDate, diasABuscar);//addDays
         //intinerarios = daoAgendaLectura.listAgendaBetweenDates(startingDate, endingDate);
-        intinerarios = daoAgendaLectura.listAgendaBetweenDates(Utils.addDays(startingDate, -5), Utils.addDays(endingDate, -5));
+        intinerarios = daoAgendaLectura.listAgendaBetweenDates(Utils.addDays(startingDate, -8), Utils.addDays(endingDate, -8));
         return intinerarios;
     }
     

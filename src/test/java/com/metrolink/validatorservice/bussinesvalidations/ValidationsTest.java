@@ -99,25 +99,25 @@ public class ValidationsTest {
         itinerarios.get(0).getListaSuministros().get(0).getNcodCalTou().setNcodCalTou(calTouNumber);      
         result = individualValidations.verificarCalendarioTOU(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
-        verify(alarmsManager).reportAlarm(any(MovSuministros.class), anyInt());
+        verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.CALENDARIO_TOU_VALIDATION_ERROR_CODE);
     }
     
     @Test
     public void verificarExistenciaDatosExitoso() throws Exception{
-        boolean result = false;
-//        ArrayList<AgendaLectura> intinerarios = createUniqueElementAgendaArray();  
-//        result = individualValidations.verificarExistenciaDatos(intinerarios.get(0).getListaSuministros().get(0));
-//        Assert.assertTrue(result);
+        ArrayList<AgendaLectura> intinerarios = createUniqueElementAgendaArray();  
+        boolean result = individualValidations.verificarExistenciaDatos(intinerarios.get(0).getListaSuministros());
+        Assert.assertTrue(result);
     }
     
   
     @Test
     public void verificarExistenciaDatosFallidoYEnvioAlarma() throws Exception{
         boolean result = false;
-//        ArrayList<AgendaLectura> intinerarios = new ArrayList<>(); 
-//        result = generalValidations.verificarExistenciaDatos(intinerarios);
-//        Assert.assertFalse(result);
-//        verify(alarmsManager).reportAlarm(any(AgendaLectura.class), anyString());
+        ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();   
+        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().clear();
+        result = individualValidations.verificarExistenciaDatos(itinerarios.get(0).getListaSuministros());
+        Assert.assertFalse(result);
+        verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.EXISTENCIA_DE_DATOS_ERROR_CODE);
     }
     
     @Test
@@ -168,7 +168,7 @@ public class ValidationsTest {
         itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNlectura(BigDecimal.valueOf(100));
         boolean result  = individualValidations.comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
-        //verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.INCREMENTO_MINIMO_NO_ESPERADO_ERROR_CODE);
+        verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.INCREMENTO_MINIMO_NO_ESPERADO_ERROR_CODE);
     }
     
      @Test

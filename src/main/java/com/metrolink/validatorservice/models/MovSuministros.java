@@ -33,6 +33,9 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "MovSuministros.findAll", query = "SELECT m FROM MovSuministros m")})
 public class MovSuministros implements Serializable {
 
+    @Column(name = "NUL_REPORTADA")
+    private Integer nulReportada;
+
     private static final long serialVersionUID = 1L;
     public static final String TIPO_LECTURA = "1";
     public static final String TIPO_CONSUMO = "2";
@@ -356,6 +359,14 @@ public class MovSuministros implements Serializable {
         for (MovLectConsu movLectConsu : movLectConsuCollection) {
             movLectConsu.setLcertificada(LECTURA_CERTIFICADA);
         }
+    }
+
+    public Integer getNulReportada() {
+        return nulReportada;
+    }
+
+    public void setNulReportada(Integer nulReportada) {
+        this.nulReportada = nulReportada;
     }
     
 }

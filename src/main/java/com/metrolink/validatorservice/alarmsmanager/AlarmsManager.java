@@ -24,6 +24,12 @@ public class AlarmsManager implements IAlarmsManager{
     public final static Integer LECTURA_REPETIDA_ERROR_CODE = 3;
     public final static Integer INCREMENTO_MINIMO_NO_ESPERADO_ERROR_CODE = 4;
     public final static Integer INCREMENTO_MAXIMO_NO_ESPERADO_ERROR_CODE = 5;
+    public final static Integer EXISTENCIA_DE_DATOS_ERROR_CODE = 6;
+    public final static Integer DEVOLUCION_DE_REGISTRO_MENSUAL_ERROR_CODE = 7;
+    public final static Integer LECTURA_REPETIDA_MENSUAL_ERROR_CODE = 8;
+    public final static Integer INCREMENTO_MINIMO_NO_ESPERADO_MENSUAL_ERROR_CODE = 9;
+    public final static Integer INCREMENTO_MAXIMO_NO_ESPERADO_MENSUAL_ERROR_CODE = 10;
+    
     public final static Short ACTIVE_ALARM = 1;
     public final static Short INACTIVE_ALARM = 0;
     
