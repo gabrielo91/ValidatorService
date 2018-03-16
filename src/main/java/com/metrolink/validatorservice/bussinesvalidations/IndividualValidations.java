@@ -136,9 +136,17 @@ public class IndividualValidations implements IIndividualValidations {
                                 result = result && false; 
                             } else if(vav.intValue() > 0){
                                 double porcentaje = vav.doubleValue()/ultimaLectura.doubleValue();
-                                //evaluar porcentaje
+                                if(porcentaje < MIN_VALUE){
+                                    alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.INCREMENTO_MINIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
+                                    result = result && false; 
+                                } else if(porcentaje > MAX_VALUE){
+                                    alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.INCREMENTO_MAXIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
+                                    result = result && false; 
+                                } else {
+                                    intinerario.certificarLecturas();
+                                    result = result && true;
+                                }
                             }
-                            
                         }
                     }
                 }
