@@ -40,6 +40,7 @@ public class MovSuministros implements Serializable {
     public static final String TIPO_LECTURA = "1";
     public static final String TIPO_CONSUMO = "2";
     public static final short LECTURA_CERTIFICADA = 1;
+    public static final short LECTURA_INVALIDA = 0;
     
     @EmbeddedId
     protected MovSuministrosPK movSuministrosPK;
@@ -358,6 +359,12 @@ public class MovSuministros implements Serializable {
     public void certificarLecturas() {
         for (MovLectConsu movLectConsu : movLectConsuCollection) {
             movLectConsu.setLcertificada(LECTURA_CERTIFICADA);
+        }
+    }
+    
+    public void invalidarLecturas() {
+        for (MovLectConsu movLectConsu : movLectConsuCollection) {
+            movLectConsu.setLcertificada(LECTURA_INVALIDA);
         }
     }
 

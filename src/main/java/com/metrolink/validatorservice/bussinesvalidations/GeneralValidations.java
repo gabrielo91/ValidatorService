@@ -23,12 +23,13 @@ import java.util.concurrent.TimeUnit;
 public class GeneralValidations implements IGeneralValidations{
     
     private IAlarmsManager alarmsManager;
+    private final int HORAS_DIA = 24;
     
     public GeneralValidations(IAlarmsManager alarmsManager){
         this.alarmsManager = alarmsManager;
     }
 
-
+    //CUANDO SE CERTIFICAN LAS LECTURAS?? **************************************
 
     
     @Override
@@ -36,52 +37,63 @@ public class GeneralValidations implements IGeneralValidations{
         
         //Sobre este preguntar si la formula basta o en que momento se cuentan los registros
         
-        boolean result = true;
+        boolean result = false;
         Date fechaActual = new Date();
         MParametrosAdm parametrosAdmin = ParametrosAdmin.getParametrosAdmin();
         long vpCompletitud = parametrosAdmin.getNvpCompletud();
-        long toleranciaCompletitud = parametrosAdmin.getNtolCompletud();
+        int toleranciaCompletitud = parametrosAdmin.getNtolCompletud();
         
-        for (AgendaLectura agenda : listAgenda) {                    
+        for (AgendaLectura agenda : listAgenda) {
+            
             if (!agenda.getListaSuministros().isEmpty() && agenda.getListaSuministros().get(0).getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
+                
                 Date maxFechaLectura = agenda.getAgendaLecturaPK().getDfechaTeo();
                 long diffTime = fechaActual.getTime() - maxFechaLectura.getTime();
                 long daysDiff =  TimeUnit.DAYS.convert(diffTime, TimeUnit.MILLISECONDS);
+                
                 System.out.println("Dias de diferencia: "+daysDiff);
                 if (daysDiff > vpCompletitud) {
                     alarmsManager.reportAlarm(agenda.getListaSuministros().get(0), AlarmsManager.COMPLETITUD_INFO_VALIDATION_ERROR_CODE);
+                    result = false;
+                } else {
+                    result = true;
                 }
             
             } else if (!agenda.getListaSuministros().isEmpty() && agenda.getListaSuministros().get(0).getVctipoVal().equals(MovSuministros.TIPO_CONSUMO)){
                 
                 Date fsy = fechaActual;
-                
+                result = true;
                 for (MovSuministros suministro : agenda.getListaSuministros()) {
-                    
                     Date ful = suministro.getTsful();//Fecha Ultima Lectura reportada en open SGC
                     Date flt = suministro.getTsflt();//fecha de lectura teorica
                     Date fla = suministro.getTsfla(); //fecha ultima lectura reportada en perseo
+                    Short factorTiempoDiario = suministro.getNnumRegs();//NNUM_REGS
                     
-                    long rangoDiasSistema = fla.getTime() - ful.getTime();
-                    rangoDiasSistema = TimeUnit.DAYS.convert(rangoDiasSistema, TimeUnit.MILLISECONDS)-toleranciaCompletitud;
-                    long qrr = rangoDiasSistema*24;
+                    long rangoDiasSistema = fla.getTime() - ful.getTime(); //Diferencia en milisegundos entre los dias
+                    rangoDiasSistema = TimeUnit.DAYS.convert(rangoDiasSistema, TimeUnit.MILLISECONDS);
+                    long qrr = rangoDiasSistema * HORAS_DIA * factorTiempoDiario.intValue();
                     
-                    if(fla.compareTo(Utils.addDays(fsy, -1)) >= 0){
+                    if(fla.compareTo(Utils.addDays(fsy, -toleranciaCompletitud)) > 0){
+                        
                         long rangoDias = fsy.getTime() - ful.getTime();
                         rangoDias = TimeUnit.DAYS.convert(rangoDias, TimeUnit.MILLISECONDS)-toleranciaCompletitud;
-                        long rangoHoras = rangoDias*24;
-                                                        
-                        if(rangoHoras > qrr){
+                        long registrosEsperados = rangoDias * HORAS_DIA * factorTiempoDiario;
+                        
+                        if (registrosEsperados > qrr) {
                             alarmsManager.reportAlarm(agenda.getListaSuministros().get(0), AlarmsManager.COMPLETITUD_INFO_VALIDATION_ERROR_CODE);
+                            suministro.invalidarLecturas();
+                            result = result && false;        
+                        } else {
+                            result = result && true;
                         }
                     } else {
-                        alarmsManager.reportAlarm(agenda.getListaSuministros().get(0), AlarmsManager.COMPLETITUD_INFO_VALIDATION_ERROR_CODE);
+                        result = result && false;       
                     }
-                }
-                
+                } 
+            } else {
+                result = false;
             }
         }
-        
         return result;
     }
     

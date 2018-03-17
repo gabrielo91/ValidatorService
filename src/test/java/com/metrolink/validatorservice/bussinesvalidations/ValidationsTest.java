@@ -10,6 +10,7 @@ import com.metrolink.validatorservice.alarmsmanager.AlarmsManager;
 import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
 import com.metrolink.validatorservice.db.controller.IDatabaseController;
 import com.metrolink.validatorservice.models.AgendaLectura;
+import com.metrolink.validatorservice.models.AgendaLecturaPK;
 import com.metrolink.validatorservice.models.MCalTou;
 import com.metrolink.validatorservice.models.MovLectConsu;
 import com.metrolink.validatorservice.models.MovSuministros;
@@ -47,6 +48,10 @@ public class ValidationsTest {
         Integer calTouNumber = 12345;
         ArrayList<AgendaLectura> intinerarios = new ArrayList<>();
         AgendaLectura agenda = new AgendaLectura();
+        
+        AgendaLecturaPK agendaLecturaPK = new AgendaLecturaPK();
+        agendaLecturaPK.setDfechaTeo(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2018-03-10 12:00"));
+        
         MovSuministros movSuministros = new MovSuministros();
         MCalTou mCalTou = new MCalTou();
         mCalTou.setNcodCalTou(calTouNumber);
@@ -66,7 +71,7 @@ public class ValidationsTest {
         movSuministros.getMovLectConsuCollection().add(movLectConsu2);
         
         agenda.getListaSuministros().add(movSuministros);
-
+        agenda.setAgendaLecturaPK(agendaLecturaPK);
         intinerarios.add(agenda);
         return intinerarios;
     }
@@ -120,7 +125,15 @@ public class ValidationsTest {
     
     @Test
     public void verificarCompletitudInformacionExitoso() throws Exception {
-        boolean result = true;
+        boolean result = false;        
+        ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();               
+        result = generalValidations.verificarCompletitudInformacion(itinerarios);
+        Assert.assertTrue(result);
+        
+        //MOCKER GENERACION DE FECHA ACTUAL 
+        
+        
+        
     }
     
     @Test
