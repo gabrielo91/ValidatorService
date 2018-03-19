@@ -42,6 +42,8 @@ public class MovSuministros implements Serializable {
     public static final short LECTURA_CERTIFICADA = 1;
     public static final short LECTURA_INVALIDA = 0;
     
+    private boolean suministroInvalidado;
+    
     @EmbeddedId
     protected MovSuministrosPK movSuministrosPK;
     @Column(name = "VCNUM_MED")
@@ -374,6 +376,14 @@ public class MovSuministros implements Serializable {
 
     public void setNulReportada(Integer nulReportada) {
         this.nulReportada = nulReportada;
+    }
+
+    public boolean isSuministroInvalidado() {
+        return suministroInvalidado;
+    }
+
+    public void setSuministroInvalidado(boolean suministroInvalidado) {
+        this.suministroInvalidado = suministroInvalidado;
     }
     
 }

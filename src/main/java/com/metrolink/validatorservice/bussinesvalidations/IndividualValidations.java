@@ -6,10 +6,16 @@
 package com.metrolink.validatorservice.bussinesvalidations;
 import com.metrolink.validatorservice.alarmsmanager.AlarmsManager;
 import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
+import com.metrolink.validatorservice.db.controller.ParametrosAdmin;
+import com.metrolink.validatorservice.models.AgendaLectura;
+import com.metrolink.validatorservice.models.MParametrosAdm;
 import com.metrolink.validatorservice.models.MovLectConsu;
 import com.metrolink.validatorservice.models.MovSuministros;
+import com.metrolink.validatorservice.utils.Utils;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -23,18 +29,21 @@ public class IndividualValidations implements IIndividualValidations {
     }
 
     @Override
-    public boolean verificarCalendarioTOU(List<MovSuministros> intinerarios) {        
+    public boolean verificarCalendarioTOU(List<MovSuministros> itinerarios) throws Exception  {        
         boolean result = false;
-        if(intinerarios.size() > 0){
+        if(itinerarios.size() > 0){
             result = true;
-            for (MovSuministros intinerario : intinerarios) {
-                if (!intinerario.getMovLectConsuCollection().isEmpty() && intinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)){
-                    Integer calendarioTOU = intinerarios.get(0).getNcodCalTou().getNcodCalTou();
-                    if(null == calendarioTOU || calendarioTOU < 1){
-                        result = result && false;
-                        alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.CALENDARIO_TOU_VALIDATION_ERROR_CODE);
-                    } else {
-                        result = result && true;
+            for (MovSuministros itinerario : itinerarios) {
+                if(!itinerario.isSuministroInvalidado()){
+                    if (!itinerario.getMovLectConsuCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)){
+                        Integer calendarioTOU = itinerarios.get(0).getNcodCalTou().getNcodCalTou();
+                        if(null == calendarioTOU || calendarioTOU < 1){
+                            result = result && false;
+                            alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.CALENDARIO_TOU_VALIDATION_ERROR_CODE);
+                            itinerario.setSuministroInvalidado(true);
+                        } else {
+                            result = result && true;
+                        }
                     }
                 }
             }
@@ -43,16 +52,19 @@ public class IndividualValidations implements IIndividualValidations {
     }
 
     @Override
-    public boolean verificarExistenciaDatos(List<MovSuministros> intinerarios) {
+    public boolean verificarExistenciaDatos(List<MovSuministros> itinerarios) throws Exception {
         boolean result = false;
-        if(intinerarios.size() > 0){
+        if(itinerarios.size() > 0){
             result = true;
-            for (MovSuministros intinerario : intinerarios) {
-                if(intinerario.getMovLectConsuCollection().size() == 0){
-                    alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.EXISTENCIA_DE_DATOS_ERROR_CODE);
-                    result = result && false;
-                } else {
-                    result = result && true;
+            for (MovSuministros itinerario : itinerarios) {
+                if(!itinerario.isSuministroInvalidado()){
+                    if(itinerario.getMovLectConsuCollection().size() == 0){
+                        alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.EXISTENCIA_DE_DATOS_ERROR_CODE);
+                        itinerario.setSuministroInvalidado(true);
+                        result = result && false;
+                    } else {
+                        result = result && true;
+                    }
                 }
             }
         }
@@ -61,48 +73,101 @@ public class IndividualValidations implements IIndividualValidations {
 
     
     @Override
-    public boolean comparacionLectuaDiaria(List<MovSuministros> intinerarios) {
+    public boolean verificarCompletitudInformacion(List<MovSuministros> itinerarios) throws Exception {
+        
+        boolean result = false;
+        Date fechaActual = new Date();
+        MParametrosAdm parametrosAdmin = ParametrosAdmin.getParametrosAdmin();
+        long toleranciaCompletitudLecturas = parametrosAdmin.getNvpCompletud();
+        int toleranciaCompletitudConsumos = parametrosAdmin.getNtolCompletud();
+
+        if(itinerarios.size() > 0){
+            result = true;
+            for (MovSuministros itinerario : itinerarios) {
+                
+                if(!itinerario.isSuministroInvalidado()){
+                    if (itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
+                
+                        Date maxFechaLectura = itinerario.getTsfla();
+                        long diffTime = fechaActual.getTime() - maxFechaLectura.getTime();
+                        long daysDiff =  TimeUnit.DAYS.convert(diffTime, TimeUnit.MILLISECONDS);
+
+                        System.out.println("Dias de diferencia: "+daysDiff);
+                        if (daysDiff > toleranciaCompletitudLecturas) {
+                            alarmsManager.reportAlarm(itinerario, AlarmsManager.COMPLETITUD_INFO_VALIDATION_ERROR_CODE);
+                            itinerario.setSuministroInvalidado(true);
+                            result = false;
+                        } else {
+                            result = true;
+                        }
+                    } else if (itinerario.getVctipoVal().equals(MovSuministros.TIPO_CONSUMO)){
+                        Date fsy = fechaActual;
+                        Date fla = itinerario.getTsfla(); //fecha ultima lectura reportada en perseo
+
+                        if(fsy.compareTo(Utils.addDays(fla, toleranciaCompletitudConsumos)) > 0){
+                            alarmsManager.reportAlarm(itinerario, AlarmsManager.COMPLETITUD_INFO_VALIDATION_ERROR_CODE);
+                            itinerario.setSuministroInvalidado(true);
+                            result = result && false;     
+                        }else {
+                            result = result && true;
+                        }
+                    }
+                }
+            }        
+        }
+        return result;
+    }
+    
+    @Override
+    public boolean comparacionLectuaDiaria(List<MovSuministros> itinerarios) throws Exception  {
         boolean result = false;
         final double MAX_VALUE = 0.9;
         final double MIN_VALUE = 0.2;
         
         int i = 1;
-        System.out.println("empezando "+intinerarios.size());
-        if(intinerarios.size() > 0){
+        System.out.println("empezando "+itinerarios.size());
+        if(itinerarios.size() > 0){
             result = true;
-            for (MovSuministros intinerario : intinerarios) {
-                if (!intinerario.getMovLectConsuCollection().isEmpty() && intinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
-                    List<MovLectConsu> listaLecturas = intinerario.getMovLectConsuCollection();
-                    if (listaLecturas.size() >= 2) {
-                        BigDecimal ultimaLectura =  listaLecturas.get(0).getNlectura();
-                        BigDecimal penUltimaLectura =  listaLecturas.get(1).getNlectura();
-                        BigDecimal vav = ultimaLectura.subtract(penUltimaLectura);                         
+            for (MovSuministros itinerario : itinerarios) {
+                
+                if(!itinerario.isSuministroInvalidado()){
+                    if (!itinerario.getMovLectConsuCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
+                        List<MovLectConsu> listaLecturas = itinerario.getMovLectConsuCollection();
+                        if (listaLecturas.size() >= 2) {
+                            BigDecimal ultimaLectura =  listaLecturas.get(0).getNlectura();
+                            BigDecimal penUltimaLectura =  listaLecturas.get(1).getNlectura();
+                            BigDecimal vav = ultimaLectura.subtract(penUltimaLectura);                         
 
-                        if (vav.signum() == -1) { //Si el valor es negativo
-                            alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.DEVOLUCION_DE_REGISTRO_ERROR_CODE);
-                            result = result && false; 
-                        } else if(vav.signum() == 0){
-                            alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.LECTURA_REPETIDA_ERROR_CODE);
-                            result = result && false;
-                        } else if(vav.signum() == 1){
-                            double porcentaje = vav.doubleValue()/ultimaLectura.doubleValue();
+                            if (vav.signum() == -1) { //Si el valor es negativo
+                                alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.DEVOLUCION_DE_REGISTRO_ERROR_CODE);
+                                result = result && false; 
+                                itinerario.setSuministroInvalidado(true);
+                            } else if(vav.signum() == 0){
+                                alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.LECTURA_REPETIDA_ERROR_CODE);
+                                result = result && false;
+                                itinerario.setSuministroInvalidado(true);
+                            } else if(vav.signum() == 1){
+                                double porcentaje = vav.doubleValue()/ultimaLectura.doubleValue();
 
-                            if(porcentaje < MIN_VALUE){
-                                alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.INCREMENTO_MINIMO_NO_ESPERADO_ERROR_CODE);
-                                result = result && false;
-                            } else if (porcentaje > MAX_VALUE) {
-                                alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.INCREMENTO_MAXIMO_NO_ESPERADO_ERROR_CODE);
-                                result = result && false;
-                            } else {
-                                //Lecturas cumplen condicion y se certifican
-                                intinerario.certificarLecturas();
-                                result = result && true;
+                                if(porcentaje < MIN_VALUE){
+                                    alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.INCREMENTO_MINIMO_NO_ESPERADO_ERROR_CODE);
+                                    result = result && false;
+                                    itinerario.setSuministroInvalidado(true);
+                                } else if (porcentaje > MAX_VALUE) {
+                                    alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.INCREMENTO_MAXIMO_NO_ESPERADO_ERROR_CODE);
+                                    result = result && false;
+                                    itinerario.setSuministroInvalidado(true);
+                                } else {
+                                    //Lecturas cumplen condicion y se certifican
+                                    itinerario.certificarLecturas();
+                                    result = result && true;
+                                }
                             }
-                        }
 
-                        System.out.println("cuenta "+i);
-                        System.out.println("Fecha lect: "+listaLecturas.get(0).getTsfechaLec());
-                        i++;
+                            System.out.println("cuenta "+i);
+                            System.out.println("Fecha lect: "+listaLecturas.get(0).getTsfechaLec());
+                            i++;
+                        }
                     }
                 }
             }
@@ -111,17 +176,17 @@ public class IndividualValidations implements IIndividualValidations {
     }
 
     @Override
-    public boolean comparacionLectuaDiariaMensual(List<MovSuministros> intinerarios) {
+    public boolean comparacionLectuaDiariaMensual(List<MovSuministros> itinerarios) throws Exception  {
         boolean result = false;
         final double MAX_VALUE = 0.9;
         final double MIN_VALUE = 0.2;
         
-        if(intinerarios.size() > 0){
+        if(itinerarios.size() > 0){
             result = true;
-            for (MovSuministros intinerario : intinerarios) {
-                if (!intinerario.getMovLectConsuCollection().isEmpty() && intinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
-                    List<MovLectConsu> listaLecturas = intinerario.getMovLectConsuCollection();
-                    Integer ultimaLecturaReportadaEnOpen =  intinerario.getNulReportada();
+            for (MovSuministros itinerario : itinerarios) {
+                if (!itinerario.getMovLectConsuCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
+                    List<MovLectConsu> listaLecturas = itinerario.getMovLectConsuCollection();
+                    Integer ultimaLecturaReportadaEnOpen =  itinerario.getNulReportada();
                     
                     if(null != ultimaLecturaReportadaEnOpen){
                         if (listaLecturas.size() >= 1) {
@@ -129,22 +194,27 @@ public class IndividualValidations implements IIndividualValidations {
                             Integer vav = ultimaLectura - ultimaLecturaReportadaEnOpen;
                             
                             if (vav.intValue() < 0) {
-                                alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.DEVOLUCION_DE_REGISTRO_MENSUAL_ERROR_CODE);
+                                alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.DEVOLUCION_DE_REGISTRO_MENSUAL_ERROR_CODE);
                                 result = result && false; 
+                                itinerario.setSuministroInvalidado(true);
                             } else if (vav.intValue()  == 0){
-                                alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.LECTURA_REPETIDA_MENSUAL_ERROR_CODE);
+                                alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.LECTURA_REPETIDA_MENSUAL_ERROR_CODE);
                                 result = result && false; 
+                                itinerario.setSuministroInvalidado(true);
                             } else if(vav.intValue() > 0){
                                 double porcentaje = vav.doubleValue()/ultimaLectura.doubleValue();
                                 if(porcentaje < MIN_VALUE){
-                                    alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.INCREMENTO_MINIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
+                                    alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.INCREMENTO_MINIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
                                     result = result && false; 
+                                    itinerario.setSuministroInvalidado(true);
                                 } else if(porcentaje > MAX_VALUE){
-                                    alarmsManager.reportAlarm(intinerarios.get(0), AlarmsManager.INCREMENTO_MAXIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
+                                    alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.INCREMENTO_MAXIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
                                     result = result && false; 
+                                    itinerario.setSuministroInvalidado(true);
                                 } else {
-                                    intinerario.certificarLecturas();
+                                    itinerario.certificarLecturas();
                                     result = result && true;
+                                    itinerario.setSuministroInvalidado(true);
                                 }
                             }
                         }

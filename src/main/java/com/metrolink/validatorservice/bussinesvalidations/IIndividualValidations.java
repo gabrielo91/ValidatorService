@@ -5,6 +5,7 @@
  */
 package com.metrolink.validatorservice.bussinesvalidations;
 
+import com.metrolink.validatorservice.models.AgendaLectura;
 import com.metrolink.validatorservice.models.MovSuministros;
 import java.util.List;
 
@@ -14,8 +15,9 @@ import java.util.List;
  */
 public interface IIndividualValidations {
     
-    public boolean verificarCalendarioTOU(List<MovSuministros> intinerarios);
-    public boolean verificarExistenciaDatos(List<MovSuministros> intinerarios);
-    public boolean comparacionLectuaDiaria(List<MovSuministros> intinerarios);
-    public boolean comparacionLectuaDiariaMensual(List<MovSuministros> intinerarios);
+    public boolean verificarCalendarioTOU(List<MovSuministros> intinerarios)  throws Exception;
+    public boolean verificarExistenciaDatos(List<MovSuministros> intinerarios)  throws Exception;
+    public boolean verificarCompletitudInformacion(List<MovSuministros> listaLecuras) throws Exception;
+    public boolean comparacionLectuaDiaria(List<MovSuministros> intinerarios) throws Exception;
+    public boolean comparacionLectuaDiariaMensual(List<MovSuministros> intinerarios)  throws Exception;
 }
