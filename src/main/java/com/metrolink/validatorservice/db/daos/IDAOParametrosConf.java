@@ -5,13 +5,13 @@
  */
 package com.metrolink.validatorservice.db.daos;
 
-import com.metrolink.validatorservice.models.MovAlarmas;
+import com.metrolink.validatorservice.models.MConfVal;
 import java.util.ArrayList;
 
 /**
  *
- * @author Gabriel Ortega
+ * @author USUARIO
  */
-public interface IDAOAlarmas {
-    void insertAlarmas(ArrayList<MovAlarmas> alarmas)throws Exception;
+public interface IDAOParametrosConf {
+    ArrayList<MConfVal> getParametrosConf () throws  Exception;
 }

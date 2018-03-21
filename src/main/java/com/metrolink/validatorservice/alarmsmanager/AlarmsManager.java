@@ -5,6 +5,9 @@
  */
 package com.metrolink.validatorservice.alarmsmanager;
 
+import com.metrolink.validatorservice.db.controller.IDatabaseController;
+import com.metrolink.validatorservice.db.daos.DAOAlarmas;
+import com.metrolink.validatorservice.db.daos.IDAOAlarmas;
 import com.metrolink.validatorservice.models.AgendaLectura;
 import com.metrolink.validatorservice.models.MovAlarmas;
 import com.metrolink.validatorservice.models.MovAlarmasPK;
@@ -29,13 +32,17 @@ public class AlarmsManager implements IAlarmsManager{
     public final static Integer LECTURA_REPETIDA_MENSUAL_ERROR_CODE = 8;
     public final static Integer INCREMENTO_MINIMO_NO_ESPERADO_MENSUAL_ERROR_CODE = 9;
     public final static Integer INCREMENTO_MAXIMO_NO_ESPERADO_MENSUAL_ERROR_CODE = 10;
+    public final static Integer PORCENTAJE_MAXIMO_SUPERIOR_INFERIOR_ERROR_CODE = 11;
+    public final static Integer DESVIACION_DE_CONSUMO_ERROR_CODE = 12;
     
     public final static Short ACTIVE_ALARM = 1;
     public final static Short INACTIVE_ALARM = 0;
     
-    public void saveAlarms(){
+    
+    public void saveAlarms(IDatabaseController databaseController) throws Exception{
         ArrayList<MovAlarmas> listAlarmas =  AlarmsStack.getInstance().getAlarmsStack();
-        //TODO save alarms using DAO
+        IDAOAlarmas daoAlarmas = new DAOAlarmas(databaseController);
+        daoAlarmas.insertAlarmas(listAlarmas);
     }
     
     public void cleanAalrmsStack(){
@@ -44,7 +51,6 @@ public class AlarmsManager implements IAlarmsManager{
 
     @Override
     public void reportAlarm(MovSuministros suministro, int codigoAlarma) {
-        System.out.println("REPORTANDO ALARMA ------------------------------------------------------------------ TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
         MovAlarmas alarm = createAlarm(suministro, codigoAlarma);
         AlarmsStack.getInstance().addAlarmToStack(alarm);
     }

@@ -15,9 +15,12 @@ import java.util.List;
  */
 public interface IIndividualValidations {
     
-    public boolean verificarCalendarioTOU(List<MovSuministros> intinerarios)  throws Exception;
-    public boolean verificarExistenciaDatos(List<MovSuministros> intinerarios)  throws Exception;
+    public boolean verificarCalendarioTOU(List<MovSuministros> itinerarios)  throws Exception;
+    public boolean verificarExistenciaDatos(List<MovSuministros> itinerarios)  throws Exception;
     public boolean verificarCompletitudInformacion(List<MovSuministros> listaLecuras) throws Exception;
-    public boolean comparacionLectuaDiaria(List<MovSuministros> intinerarios) throws Exception;
-    public boolean comparacionLectuaDiariaMensual(List<MovSuministros> intinerarios)  throws Exception;
+    public boolean comparacionLectuaDiaria(List<MovSuministros> itinerarios) throws Exception;
+    public boolean comparacionLectuaDiariaMensual(List<MovSuministros> itinerarios)  throws Exception;
+    public boolean verificarPorcentajeMaximoSuperiorInferior(List<MovSuministros> itinerarios)  throws Exception;
+    public boolean verificarDesviacionConsumo(List<MovSuministros> itinerarios)  throws Exception;
+    
 }

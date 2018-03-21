@@ -16,9 +16,11 @@ import java.util.List;
 import com.metrolink.validatorservice.bussinesvalidations.IIndividualValidations;
 import com.metrolink.validatorservice.db.daos.DAOAgendaLectura;
 import com.metrolink.validatorservice.db.daos.DAOParametrosAdmin;
+import com.metrolink.validatorservice.db.daos.DAOParametrosConf;
 import com.metrolink.validatorservice.db.daos.DAOSuministros;
 import com.metrolink.validatorservice.db.daos.IDAOAgendaLectura;
 import com.metrolink.validatorservice.db.daos.IDAOParametrosAdmin;
+import com.metrolink.validatorservice.db.daos.IDAOParametrosConf;
 import com.metrolink.validatorservice.db.daos.IDAOSuministros;
 import com.metrolink.validatorservice.models.AgendaLectura;
 import com.metrolink.validatorservice.models.MParametrosAdm;
@@ -76,7 +78,7 @@ public class Controller {
         
         ArrayList<AgendaLectura> intinerarios = null;
         IDatabaseController databaseController = new DatabaseController(preferencesManager);
-        daoParametrosAdmin = new DAOParametrosAdmin(databaseController);        
+        daoParametrosAdmin = new DAOParametrosAdmin(databaseController);    
         MParametrosAdm parametrosAdm = daoParametrosAdmin.getParametrosAdm().get(0);
         short diasABuscar = parametrosAdm.getNdiasBusca();
         System.out.println("dias busca es: "+diasABuscar);
@@ -88,9 +90,6 @@ public class Controller {
         intinerarios = daoAgendaLectura.listAgendaBetweenDates(Utils.addDays(startingDate, -8), Utils.addDays(endingDate, -8));
         return intinerarios;
     }
-    
-    
-    
     
     /**
      * This method gets agenda values and performs validations over them

@@ -8,6 +8,7 @@ package com.metrolink.validatorservice.models;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -25,6 +26,9 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "MAreas.findAll", query = "SELECT m FROM MAreas m")})
 public class MAreas implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ncodArea")
+    private Collection<MConfVal> mConfValCollection;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -100,6 +104,14 @@ public class MAreas implements Serializable {
     @Override
     public String toString() {
         return "com.metrolink.validatorservice.models.MAreas[ ncodArea=" + ncodArea + " ]";
+    }
+
+    public Collection<MConfVal> getMConfValCollection() {
+        return mConfValCollection;
+    }
+
+    public void setMConfValCollection(Collection<MConfVal> mConfValCollection) {
+        this.mConfValCollection = mConfValCollection;
     }
     
 }

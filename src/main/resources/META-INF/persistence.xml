@@ -20,6 +20,8 @@
     <class>com.metrolink.validatorservice.models.MDelegaciones</class>
     <class>com.metrolink.validatorservice.models.MovAlarmas</class>
     <class>com.metrolink.validatorservice.models.MAlarmas</class>
+    <class>com.metrolink.validatorservice.models.MConfVal</class>
+    <class>com.metrolink.validatorservice.models.MTipoValidacion</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@18.216.205.163:1521:XE"/>
       <property name="javax.persistence.jdbc.user" value="perseo"/>

@@ -10,11 +10,15 @@ import com.metrolink.validatorservice.alarmsmanager.AlarmsManager;
 import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
 import com.metrolink.validatorservice.db.controller.DatabaseController;
 import com.metrolink.validatorservice.db.controller.IDatabaseController;
+import com.metrolink.validatorservice.db.controller.ParametrosConf;
 import com.metrolink.validatorservice.db.daos.DAOParametrosAdmin;
+import com.metrolink.validatorservice.db.daos.DAOParametrosConf;
 import com.metrolink.validatorservice.db.daos.IDAOParametrosAdmin;
+import com.metrolink.validatorservice.db.daos.IDAOParametrosConf;
 import com.metrolink.validatorservice.models.AgendaLectura;
 import com.metrolink.validatorservice.models.AgendaLecturaPK;
 import com.metrolink.validatorservice.models.MCalTou;
+import com.metrolink.validatorservice.models.MConfVal;
 import com.metrolink.validatorservice.models.MParametrosAdm;
 import com.metrolink.validatorservice.models.MovLectConsu;
 import com.metrolink.validatorservice.models.MovSuministros;
@@ -56,6 +60,7 @@ public class ValidationsTest {
     
     IIndividualValidations individualValidations;
     MParametrosAdm parametrosAdm;
+    MConfVal parametrosConf;
     
     
     private  ArrayList<AgendaLectura> createUniqueElementAgendaArray() throws ParseException{
@@ -100,6 +105,7 @@ public class ValidationsTest {
          alarmsManager = mock(AlarmsManager.class);
          individualValidations = new IndividualValidations(alarmsManager);   
          loadAdminParamsFromDB();
+         loadConfParamsFromDB();
          AgendaLectura lectura = new AgendaLectura();
          Mockito.doNothing().when(alarmsManager).reportAlarm(lectura, 0);
     }
@@ -121,7 +127,6 @@ public class ValidationsTest {
         result = individualValidations.verificarCalendarioTOU(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.CALENDARIO_TOU_VALIDATION_ERROR_CODE);
-        Assert.assertTrue(itinerarios.get(0).getListaSuministros().get(0).isSuministroInvalidado());
     }
     
     @Test
@@ -166,7 +171,6 @@ public class ValidationsTest {
         result = individualValidations.verificarCompletitudInformacion(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.COMPLETITUD_INFO_VALIDATION_ERROR_CODE);
-        Assert.assertTrue(itinerarios.get(0).getListaSuministros().get(0).isSuministroInvalidado());
     }
     
     @Test
@@ -212,7 +216,6 @@ public class ValidationsTest {
         boolean result = individualValidations.comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.DEVOLUCION_DE_REGISTRO_ERROR_CODE);
-        Assert.assertTrue(itinerarios.get(0).getListaSuministros().get(0).isSuministroInvalidado());
     }
     
     @Test
@@ -224,7 +227,6 @@ public class ValidationsTest {
         boolean result = individualValidations.comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.LECTURA_REPETIDA_ERROR_CODE);
-        Assert.assertTrue(itinerarios.get(0).getListaSuministros().get(0).isSuministroInvalidado());
     }
     
     @Test
@@ -236,7 +238,6 @@ public class ValidationsTest {
         boolean result  = individualValidations.comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.INCREMENTO_MINIMO_NO_ESPERADO_ERROR_CODE);
-        Assert.assertTrue(itinerarios.get(0).getListaSuministros().get(0).isSuministroInvalidado());
     }
     
      @Test
@@ -248,11 +249,10 @@ public class ValidationsTest {
         boolean result = individualValidations.comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.INCREMENTO_MAXIMO_NO_ESPERADO_ERROR_CODE);
-        Assert.assertTrue(itinerarios.get(0).getListaSuministros().get(0).isSuministroInvalidado());
     }
     
     
-   @Test
+    @Test
     public void comparacionLectuaDiariaMensualExitoso() throws Exception {
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
         itinerarios.get(0).getListaSuministros().get(0).setNulReportada(100);
@@ -269,7 +269,6 @@ public class ValidationsTest {
         boolean result = individualValidations.comparacionLectuaDiariaMensual(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.DEVOLUCION_DE_REGISTRO_MENSUAL_ERROR_CODE);
-        Assert.assertTrue(itinerarios.get(0).getListaSuministros().get(0).isSuministroInvalidado());
     }
     
     @Test
@@ -281,7 +280,6 @@ public class ValidationsTest {
         boolean result = individualValidations.comparacionLectuaDiariaMensual(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.LECTURA_REPETIDA_MENSUAL_ERROR_CODE);
-        Assert.assertTrue(itinerarios.get(0).getListaSuministros().get(0).isSuministroInvalidado());
     }
     
     @Test
@@ -293,10 +291,9 @@ public class ValidationsTest {
         boolean result  = individualValidations.comparacionLectuaDiariaMensual(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.INCREMENTO_MINIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
-        Assert.assertTrue(itinerarios.get(0).getListaSuministros().get(0).isSuministroInvalidado());
     }
     
-     @Test
+    @Test
     public void comparacionLectuaDiariaMensualFallidoYEnvioAlarmaIncrementoMaximoNoEsperado() throws Exception {
         //Ocurre cuando el valor de la ultima lectura menos el de la penultima es mayor a valor máximo esperado
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
@@ -305,7 +302,18 @@ public class ValidationsTest {
         boolean result = individualValidations.comparacionLectuaDiariaMensual(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.INCREMENTO_MAXIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
-        Assert.assertTrue(itinerarios.get(0).getListaSuministros().get(0).isSuministroInvalidado());
+    }
+    
+    @Test
+    public void validacionLecturaPorcentajeMaximoSuperiorInferiorExitoso() throws Exception {
+        BigDecimal valorMinimoAceptado = parametrosConf.getNranDiaMin().add(BigDecimal.ONE);
+        ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
+        itinerarios.get(0).getListaSuministros().get(0).setNulReportada(valorMinimoAceptado.intValue());
+        itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_LECTURA);
+        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNlectura(valorMinimoAceptado);
+        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNlectura(valorMinimoAceptado);
+        boolean result = individualValidations.verificarPorcentajeMaximoSuperiorInferior(itinerarios.get(0).getListaSuministros());
+        Assert.assertTrue(result);
     }
 
     private void loadAdminParamsFromDB() throws IOException, FileNotFoundException, org.json.simple.parser.ParseException, Exception {
@@ -314,6 +322,14 @@ public class ValidationsTest {
         IDatabaseController databaseController = new DatabaseController(preferencesManager);
         IDAOParametrosAdmin daoParametrosAdmin = new DAOParametrosAdmin(databaseController);        
         parametrosAdm = daoParametrosAdmin.getParametrosAdm().get(0);
+    }
+
+    private void loadConfParamsFromDB() throws IOException, FileNotFoundException, org.json.simple.parser.ParseException, Exception {
+        String configFilePath = "resources/config.json";
+        IPreferencesManager preferencesManager = new PreferencesManager(configFilePath);
+        IDatabaseController databaseController = new DatabaseController(preferencesManager);
+        IDAOParametrosConf daoParametrosConf = new DAOParametrosConf(databaseController);
+        parametrosConf = daoParametrosConf.getParametrosConf().get(0);//necesaria para inicialziar los valores
     }
     
     

@@ -9,6 +9,7 @@ import com.metrolink.validatorservice.db.controller.IDatabaseController;
 import com.metrolink.validatorservice.models.MovAlarmas;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 
 /**
  *
@@ -24,8 +25,10 @@ public class DAOAlarmas implements IDAOAlarmas {
     
     
     @Override
-    public void insertAlarma(MovAlarmas alarma) throws Exception {
+    public void insertAlarmas(ArrayList<MovAlarmas> alarmas) throws Exception {
         boolean result = false;
+        int[] resultList;
+        
         String sql = "INSERT INTO MOV_ALARMAS ("
                 + " NUNICOM" 
                 + " NCONS_PROCESO"
@@ -40,21 +43,27 @@ public class DAOAlarmas implements IDAOAlarmas {
 
         try (Connection con = databaseController.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(sql);
+           
+            for (MovAlarmas alarma : alarmas) {
+                
+                preparedStatement.setShort(1, alarma.getNunicom());
+                preparedStatement.setInt(2, alarma.getMovAlarmasPK().getNconsProceso());
+                preparedStatement.setInt(3, alarma.getNperiodo());
+                preparedStatement.setString(4, alarma.getVcruta());
+                preparedStatement.setString(5, alarma.getVcitinerario());
+                preparedStatement.setDate(6, new java.sql.Date(alarma.getDfechaVal().getTime()) );
+                preparedStatement.setInt(7, alarma.getNnic());
+                preparedStatement.setInt(8, alarma.getMovAlarmasPK().getNnisRad());
+                preparedStatement.setInt(9, alarma.getMovAlarmasPK().getNcodAlarma());
+                preparedStatement.setString(10, alarma.getVctipoEnergia());
+                
+                preparedStatement.addBatch();
+            }
             
-            //DEBE REVISARSE AQUI QUE NO HAYA UNA ALARMA REPORTADA YA CON EL MISMO ID
-            preparedStatement.setShort(1, alarma.getNunicom());
-            preparedStatement.setInt(2, alarma.getMovAlarmasPK().getNconsProceso());
-            preparedStatement.setInt(3, alarma.getNperiodo());
-            preparedStatement.setString(4, alarma.getVcruta());
-            preparedStatement.setString(5, alarma.getVcitinerario());
-            preparedStatement.setDate(6, new java.sql.Date(alarma.getDfechaVal().getTime()) );
-            preparedStatement.setInt(7, alarma.getNnic());
-            preparedStatement.setInt(8, alarma.getMovAlarmasPK().getNnisRad());
-            preparedStatement.setInt(9, alarma.getMovAlarmasPK().getNcodAlarma());
-            preparedStatement.setString(10, alarma.getVctipoEnergia());
-            
-            
-            result = preparedStatement.executeUpdate()>0;
+            resultList  = preparedStatement.executeBatch();
+            for (int i : resultList) {
+                result = result && (i>=0);
+            }
         }
     }
     
