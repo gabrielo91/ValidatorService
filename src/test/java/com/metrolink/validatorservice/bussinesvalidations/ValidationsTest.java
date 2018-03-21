@@ -196,7 +196,7 @@ public class ValidationsTest {
         result = individualValidations.verificarCompletitudInformacion(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.COMPLETITUD_INFO_VALIDATION_ERROR_CODE);
-        Assert.assertTrue(itinerarios.get(0).getListaSuministros().get(0).isSuministroInvalidado());
+        Assert.assertTrue(itinerarios.get(0).getListaSuministros().get(0).isSuministroInvalidado()); //Validar que se invalidó el suministro correctamente
     }
     
     
@@ -314,6 +314,19 @@ public class ValidationsTest {
         itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNlectura(valorMinimoAceptado);
         boolean result = individualValidations.verificarPorcentajeMaximoSuperiorInferior(itinerarios.get(0).getListaSuministros());
         Assert.assertTrue(result);
+    }
+    
+    @Test
+    public void validacionLecturaPorcentajeMaximoSuperiorInferiorFallidoYEnvioAlarmas() throws Exception {
+        BigDecimal valorMinimoAceptado = parametrosConf.getNranDiaMax().add(BigDecimal.ONE);
+        ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
+        itinerarios.get(0).getListaSuministros().get(0).setNulReportada(valorMinimoAceptado.intValue());
+        itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_LECTURA);
+        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNlectura(valorMinimoAceptado);
+        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNlectura(valorMinimoAceptado);
+        boolean result = individualValidations.verificarPorcentajeMaximoSuperiorInferior(itinerarios.get(0).getListaSuministros());
+        Assert.assertFalse(result);
+        verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.PORCENTAJE_MAXIMO_SUPERIOR_INFERIOR_ERROR_CODE);
     }
 
     private void loadAdminParamsFromDB() throws IOException, FileNotFoundException, org.json.simple.parser.ParseException, Exception {

@@ -178,32 +178,35 @@ public class IndividualValidations implements IIndividualValidations {
         if(itinerarios.size() > 0){
             result = true;
             for (MovSuministros itinerario : itinerarios) {
-                if (!itinerario.getMovLectConsuCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
-                    List<MovLectConsu> listaLecturas = itinerario.getMovLectConsuCollection();
-                    Integer ultimaLecturaReportadaEnOpen =  itinerario.getNulReportada();
-                    
-                    if(null != ultimaLecturaReportadaEnOpen){
-                        if (listaLecturas.size() >= 1) {
-                            Integer ultimaLectura =  listaLecturas.get(0).getNlectura().intValueExact();
-                            Integer vav = ultimaLectura - ultimaLecturaReportadaEnOpen;
-                            
-                            if (vav.intValue() < 0) {
-                                alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.DEVOLUCION_DE_REGISTRO_MENSUAL_ERROR_CODE);
-                                result = result && false; 
-                            } else if (vav.intValue()  == 0){
-                                alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.LECTURA_REPETIDA_MENSUAL_ERROR_CODE);
-                                result = result && false; 
-                            } else if(vav.intValue() > 0){
-                                double porcentaje = vav.doubleValue()/ultimaLectura.doubleValue();
-                                if(porcentaje < MIN_VALUE){
-                                    alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.INCREMENTO_MINIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
+                
+                if(!itinerario.isSuministroInvalidado()){
+                    if (!itinerario.getMovLectConsuCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
+                        List<MovLectConsu> listaLecturas = itinerario.getMovLectConsuCollection();
+                        Integer ultimaLecturaReportadaEnOpen =  itinerario.getNulReportada();
+
+                        if(null != ultimaLecturaReportadaEnOpen){
+                            if (listaLecturas.size() >= 1) {
+                                Integer ultimaLectura =  listaLecturas.get(0).getNlectura().intValueExact();
+                                Integer vav = ultimaLectura - ultimaLecturaReportadaEnOpen;
+
+                                if (vav.intValue() < 0) {
+                                    alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.DEVOLUCION_DE_REGISTRO_MENSUAL_ERROR_CODE);
                                     result = result && false; 
-                                } else if(porcentaje > MAX_VALUE){
-                                    alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.INCREMENTO_MAXIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
+                                } else if (vav.intValue()  == 0){
+                                    alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.LECTURA_REPETIDA_MENSUAL_ERROR_CODE);
                                     result = result && false; 
-                                } else {
-                                    itinerario.certificarLecturas();
-                                    result = result && true;
+                                } else if(vav.intValue() > 0){
+                                    double porcentaje = vav.doubleValue()/ultimaLectura.doubleValue();
+                                    if(porcentaje < MIN_VALUE){
+                                        alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.INCREMENTO_MINIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
+                                        result = result && false; 
+                                    } else if(porcentaje > MAX_VALUE){
+                                        alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.INCREMENTO_MAXIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
+                                        result = result && false; 
+                                    } else {
+                                        itinerario.certificarLecturas();
+                                        result = result && true;
+                                    }
                                 }
                             }
                         }
@@ -222,19 +225,21 @@ public class IndividualValidations implements IIndividualValidations {
             MConfVal parametrosConf = ParametrosConf.getParametrosConf();
             
             for (MovSuministros itinerario : itinerarios) {
-                if (!itinerario.getMovLectConsuCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
-                    result = true;
-                    BigDecimal lecturaEsperadaMinima = parametrosConf.getNranDiaMin();
-                    BigDecimal lecturaEsperadaMaxima = parametrosConf.getNranDiaMax();
-                    BigDecimal ultimaLectura = itinerario.getMovLectConsuCollection().get(0).getNlectura();
-                    
-                    if (ultimaLectura.compareTo(lecturaEsperadaMinima) < 0 || ultimaLectura.compareTo(lecturaEsperadaMaxima) > 0){
-                        alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.PORCENTAJE_MAXIMO_SUPERIOR_INFERIOR_ERROR_CODE);
-                        result = result && false;
-                    } else {
-                        result = result && true;
-                    }
-                }                
+                if(!itinerario.isSuministroInvalidado()){
+                    if (!itinerario.getMovLectConsuCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
+                        result = true;
+                        BigDecimal lecturaEsperadaMinima = parametrosConf.getNranDiaMin();
+                        BigDecimal lecturaEsperadaMaxima = parametrosConf.getNranDiaMax();
+                        BigDecimal ultimaLectura = itinerario.getMovLectConsuCollection().get(0).getNlectura();
+
+                        if (ultimaLectura.compareTo(lecturaEsperadaMinima) < 0 || ultimaLectura.compareTo(lecturaEsperadaMaxima) > 0){
+                            alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.PORCENTAJE_MAXIMO_SUPERIOR_INFERIOR_ERROR_CODE);
+                            result = result && false;
+                        } else {
+                            result = result && true;
+                        }
+                    } 
+                }
             }
         }
         
