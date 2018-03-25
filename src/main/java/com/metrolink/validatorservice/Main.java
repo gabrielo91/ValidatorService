@@ -7,6 +7,7 @@ package com.metrolink.validatorservice;
 
 import com.metrolink.validatorservice.alarmsmanager.AlarmsManager;
 import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
+import com.metrolink.validatorservice.bussinesvalidations.IndividualValidationsSCO;
 import com.metrolink.validatorservice.bussinesvalidations.IndividualValidations;
 import com.metrolink.validatorservice.controller.Controller;
 import com.metrolink.validatorservice.db.controller.DatabaseController;
@@ -21,6 +22,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.parser.ParseException;
 import com.metrolink.validatorservice.bussinesvalidations.IIndividualValidations;
+import com.metrolink.validatorservice.bussinesvalidations.IIndividualValidationsSCO;
+import com.metrolink.validatorservice.utils.Utils;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 
 
 /**
@@ -42,11 +49,38 @@ public class Main {
     private static void test2(){
         try {
 
+            
+            //test
+            ArrayList<Date> lista = new ArrayList<>();
+            lista.add(Utils.addDays(new Date(), 0));
+            lista.add(Utils.addDays(new Date(), 1));
+            lista.add(Utils.addDays(new Date(), 3));
+            lista.add(Utils.addDays(new Date(), 2));
+            for (Date string : lista) {
+                System.out.println("Los datos son: "+string);
+            }
+            
+            System.out.println("antes de ordenar");
+            Collections.sort(lista, sortByDate());
+            //validarListaYeliminarObjeto(lista);
+            System.out.println("luego de ordenar");
+            
+            for (Date string : lista) {
+                System.out.println("Los datos2 son: "+string);
+            }
+            
+            //test
+            
+            
+            
+            
+            
             String configFilePath = "resources/config.json";
             IPreferencesManager preferencesManager = new PreferencesManager(configFilePath);
             IAlarmsManager alarmsManager = new AlarmsManager();
             IIndividualValidations individualValidations = new IndividualValidations(alarmsManager);
-            Controller controller = new Controller(individualValidations, preferencesManager);
+            IIndividualValidationsSCO generalValidations = new IndividualValidationsSCO();
+            Controller controller = new Controller(individualValidations, generalValidations, preferencesManager);
             //controller.performValidations();
             controller.startValidationProcess();
             
@@ -68,6 +102,28 @@ public class Main {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
     
+    }
+
+    
+    private static Comparator<Date> sortByDate(){
+        return new Comparator<Date>() {
+            @Override
+            public int compare(Date o1, Date o2) {
+                return o2.compareTo(o1);
+            }
+            
+        };
+    }
+    
+    
+    
+    private static void validarListaYeliminarObjeto(ArrayList<String> lista) {
+        ArrayList<String> localListo = new ArrayList<>(lista);
+        for (String string : localListo) {
+            if ("PACO".equals(string)) {
+                lista.remove(string);
+            }
+        }
     }
     
     //test preferences manager

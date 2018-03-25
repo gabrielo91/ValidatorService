@@ -13,8 +13,10 @@ import com.metrolink.validatorservice.models.MProveedores;
 import com.metrolink.validatorservice.models.MTarifas;
 import com.metrolink.validatorservice.models.MTipoconsumo;
 import com.metrolink.validatorservice.models.MovLectConsu;
+import com.metrolink.validatorservice.models.MovRegsSco;
 import com.metrolink.validatorservice.models.MovSuministros;
 import com.metrolink.validatorservice.models.MovSuministrosPK;
+import com.metrolink.validatorservice.utils.Utils;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,7 +28,7 @@ import java.util.ArrayList;
  *
  * @author Gabriel Ortega
  */
-public class DAOSuministros implements IDAOSuministros{
+public class DAOSuministros implements IDAOSuministros {
 
     private final IDatabaseController databaseController;
     public static final short BLOQUEADO = 1;
@@ -35,17 +37,16 @@ public class DAOSuministros implements IDAOSuministros{
     public DAOSuministros(IDatabaseController databaseController) {
         this.databaseController = databaseController;
     }
-    
-    
+
     @Override
     public boolean lockUnlockSuministros(ArrayList<MovSuministros> listSuministros, short lockStatus) throws Exception {
-        boolean result =  true;
-        int [] resultList;
+        boolean result = true;
+        int[] resultList;
         String sql = "UPDATE MOV_SUMINISTROS SET LBLOQUEADO = ? WHERE NCOD_PROV = ? AND NNIS_RAD = ? AND VCCODTCONSUMO = ?";
-        
+
         try (Connection con = databaseController.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(sql);
-            
+
             for (MovSuministros suministro : listSuministros) {
                 preparedStatement.setShort(1, lockStatus);
                 preparedStatement.setInt(2, suministro.getMovSuministrosPK().getNcodProv());
@@ -53,15 +54,15 @@ public class DAOSuministros implements IDAOSuministros{
                 preparedStatement.setString(4, suministro.getMovSuministrosPK().getVccodtconsumo());
                 preparedStatement.addBatch();
             }
-            resultList  = preparedStatement.executeBatch();
+            resultList = preparedStatement.executeBatch();
             for (int i : resultList) {
-                result = result && (i>=0);
+                result = result && (i >= 0);
             }
-        } 
-        
+        }
+
         return result;
     }
-    
+
     public static MovSuministros createMovSuministrosEntity(ResultSet resultSet) throws SQLException {
         MovSuministros movSuministros = new MovSuministros();
 
@@ -87,38 +88,46 @@ public class DAOSuministros implements IDAOSuministros{
         movSuministros.setVcitinerario(resultSet.getString("VCITINERARIO"));
         movSuministros.setVcciclo(resultSet.getString("VCCICLO"));
         movSuministros.setVctipoEnergia(resultSet.getString("VCTIPO_ENERGIA"));
-        
+
         MCalTou ncodCalTou = new MCalTou();
         ncodCalTou.setNcodCalTou(resultSet.getInt("NCOD_CAL_TOU"));
         movSuministros.setNcodCalTou(ncodCalTou);
-        
+
         MJurisdicciones ncodJurisdiccion = new MJurisdicciones();
         ncodJurisdiccion.setNcodJurisdiccion(resultSet.getInt("NCOD_JURISDICCION"));
         movSuministros.setNcodJurisdiccion(ncodJurisdiccion);
-        
+
         MMarcasmedidor vccodmarca = new MMarcasmedidor();
         vccodmarca.setVccodmarca(resultSet.getString("VCCODMARCA"));
         movSuministros.setVccodmarca(vccodmarca);
-        
+
         MProveedores mProveedores = new MProveedores();
         mProveedores.setNcodProv(resultSet.getInt("NCOD_PROV"));
         movSuministros.setMProveedores(mProveedores);
-        
+
         MTarifas vccodtarifa = new MTarifas();
         vccodtarifa.setVccodtarifa(resultSet.getString("VCCODTARIFA"));
         movSuministros.setVccodtarifa(vccodtarifa);
-        
+
         MTipoconsumo mTipoconsumo = new MTipoconsumo();
         mTipoconsumo.setVccodtconsumo(resultSet.getString("VCCODTCONSUMO"));
         movSuministros.setMTipoconsumo(mTipoconsumo);
-        
-        MovLectConsu lectConsu = DAOLecturas.createMovLecConsuEntity(resultSet);
 
-        if (null != lectConsu.getId()) {
-            movSuministros.getMovLectConsuCollection().add(lectConsu);
-        }       
-        
+        if (Utils.doesColumnExist("VCCOAN", resultSet)) { // Es una consulta de MOV_REGS_SCO
+            MovRegsSco movRegsSco = DAORegsSco.createMovLecConsuEntity(resultSet);
+            if (null != movRegsSco.getMovRegsScoPK() && null != movRegsSco.getMovRegsScoPK().getNnisRad()) {
+                movSuministros.getMovRegsScoCollection().add(movRegsSco);
+            }
+        }
+
+        if (Utils.doesColumnExist("NLECTURA", resultSet)) {// Es una consulta de MOV_LECT_CONSU
+            MovLectConsu lectConsu = DAOLecturas.createMovLecConsuEntity(resultSet);
+            if (null != lectConsu.getId()) {
+                movSuministros.getMovLectConsuCollection().add(lectConsu);
+            }
+        }
+
         return movSuministros;
     }
-    
+
 }

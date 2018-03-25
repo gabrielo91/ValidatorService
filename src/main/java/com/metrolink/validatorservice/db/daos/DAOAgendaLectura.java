@@ -9,6 +9,7 @@ import com.metrolink.validatorservice.db.controller.IDatabaseController;
 import com.metrolink.validatorservice.models.AgendaLectura;
 import com.metrolink.validatorservice.models.AgendaLecturaPK;
 import com.metrolink.validatorservice.models.MovLectConsu;
+import com.metrolink.validatorservice.models.MovRegsSco;
 import com.metrolink.validatorservice.models.MovSuministros;
 import com.metrolink.validatorservice.models.MovSuministrosPK;
 import java.math.BigInteger;
@@ -25,18 +26,28 @@ import java.util.Date;
  */
 public class DAOAgendaLectura implements IDAOAgendaLectura {
 
+    public final static int CONSULTA_MOV_LECT_CONSU = 0;
+    public final static int CONSULTA_MOV_REGS_SCO = 1;
     private final IDatabaseController databaseController;
 
     public DAOAgendaLectura(IDatabaseController databaseController) {
         this.databaseController = databaseController;
     }
 
+    /**
+     * Retorna un arreglo den agendas con los suministros y lecturas asociadas.
+     * @param startingDate
+     * @param endingDate
+     * @param tipoConsulta
+     * @return
+     * @throws Exception 
+     */
     @Override
-    public ArrayList<AgendaLectura> listAgendaBetweenDates(Date startingDate, Date endingDate) throws Exception {
+    public ArrayList<AgendaLectura> listAgendaBetweenDates(Date startingDate, Date endingDate, int tipoConsulta) throws Exception {
         System.out.println("DATES ARE: "+startingDate.toString() + " AND "+endingDate.toString());
         
         ArrayList<AgendaLectura> listAgenda = new ArrayList<>();
-        String sql = "SELECT  AL.*,  MSUM.*, MLEC.*  FROM AGENDA_LECTURA AL  \n"
+        String sqlMovLectConsumo = "SELECT  AL.*,  MSUM.*, MLEC.*  FROM AGENDA_LECTURA AL  \n"
                 + "LEFT OUTER JOIN MOV_SUMINISTROS MSUM\n"
                 + "ON AL.NUNICOM = MSUM.NUNICOM \n"
                 + "AND AL.VCITINERARIO = MSUM.VCITINERARIO \n"
@@ -48,13 +59,37 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
                 + "WHERE AL.DFECHA_TEO BETWEEN ? AND ?\n"
                 + "ORDER BY AL.DFECHA_TEO, AL.VCPARAM, AL.NPERICONS";
 
+        String sqlMovRegsSco = "SELECT  AL.*,  MSUM.*, MRSCO.*  FROM AGENDA_LECTURA AL  \n" +
+                "LEFT OUTER JOIN MOV_SUMINISTROS MSUM\n" +
+                "ON AL.NUNICOM = MSUM.NUNICOM \n" +
+                "AND AL.VCITINERARIO = MSUM.VCITINERARIO \n" +
+                "AND AL.VCRUTA = MSUM.VCRUTA\n" +
+                "LEFT JOIN MOV_REGS_SCO MRSCO\n" +
+                "ON MRSCO.NNIS_RAD = MSUM.NNIS_RAD\n" +
+                "WHERE AL.DFECHA_TEO BETWEEN ? AND ? \n" +
+                "ORDER BY AL.DFECHA_TEO, AL.VCPARAM,  AL.NPERICONS";
+        
         try (Connection con = databaseController.getConnection()) {
             
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
-            preparedStatement.setDate(1, new java.sql.Date(startingDate.getTime()));
-            preparedStatement.setDate(2, new java.sql.Date(endingDate.getTime()));
-            ResultSet result = preparedStatement.executeQuery();
-            listAgenda = mapRows(result);
+            PreparedStatement preparedStatement;
+            ResultSet result = null;
+            
+            if (tipoConsulta == CONSULTA_MOV_LECT_CONSU){
+                preparedStatement = con.prepareStatement(sqlMovLectConsumo);
+                preparedStatement.setDate(1, new java.sql.Date(startingDate.getTime()));
+                preparedStatement.setDate(2, new java.sql.Date(endingDate.getTime()));
+                result = preparedStatement.executeQuery();
+                listAgenda = mapRows(result, CONSULTA_MOV_LECT_CONSU);
+            
+            } else {
+                
+                preparedStatement = con.prepareStatement(sqlMovRegsSco);
+                preparedStatement.setDate(1, new java.sql.Date(startingDate.getTime()));
+                preparedStatement.setDate(2, new java.sql.Date(endingDate.getTime()));
+                result = preparedStatement.executeQuery();
+                listAgenda = mapRows(result, CONSULTA_MOV_REGS_SCO);
+                
+            }
 
         } catch (Exception ex) {
             throw new Exception("Error getting agenda data", ex);
@@ -62,8 +97,8 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
 
         return listAgenda;
     }
-
-    private ArrayList<AgendaLectura> mapRows(ResultSet result) throws SQLException {
+    
+    private ArrayList<AgendaLectura> mapRows(ResultSet result, int tipoConsulta) throws SQLException {
         
         //Agenda
         ArrayList<AgendaLectura> listAgenda = new ArrayList<>();
@@ -107,17 +142,23 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
                 vccodtconsumoCurr = result.getString("VCCODTCONSUMO"); 
                 suministrosPKCurr = new MovSuministrosPK(ncodProvCurr, nnisRadCurr, vccodtconsumoCurr);               
                 
+                
                 //Iterates over each distinc row of Suministros
                 if (null == movSuministrosPKPrev || !movSuministrosPKPrev.equals(suministrosPKCurr)){
                     suministro = DAOSuministros.createMovSuministrosEntity(result);                                        
                     agendaLectura.getListaSuministros().add(suministro);
 
                 } else if (movSuministrosPKPrev.equals(suministrosPKCurr)){
-                                        
-                    MovLectConsu movLectConsu = DAOLecturas.createMovLecConsuEntity(result);   
+                    
                     int lastElementIndex = agendaLectura.getListaSuministros().size()-1;
-                    agendaLectura.getListaSuministros().get(lastElementIndex).getMovLectConsuCollection().add(movLectConsu);
-                
+                    if(tipoConsulta == CONSULTA_MOV_LECT_CONSU){
+                        MovLectConsu movLectConsu = DAOLecturas.createMovLecConsuEntity(result);   
+                        agendaLectura.getListaSuministros().get(lastElementIndex).getMovLectConsuCollection().add(movLectConsu);
+                    }else {
+                        MovRegsSco movRegsSco = DAORegsSco.createMovLecConsuEntity(result);
+                        agendaLectura.getListaSuministros().get(lastElementIndex).getMovRegsScoCollection().add(movRegsSco);
+                    }
+                    
                 }
 
                 ncodProvPrev = ncodProvCurr; 
@@ -134,7 +175,7 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
         }
         return listAgenda;
     }
-
+    
     private AgendaLectura createAgendaEntity(ResultSet result) throws SQLException {
 
         AgendaLectura agendaLectura = new AgendaLectura();
@@ -159,6 +200,8 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
         
         return agendaLectura;
     }
+
+    
 
 
 }

@@ -107,6 +107,8 @@ public class MovSuministros implements Serializable {
     @JoinColumn(name = "VCCODTCONSUMO", referencedColumnName = "VCCODTCONSUMO", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private MTipoconsumo mTipoconsumo;
+    
+    private ArrayList<MovRegsSco> movRegsScoCollection = new ArrayList<>();
 
     public MovSuministros() {
     }
@@ -385,5 +387,15 @@ public class MovSuministros implements Serializable {
     public void setSuministroInvalidado(boolean suministroInvalidado) {
         this.suministroInvalidado = suministroInvalidado;
     }
+
+    public ArrayList<MovRegsSco> getMovRegsScoCollection() {
+        return movRegsScoCollection;
+    }
+
+    public void setMovRegsScoCollection(ArrayList<MovRegsSco> movRegsScoCollection) {
+        this.movRegsScoCollection = movRegsScoCollection;
+    }
+    
+    
     
 }

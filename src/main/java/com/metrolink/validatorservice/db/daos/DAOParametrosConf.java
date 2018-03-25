@@ -8,7 +8,6 @@ package com.metrolink.validatorservice.db.daos;
 import com.metrolink.validatorservice.db.controller.IDatabaseController;
 import com.metrolink.validatorservice.db.controller.ParametrosConf;
 import com.metrolink.validatorservice.models.MConfVal;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

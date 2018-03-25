@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class AgendaStack {
     private static AgendaStack instance;
-    private static ArrayList<AgendaLectura> intinerarios;
+    private static ArrayList<AgendaLectura> itinerarios;
 
     private AgendaStack() {
     }
@@ -22,32 +22,32 @@ public class AgendaStack {
     public static AgendaStack getInstance(){
         if(null == instance){
            instance = new AgendaStack();
-           intinerarios = new ArrayList<>();
+           itinerarios = new ArrayList<>();
         }
         return instance;
     }
     
     public static void setAgendaValues(ArrayList<AgendaLectura> agendaList) throws IllegalStateException  {
-        if(null != intinerarios){
-            intinerarios.addAll(agendaList);
+        if(null != itinerarios){
+            itinerarios.addAll(agendaList);
         }else{
             throw new IllegalStateException ("getInstance method must be called before using setAgendaValues() method");
         }
         
     }
     
-    public static synchronized ArrayList<AgendaLectura> getIntinerarios() throws IllegalStateException  {
-        if(null != intinerarios){
-            return intinerarios;
+    public static synchronized ArrayList<AgendaLectura> getItinerarios() throws IllegalStateException  {
+        if(null != itinerarios){
+            return itinerarios;
         }else{
-            throw new IllegalStateException ("getInstance method must be called before using getIntinerarios() method");
+            throw new IllegalStateException ("getInstance method must be called before using getItinerarios() method");
         }
     }
     
     public static void cleanStack() throws IllegalStateException  {
-        if(null != intinerarios){
-            intinerarios.clear();
-            intinerarios = new ArrayList<>();
+        if(null != itinerarios){
+            itinerarios.clear();
+            itinerarios = new ArrayList<>();
         }else{
             throw new IllegalStateException ("getInstance method must be called before using cleanStack() method");
         }

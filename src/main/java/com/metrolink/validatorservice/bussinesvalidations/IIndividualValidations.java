@@ -5,7 +5,6 @@
  */
 package com.metrolink.validatorservice.bussinesvalidations;
 
-import com.metrolink.validatorservice.models.AgendaLectura;
 import com.metrolink.validatorservice.models.MovSuministros;
 import java.util.List;
 

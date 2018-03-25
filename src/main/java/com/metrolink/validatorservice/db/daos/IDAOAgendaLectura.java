@@ -14,5 +14,5 @@ import java.util.Date;
  * @author Gabriel Ortega
  */
 public interface IDAOAgendaLectura {
-    ArrayList<AgendaLectura> listAgendaBetweenDates(Date startingDate, Date endingDate) throws Exception;
+    ArrayList<AgendaLectura> listAgendaBetweenDates(Date startingDate, Date endingDate, int tipoConsulta) throws Exception;
 }
