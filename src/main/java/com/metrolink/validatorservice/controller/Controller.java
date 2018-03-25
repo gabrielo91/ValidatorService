@@ -27,6 +27,8 @@ import com.metrolink.validatorservice.utils.Utils;
 import java.util.ArrayList;
 import java.util.Date;
 import com.metrolink.validatorservice.bussinesvalidations.IIndividualValidationsSCO;
+import com.metrolink.validatorservice.db.daos.DAOParametrosConf;
+import com.metrolink.validatorservice.db.daos.IDAOParametrosConf;
 
 /**
  *
@@ -82,6 +84,8 @@ public class Controller {
         IDatabaseController databaseController = new DatabaseController(preferencesManager);
         daoParametrosAdmin = new DAOParametrosAdmin(databaseController);    
         MParametrosAdm parametrosAdm = daoParametrosAdmin.getParametrosAdm().get(0);
+        IDAOParametrosConf daoParametrosConf = new DAOParametrosConf(databaseController);
+        daoParametrosConf.getParametrosConf().get(0);//necesaria para inicialziar los valores
         short diasABuscar = parametrosAdm.getNdiasBusca();
         System.out.println("dias busca es: "+diasABuscar);
         daoLecturas = new DAOLecturas(databaseController);

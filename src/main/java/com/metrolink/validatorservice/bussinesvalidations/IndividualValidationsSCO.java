@@ -5,12 +5,15 @@
  */
 package com.metrolink.validatorservice.bussinesvalidations;
 
+import com.metrolink.validatorservice.alarmsmanager.AlarmsManager;
+import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
 import com.metrolink.validatorservice.models.MovRegsSco;
 import com.metrolink.validatorservice.models.MovSuministros;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.DoubleStream;
 
 /**
  *
@@ -18,7 +21,13 @@ import java.util.List;
  */
 public class IndividualValidationsSCO implements IIndividualValidationsSCO {
 
-    //Validar que los valores se esten pasando por referencia
+    
+    private IAlarmsManager alarmsManager;
+    public IndividualValidationsSCO(IAlarmsManager alarmsManager){
+        this.alarmsManager = alarmsManager;
+    }
+    
+    
     //para probar este metodo adicionar cinco lecturas  con una que tenga el vccoan > 0
     @Override
     public boolean verificarDesviacionConsumo(List<MovSuministros> itinerariosSCO) throws Exception {
@@ -26,16 +35,51 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
         if (itinerariosSCO.size() > 0) {
             result = true;
             int rangoMeses = 5;
+            double coeficienteVariacionMaximo = 0.3;
+            
             for (MovSuministros itinerario : itinerariosSCO) {
 
-                if (!itinerario.getMovLectConsuCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
+                if (!itinerario.getMovRegsScoCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
                     List<MovRegsSco> movLectConsuAnalizables = itinerario.getMovRegsScoCollection().subList(0, rangoMeses - 1);
 
-                    //#1.
-                    validarAusenciaAnomalias(movLectConsuAnalizables);
+                    validarAusenciaDeAnomalias(movLectConsuAnalizables);
                     if (movLectConsuAnalizables.size() >= rangoMeses) {
                         Collections.sort(movLectConsuAnalizables, sorterByDate()); // Se organiza por fechas en orden descendente
+
+                        double[] diferencias = obtenerDiferenciasLecturas(itinerario.getMovRegsScoCollection());
+                        double desviacionEstandar = calcularDesviacionEstandar(diferencias);
+                        double promedio = (DoubleStream.of(diferencias).sum()) / diferencias.length;
+                        double coeficienteVariacion = desviacionEstandar/Math.abs(promedio);
                         
+                        if(coeficienteVariacion > coeficienteVariacionMaximo){
+                            alarmsManager.reportAlarm(itinerariosSCO.get(0), AlarmsManager.DESVIACION_DE_CONSUMO_ERROR_CODE);
+                            result = result && false;
+                        } else {
+                            result = result && true;
+                        }
+                    } else {
+                        result = result && false;
+                    }
+                } else { //Analisis para consumo
+                    //analisis para consumo
+                    List<MovRegsSco> movLectConsuAnalizables = itinerario.getMovRegsScoCollection().subList(0, rangoMeses - 1);
+                    validarAusenciaDeAnomalias(movLectConsuAnalizables);
+                    if (movLectConsuAnalizables.size() >= rangoMeses) {
+                        Collections.sort(movLectConsuAnalizables, sorterByDate()); // Se organiza por fechas en orden descendente
+
+                        double[] valoresConsumo = obtenerConsumos(itinerario.getMovRegsScoCollection());
+                        double desviacionEstandar = calcularDesviacionEstandar(valoresConsumo);
+                        double promedio = (DoubleStream.of(valoresConsumo).sum()) / valoresConsumo.length;
+                        double coeficienteVariacion = desviacionEstandar/Math.abs(promedio);
+                        
+                        if(coeficienteVariacion > coeficienteVariacionMaximo){
+                            alarmsManager.reportAlarm(itinerariosSCO.get(0), AlarmsManager.DESVIACION_DE_CONSUMO_ERROR_CODE);
+                            result = result && false;
+                        } else {
+                            result = result && true;
+                        }
+                    } else {
+                        result = result && false;
                     }
                 }
 
@@ -43,8 +87,8 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
         }
         return result;
     }
-    
-    private  Comparator<MovRegsSco> sorterByDate(){
+
+    private Comparator<MovRegsSco> sorterByDate() {
         return new Comparator<MovRegsSco>() {
             @Override
             public int compare(MovRegsSco o1, MovRegsSco o2) {
@@ -53,7 +97,7 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
         };
     }
 
-    private void validarAusenciaAnomalias(List<MovRegsSco> movLectConsuAnalizables) {
+    private void validarAusenciaDeAnomalias(List<MovRegsSco> movLectConsuAnalizables) {
         List<MovRegsSco> movLectConsuAnalizablesLocal = new ArrayList<>(movLectConsuAnalizables);
 
         for (MovRegsSco movLectConsuAnalizable : movLectConsuAnalizablesLocal) {
@@ -63,7 +107,32 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
             }
         }
     }
+
+    private double[] obtenerDiferenciasLecturas(ArrayList<MovRegsSco> movRegsScoCollection) {
+        double[] diferencias = new double[movRegsScoCollection.size()-1];
+        for (int i = movRegsScoCollection.size()-1; i > 0; i--) {
+            diferencias[i] = movRegsScoCollection.get(i).getNlec().longValue() - movRegsScoCollection.get(i-1).getNlec().longValue();
+        }
+        return diferencias;
+    }
     
-    
+    private double[] obtenerConsumos(ArrayList<MovRegsSco> movRegsScoCollection) {
+        double[] consumos = new double[movRegsScoCollection.size()];
+        for (int i = 0; i < movRegsScoCollection.size(); i++) {
+            consumos[i] = movRegsScoCollection.get(i).getNconsumo().longValue();
+        }
+        return consumos;
+    }
+
+    private double calcularDesviacionEstandar(double[] diferencias) {
+        double promedio = (DoubleStream.of(diferencias).sum()) / diferencias.length;
+        float sumatoria = 0.0f;
+
+        for (int i = 0; i < diferencias.length; i++) {
+            sumatoria += Math.pow(diferencias[i] - promedio, 2);
+        }
+
+        return Math.sqrt(sumatoria / (double) diferencias.length);
+    }
 
 }

@@ -23,11 +23,6 @@ import java.util.logging.Logger;
 import org.json.simple.parser.ParseException;
 import com.metrolink.validatorservice.bussinesvalidations.IIndividualValidations;
 import com.metrolink.validatorservice.bussinesvalidations.IIndividualValidationsSCO;
-import com.metrolink.validatorservice.utils.Utils;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 
 
 /**
@@ -53,7 +48,7 @@ public class Main {
             IPreferencesManager preferencesManager = new PreferencesManager(configFilePath);
             IAlarmsManager alarmsManager = new AlarmsManager();
             IIndividualValidations individualValidations = new IndividualValidations(alarmsManager);
-            IIndividualValidationsSCO generalValidations = new IndividualValidationsSCO();
+            IIndividualValidationsSCO generalValidations = new IndividualValidationsSCO(alarmsManager);
             Controller controller = new Controller(individualValidations, generalValidations, preferencesManager);
             //controller.performValidations();
             controller.startValidationProcess();
@@ -77,17 +72,7 @@ public class Main {
         }
     
     }
-   
-    
-    private static void validarListaYeliminarObjeto(ArrayList<String> lista) {
-        ArrayList<String> localListo = new ArrayList<>(lista);
-        for (String string : localListo) {
-            if ("PACO".equals(string)) {
-                lista.remove(string);
-            }
-        }
-    }
-    
+
     //test preferences manager
     private void test1(){
    

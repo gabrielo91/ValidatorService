@@ -20,6 +20,5 @@ public interface IIndividualValidations {
     public boolean comparacionLectuaDiaria(List<MovSuministros> itinerarios) throws Exception;
     public boolean comparacionLectuaDiariaMensual(List<MovSuministros> itinerarios)  throws Exception;
     public boolean verificarPorcentajeMaximoSuperiorInferior(List<MovSuministros> itinerarios)  throws Exception;
-    public boolean verificarDesviacionConsumo(List<MovSuministros> itinerarios)  throws Exception;
     
 }

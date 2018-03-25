@@ -10,7 +10,6 @@ import com.metrolink.validatorservice.alarmsmanager.AlarmsManager;
 import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
 import com.metrolink.validatorservice.db.controller.DatabaseController;
 import com.metrolink.validatorservice.db.controller.IDatabaseController;
-import com.metrolink.validatorservice.db.controller.ParametrosConf;
 import com.metrolink.validatorservice.db.daos.DAOParametrosAdmin;
 import com.metrolink.validatorservice.db.daos.DAOParametrosConf;
 import com.metrolink.validatorservice.db.daos.IDAOParametrosAdmin;
