@@ -49,32 +49,6 @@ public class Main {
     private static void test2(){
         try {
 
-            
-            //test
-            ArrayList<Date> lista = new ArrayList<>();
-            lista.add(Utils.addDays(new Date(), 0));
-            lista.add(Utils.addDays(new Date(), 1));
-            lista.add(Utils.addDays(new Date(), 3));
-            lista.add(Utils.addDays(new Date(), 2));
-            for (Date string : lista) {
-                System.out.println("Los datos son: "+string);
-            }
-            
-            System.out.println("antes de ordenar");
-            Collections.sort(lista, sortByDate());
-            //validarListaYeliminarObjeto(lista);
-            System.out.println("luego de ordenar");
-            
-            for (Date string : lista) {
-                System.out.println("Los datos2 son: "+string);
-            }
-            
-            //test
-            
-            
-            
-            
-            
             String configFilePath = "resources/config.json";
             IPreferencesManager preferencesManager = new PreferencesManager(configFilePath);
             IAlarmsManager alarmsManager = new AlarmsManager();
@@ -103,19 +77,7 @@ public class Main {
         }
     
     }
-
-    
-    private static Comparator<Date> sortByDate(){
-        return new Comparator<Date>() {
-            @Override
-            public int compare(Date o1, Date o2) {
-                return o2.compareTo(o1);
-            }
-            
-        };
-    }
-    
-    
+   
     
     private static void validarListaYeliminarObjeto(ArrayList<String> lista) {
         ArrayList<String> localListo = new ArrayList<>(lista);
