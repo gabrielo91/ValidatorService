@@ -5,6 +5,7 @@
  */
 package com.metrolink.validatorservice.controller;
 
+import com.metrolink.validatorservice.alarmsmanager.AlarmsManager;
 import com.metrolink.validatorservice.db.controller.DatabaseController;
 import com.metrolink.validatorservice.db.controller.IDatabaseController;
 import com.metrolink.validatorservice.db.daos.DAOLecturas;
@@ -29,6 +30,9 @@ import java.util.Date;
 import com.metrolink.validatorservice.bussinesvalidations.IIndividualValidationsSCO;
 import com.metrolink.validatorservice.db.daos.DAOParametrosConf;
 import com.metrolink.validatorservice.db.daos.IDAOParametrosConf;
+import com.metrolink.validatorservice.logger.DataLogger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -56,21 +60,19 @@ public class Controller {
         ArrayList<AgendaLectura> itinerariosMovRegsSco = getValuesForChecking();
         System.out.println("El tamano es: : "+itinerariosMovLectConsu.size());
         AgendaStack.getInstance().setAgendaValues(itinerariosMovLectConsu);
-        
-        //Remember: element in index is the newest
-        
+                
         int i=0;
         for (AgendaLectura intinerario : AgendaStack.getInstance().getItinerarios()) {
             i++;
             System.out.println("i: "+ i +"La fecha es: "+intinerario.getAgendaLecturaPK().getDfechaTeo() + " vdtcodconsumo: "+intinerario.getAgendaLecturaPK().getVcparam());
         }
         
-        //lockUnlockSuministros(DAOSuministros.BLOQUEADO);
+        lockUnlockSuministros(DAOSuministros.BLOQUEADO);
         performIndividualValidationsSCO(itinerariosMovRegsSco);
         performIndividualValidations();
-        //updateLecturas()
-        //lockUnlockSuministros(DAOSuministros.DESBLOQUEADO);
-        //saveAlarmas()
+        certificarLecturas();
+        lockUnlockSuministros(DAOSuministros.DESBLOQUEADO);
+        saveAlarmas();
     }
     
     
@@ -167,6 +169,21 @@ public class Controller {
             Method validation = validations.getMethod(bussinesValidation.getName(), List.class);
             validation.invoke(generalValidationsClass, itinerariosMovRegsSco);
         }
+    }
+
+    private void saveAlarmas() throws Exception {
+        try {
+            IDatabaseController databaseController = new DatabaseController(preferencesManager);
+            AlarmsManager.saveAlarms(databaseController);
+        } catch (Exception ex) {
+            String mensaje = "Error guardando alarmas";
+            DataLogger.Log(ex, mensaje);
+            throw new Exception(mensaje);
+        }
+    }
+
+    private void certificarLecturas() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     

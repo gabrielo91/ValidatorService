@@ -10,8 +10,6 @@ import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
 import com.metrolink.validatorservice.bussinesvalidations.IndividualValidationsSCO;
 import com.metrolink.validatorservice.bussinesvalidations.IndividualValidations;
 import com.metrolink.validatorservice.controller.Controller;
-import com.metrolink.validatorservice.db.controller.DatabaseController;
-import com.metrolink.validatorservice.db.controller.IDatabaseController;
 import com.metrolink.validatorservice.logger.DataLogger;
 import com.metrolink.validatorservice.preferencesmanager.IPreferencesManager;
 import com.metrolink.validatorservice.preferencesmanager.PreferencesManager;
@@ -36,12 +34,10 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        test2();
+        run();
     }
     
-    
-    //test validations iterator
-    private static void test2(){
+    private static void run(){
         try {
 
             String configFilePath = "resources/config.json";
@@ -50,49 +46,34 @@ public class Main {
             IIndividualValidations individualValidations = new IndividualValidations(alarmsManager);
             IIndividualValidationsSCO generalValidations = new IndividualValidationsSCO(alarmsManager);
             Controller controller = new Controller(individualValidations, generalValidations, preferencesManager);
-            //controller.performValidations();
             controller.startValidationProcess();
             
         } catch (IllegalAccessException ex) {
+            DataLogger.Log(ex, ex.getMessage());
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalArgumentException ex) {
+            DataLogger.Log(ex, ex.getMessage());
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
+            DataLogger.Log(ex, ex.getMessage());
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
+            DataLogger.Log(ex, ex.getMessage());
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSuchMethodException ex) {
+            DataLogger.Log(ex, ex.getMessage());
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
+            DataLogger.Log(ex, ex.getMessage());
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
+            DataLogger.Log(ex, ex.getMessage());
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
+            DataLogger.Log(ex, ex.getMessage());
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
     
-    }
-
-    //test preferences manager
-    private void test1(){
-   
-        try {
-            System.out.println("Empezamos");
-            String configFilePath = "resources/config.json";
-            IPreferencesManager preferencesManager = new PreferencesManager(configFilePath);
-            IDatabaseController databaseController = new DatabaseController(preferencesManager);
-            Connection con = databaseController.getConnection();
-            System.out.println("Funcionamos: "+ databaseController);
-            int a = 4/0;
-            
-        } catch (IOException ex) {      
-            DataLogger.Log(ex, "Error leyendo el archivo de configuracion");
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Error leyendo el archivo de configuracion", ex);             
-        } catch (ParseException ex) {
-            DataLogger.Log(ex, "Error analizando el archivo de configuracion");
-        } catch (Exception ex) {
-            DataLogger.Log(ex, "Error en la ejecuciòn de la función principal");
-        }
     }
     
 }

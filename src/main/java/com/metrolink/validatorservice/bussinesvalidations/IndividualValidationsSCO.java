@@ -7,6 +7,7 @@ package com.metrolink.validatorservice.bussinesvalidations;
 
 import com.metrolink.validatorservice.alarmsmanager.AlarmsManager;
 import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
+import com.metrolink.validatorservice.logger.DataLogger;
 import com.metrolink.validatorservice.models.MovRegsSco;
 import com.metrolink.validatorservice.models.MovSuministros;
 import java.util.ArrayList;
@@ -32,45 +33,25 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
     @Override
     public boolean verificarDesviacionConsumo(List<MovSuministros> itinerariosSCO) throws Exception {
         boolean result = false;
-        if (itinerariosSCO.size() > 0) {
-            result = true;
-            
-            //TODO REEMPLAZAR VALORES
-            final int RANGO_MESES = 4;
-            final double COEFICIENTE_VARIACION_MAX = 0.3;
-            
-            for (MovSuministros itinerario : itinerariosSCO) {
+        try {
+            if (itinerariosSCO.size() > 0) {
+                result = true;
 
-                if (!itinerario.getMovRegsScoCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
-                    List<MovRegsSco> movLectConsuAnalizables = itinerario.getMovRegsScoCollection().subList(0, RANGO_MESES);
-                    validarAusenciaDeAnomalias(movLectConsuAnalizables);
-                    if (movLectConsuAnalizables.size() >= RANGO_MESES) {
-                        Collections.sort(movLectConsuAnalizables, sorterByDate()); // Se organiza por fechas en orden descendente
+                //TODO REEMPLAZAR VALORES
+                final int RANGO_MESES = 4;
+                final double COEFICIENTE_VARIACION_MAX = 0.3;
 
-                        double[] diferencias = obtenerDiferenciasLecturas(itinerario.getMovRegsScoCollection());
-                        double desviacionEstandar = calcularDesviacionEstandar(diferencias);
-                        double promedio = (DoubleStream.of(diferencias).sum()) / diferencias.length;
-                        double coeficienteVariacion = desviacionEstandar/Math.abs(promedio);
-                        
-                        if(coeficienteVariacion > COEFICIENTE_VARIACION_MAX){
-                            alarmsManager.reportAlarm(itinerariosSCO.get(0), AlarmsManager.DESVIACION_DE_CONSUMO_ERROR_CODE);
-                            result = result && false;
-                        } else {
-                            result = result && true;
-                        }
-                    } else {
-                        result = result && false;
-                    }
-                } else { //Analisis para consumo
-                    
+                for (MovSuministros itinerario : itinerariosSCO) {
+
+                    if (!itinerario.getMovRegsScoCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
                         List<MovRegsSco> movLectConsuAnalizables = itinerario.getMovRegsScoCollection().subList(0, RANGO_MESES);
                         validarAusenciaDeAnomalias(movLectConsuAnalizables);
                         if (movLectConsuAnalizables.size() >= RANGO_MESES) {
                             Collections.sort(movLectConsuAnalizables, sorterByDate()); // Se organiza por fechas en orden descendente
 
-                            double[] valoresConsumo = obtenerConsumos(itinerario.getMovRegsScoCollection());
-                            double desviacionEstandar = calcularDesviacionEstandar(valoresConsumo);
-                            double promedio = (DoubleStream.of(valoresConsumo).sum()) / valoresConsumo.length;
+                            double[] diferencias = obtenerDiferenciasLecturas(itinerario.getMovRegsScoCollection());
+                            double desviacionEstandar = calcularDesviacionEstandar(diferencias);
+                            double promedio = (DoubleStream.of(diferencias).sum()) / diferencias.length;
                             double coeficienteVariacion = desviacionEstandar/Math.abs(promedio);
 
                             if(coeficienteVariacion > COEFICIENTE_VARIACION_MAX){
@@ -82,9 +63,35 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
                         } else {
                             result = result && false;
                         }
-                }
+                    } else { //Analisis para consumo
 
+                            List<MovRegsSco> movLectConsuAnalizables = itinerario.getMovRegsScoCollection().subList(0, RANGO_MESES);
+                            validarAusenciaDeAnomalias(movLectConsuAnalizables);
+                            if (movLectConsuAnalizables.size() >= RANGO_MESES) {
+                                Collections.sort(movLectConsuAnalizables, sorterByDate()); // Se organiza por fechas en orden descendente
+
+                                double[] valoresConsumo = obtenerConsumos(itinerario.getMovRegsScoCollection());
+                                double desviacionEstandar = calcularDesviacionEstandar(valoresConsumo);
+                                double promedio = (DoubleStream.of(valoresConsumo).sum()) / valoresConsumo.length;
+                                double coeficienteVariacion = desviacionEstandar/Math.abs(promedio);
+
+                                if(coeficienteVariacion > COEFICIENTE_VARIACION_MAX){
+                                    alarmsManager.reportAlarm(itinerariosSCO.get(0), AlarmsManager.DESVIACION_DE_CONSUMO_ERROR_CODE);
+                                    result = result && false;
+                                } else {
+                                    result = result && true;
+                                }
+                            } else {
+                                result = result && false;
+                            }
+                    }
+
+                }
             }
+        } catch (Exception e) {
+            String mensaje = "Error verificando desviación de consumo";
+            DataLogger.Log(e, mensaje);
+            throw new Exception(mensaje);
         }
         return result;
     }

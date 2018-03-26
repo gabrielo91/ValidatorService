@@ -39,7 +39,7 @@ public class AlarmsManager implements IAlarmsManager{
     public final static Short INACTIVE_ALARM = 0;
     
     
-    public void saveAlarms(IDatabaseController databaseController) throws Exception{
+    public static void saveAlarms(IDatabaseController databaseController) throws Exception{
         ArrayList<MovAlarmas> listAlarmas =  AlarmsStack.getInstance().getAlarmsStack();
         IDAOAlarmas daoAlarmas = new DAOAlarmas(databaseController);
         daoAlarmas.insertAlarmas(listAlarmas);
