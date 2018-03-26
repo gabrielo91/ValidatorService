@@ -119,6 +119,7 @@ public class IndividualValidations implements IIndividualValidations {
     @Override
     public boolean comparacionLectuaDiaria(List<MovSuministros> itinerarios) throws Exception  {
         boolean result = false;
+        //TODO REPLACE THIS VALUES
         final double MAX_VALUE = 0.9;
         final double MIN_VALUE = 0.2;
         
@@ -172,6 +173,8 @@ public class IndividualValidations implements IIndividualValidations {
     @Override
     public boolean comparacionLectuaDiariaMensual(List<MovSuministros> itinerarios) throws Exception  {
         boolean result = false;
+        
+        //TODO REPLACE THIS VALUES
         final double MAX_VALUE = 0.9;
         final double MIN_VALUE = 0.2;
         
