@@ -72,7 +72,8 @@ public class Controller {
         performIndividualValidations();
         certificarLecturas();
         lockUnlockSuministros(DAOSuministros.DESBLOQUEADO);
-        saveAlarmas();
+        //TODO ajustar cambios en tablas
+        //saveAlarmas();
     }
     
     
