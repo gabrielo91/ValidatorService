@@ -12,6 +12,7 @@ import com.metrolink.validatorservice.models.AgendaLectura;
 import com.metrolink.validatorservice.models.MovAlarmas;
 import com.metrolink.validatorservice.models.MovAlarmasPK;
 import com.metrolink.validatorservice.models.MovSuministros;
+import com.metrolink.validatorservice.models.MovSuministrosPK;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -72,6 +73,9 @@ public class AlarmsManager implements IAlarmsManager{
         alarm.setVcitinerario(suministro.getVcitinerario());
         alarm.setVcruta(suministro.getVcruta());
         alarm.setVctipoEnergia(suministro.getVctipoEnergia());
+        
+        //Se almacenan los datos del suminsitro que genera la alarma
+        alarm.setMovSuministrosPK(suministro.getMovSuministrosPK());
         
         return alarm;
     }

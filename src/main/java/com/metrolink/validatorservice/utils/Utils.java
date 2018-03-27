@@ -5,12 +5,15 @@
  */
 package com.metrolink.validatorservice.utils;
 
+import com.metrolink.validatorservice.models.MovSuministrosPK;
+import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  *
@@ -36,4 +39,19 @@ public class Utils {
         return false;
     }
     
+    public static boolean esItinerarioValido(MovSuministrosPK movSuministrosPK, List<MovSuministrosPK> suministrosInvalidos) {
+        boolean itinerarioValido = true;
+        for (MovSuministrosPK suministrosInvalido : suministrosInvalidos) {
+            String codConsumo = movSuministrosPK.getVccodtconsumo();
+            int codProv = movSuministrosPK.getNcodProv();
+            BigInteger nnisRad = movSuministrosPK.getNnisRad();
+            if (codConsumo.equals(suministrosInvalido.getVccodtconsumo())
+                    && codProv == suministrosInvalido.getNcodProv()
+                    && nnisRad.compareTo(suministrosInvalido.getNnisRad()) == 0) {
+
+                itinerarioValido = false;
+            }
+        }
+        return itinerarioValido;
+    }
 }

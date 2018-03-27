@@ -52,6 +52,9 @@ public class MovAlarmas implements Serializable {
     @ManyToOne(optional = false)
     private MAlarmas mAlarmas;
 
+    //Campo para almacenar los datos de los suministros que generaron alarmas y que por tanto no se deben validar
+    private MovSuministrosPK movSuministrosPK;
+    
     public MovAlarmas() {
     }
 
@@ -164,5 +167,15 @@ public class MovAlarmas implements Serializable {
     public String toString() {
         return "com.metrolink.validatorservice.models.MovAlarmas[ movAlarmasPK=" + movAlarmasPK + " ]";
     }
+
+    public MovSuministrosPK getMovSuministrosPK() {
+        return movSuministrosPK;
+    }
+
+    public void setMovSuministrosPK(MovSuministrosPK movSuministrosPK) {
+        this.movSuministrosPK = movSuministrosPK;
+    }
+    
+    
     
 }

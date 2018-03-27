@@ -6,6 +6,7 @@
 package com.metrolink.validatorservice.controller;
 
 import com.metrolink.validatorservice.alarmsmanager.AlarmsManager;
+import com.metrolink.validatorservice.alarmsmanager.AlarmsStack;
 import com.metrolink.validatorservice.db.controller.DatabaseController;
 import com.metrolink.validatorservice.db.controller.IDatabaseController;
 import com.metrolink.validatorservice.db.daos.DAOLecturas;
@@ -31,111 +32,112 @@ import com.metrolink.validatorservice.bussinesvalidations.IIndividualValidations
 import com.metrolink.validatorservice.db.daos.DAOParametrosConf;
 import com.metrolink.validatorservice.db.daos.IDAOParametrosConf;
 import com.metrolink.validatorservice.logger.DataLogger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.metrolink.validatorservice.models.MovAlarmas;
+import com.metrolink.validatorservice.models.MovSuministrosPK;
 
 /**
  *
  * @author Gabriel Ortega
  */
 public class Controller {
-    
+
     private IDAOLecturas daoLecturas;
     private IDAOParametrosAdmin daoParametrosAdmin;
     private IDAOAgendaLectura daoAgendaLectura;
     private IDAOSuministros dAOSuministros;
-    
+
     private final IIndividualValidations idividualValidationsClass;
     private final IIndividualValidationsSCO generalValidationsClass;
     private IPreferencesManager preferencesManager;
-    
+
     public Controller(IIndividualValidations idividualValidationsClass, IIndividualValidationsSCO generalValidations, IPreferencesManager preferencesManager) {
         this.idividualValidationsClass = idividualValidationsClass;
         this.generalValidationsClass = generalValidations;
-        this.preferencesManager  = preferencesManager;
+        this.preferencesManager = preferencesManager;
     }
-    
-    public void startValidationProcess() throws Exception{
+
+    public void startValidationProcess() throws Exception {
         ArrayList<AgendaLectura> itinerariosMovLectConsu = getValuesForChecking();
         ArrayList<AgendaLectura> itinerariosMovRegsSco = getValuesForChecking();
-        System.out.println("El tamano es: : "+itinerariosMovLectConsu.size());
+        System.out.println("El tamano es: : " + itinerariosMovLectConsu.size());
         AgendaStack.getInstance().setAgendaValues(itinerariosMovLectConsu);
-                
-        int i=0;
+
+        int i = 0;
         for (AgendaLectura intinerario : AgendaStack.getInstance().getItinerarios()) {
             i++;
-            System.out.println("i: "+ i +"La fecha es: "+intinerario.getAgendaLecturaPK().getDfechaTeo() + " vdtcodconsumo: "+intinerario.getAgendaLecturaPK().getVcparam());
+            System.out.println("i: " + i + "La fecha es: " + intinerario.getAgendaLecturaPK().getDfechaTeo() + " vdtcodconsumo: " + intinerario.getAgendaLecturaPK().getVcparam());
         }
-        
+
         lockUnlockSuministros(DAOSuministros.BLOQUEADO);
-        performIndividualValidationsSCO(itinerariosMovRegsSco);
         performIndividualValidations();
+        ArrayList<MovSuministrosPK> suministrosInvalidos = getSuministrosInvalidos(AgendaStack.getInstance().getItinerarios());
+        performIndividualValidationsSCO(itinerariosMovRegsSco, suministrosInvalidos);
         certificarLecturas();
         lockUnlockSuministros(DAOSuministros.DESBLOQUEADO);
-        //TODO ajustar cambios en tablas
-        //saveAlarmas();
+        saveAlarmas();
     }
-    
-    
+
     /**
      * This method gets the needed value to analyze
-     * @return 
+     *
+     * @return
      */
-    public ArrayList<AgendaLectura> getValuesForChecking() throws Exception{
-        
+    public ArrayList<AgendaLectura> getValuesForChecking() throws Exception {
+
         ArrayList<AgendaLectura> itinerarios = null;
         IDatabaseController databaseController = new DatabaseController(preferencesManager);
-        daoParametrosAdmin = new DAOParametrosAdmin(databaseController);    
+        daoParametrosAdmin = new DAOParametrosAdmin(databaseController);
         MParametrosAdm parametrosAdm = daoParametrosAdmin.getParametrosAdm().get(0);
         IDAOParametrosConf daoParametrosConf = new DAOParametrosConf(databaseController);
         daoParametrosConf.getParametrosConf().get(0);//necesaria para inicialziar los valores
         short diasABuscar = parametrosAdm.getNdiasBusca();
-        System.out.println("dias busca es: "+diasABuscar);
+        System.out.println("dias busca es: " + diasABuscar);
         daoLecturas = new DAOLecturas(databaseController);
         daoAgendaLectura = new DAOAgendaLectura(databaseController);
         Date startingDate = new Date();
         Date endingDate = Utils.addDays(startingDate, diasABuscar);//addDays
         //itinerarios = daoAgendaLectura.listAgendaBetweenDates(startingDate, endingDate);
-        itinerarios = daoAgendaLectura.listAgendaBetweenDates(Utils.addDays(startingDate, -10), Utils.addDays(endingDate, -10),  DAOAgendaLectura.CONSULTA_MOV_LECT_CONSU );
+        itinerarios = daoAgendaLectura.listAgendaBetweenDates(Utils.addDays(startingDate, -14), Utils.addDays(endingDate, -14), DAOAgendaLectura.CONSULTA_MOV_LECT_CONSU);
         return itinerarios;
     }
-    
+
     /**
      * This method gets agenda values and performs validations over them
-     * 
+     *
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
      * @throws InvocationTargetException
      * @throws InstantiationException
-     * @throws NoSuchMethodException 
+     * @throws NoSuchMethodException
      */
-    public void performIndividualValidations() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException, Exception{
+    public void performIndividualValidations() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException, Exception {
         int j = 0;
-        for (AgendaLectura intinerario :  AgendaStack.getInstance().getItinerarios()) {
-            System.out.println("******************************* INTINERARIO: "+intinerario.getVcitinerario());
-            for (int i = 0; i <  intinerario.getListaSuministros().size(); i++) {
+        for (AgendaLectura intinerario : AgendaStack.getInstance().getItinerarios()) {
+            System.out.println("******************************* INTINERARIO: " + intinerario.getVcitinerario());
+            for (int i = 0; i < intinerario.getListaSuministros().size(); i++) {
                 performIndividualValidations(j);
             }
             j++;
-        }  
+        }
     }
-    
-    
+
     /**
-     * Iterate over each method declared in IIndividualValidations interface and uses it over each suministros object. 
-     * It uses the full array in order to perfom validations which uses previous values
+     * Iterate over each method declared in IIndividualValidations interface and
+     * uses it over each suministros object. It uses the full array in order to
+     * perfom validations which uses previous values
+     *
      * @param indexToValidate
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
      * @throws InvocationTargetException
      * @throws InstantiationException
-     * @throws NoSuchMethodException 
+     * @throws NoSuchMethodException
      */
     private void performIndividualValidations(int indexToValidate) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException {
-        
-        Class validations = idividualValidationsClass.getClass();   
+
+        Class validations = idividualValidationsClass.getClass();
         for (Method bussinesValidation : IIndividualValidations.class.getMethods()) {
-            System.out.println("La validacion a ejecutar es: "+ bussinesValidation.getName());
+            System.out.println("La validacion a ejecutar es: " + bussinesValidation.getName());
             Method validation = validations.getMethod(bussinesValidation.getName(), List.class);
             validation.invoke(idividualValidationsClass, AgendaStack.getInstance().getItinerarios().get(indexToValidate).getListaSuministros());
         }
@@ -146,7 +148,7 @@ public class Controller {
         daoParametrosAdmin = new DAOParametrosAdmin(databaseController);
         dAOSuministros = new DAOSuministros(databaseController);
         daoLecturas = new DAOLecturas(databaseController);
-        
+
         for (AgendaLectura intinerario : AgendaStack.getInstance().getItinerarios()) {
 
             dAOSuministros.lockUnlockSuministros(intinerario.getListaSuministros(), state);
@@ -156,19 +158,15 @@ public class Controller {
         }
     }
 
-    private void performIndividualValidationsSCO(ArrayList<AgendaLectura> itinerariosMovRegsSco) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
-        for (AgendaLectura intinerario :  itinerariosMovRegsSco) {
-            System.out.println("******************************* INTINERARIO: "+intinerario.getVcitinerario());
-                performValidationsSCO(intinerario.getListaSuministros());
-        }
-    }
-    
-    private void performValidationsSCO(ArrayList<MovSuministros> itinerariosMovRegsSco) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        Class validations = generalValidationsClass.getClass();   
-        for (Method bussinesValidation : IIndividualValidationsSCO.class.getMethods()) {
-            System.out.println("La validacion a ejecutar es: "+ bussinesValidation.getName());
-            Method validation = validations.getMethod(bussinesValidation.getName(), List.class);
-            validation.invoke(generalValidationsClass, itinerariosMovRegsSco);
+    private void performIndividualValidationsSCO(ArrayList<AgendaLectura> itinerariosMovRegsSco, ArrayList<MovSuministrosPK> suministrosInvalidos) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        for (AgendaLectura intinerario : itinerariosMovRegsSco) {
+            Class validations = generalValidationsClass.getClass();
+            for (Method bussinesValidation : IIndividualValidationsSCO.class.getMethods()) {
+                System.out.println("La validacion a ejecutar es: " + bussinesValidation.getName());
+                Method validation = validations.getMethod(bussinesValidation.getName(), List.class, List.class);
+                validation.invoke(generalValidationsClass, intinerario.getListaSuministros(), suministrosInvalidos);
+            }
+
         }
     }
 
@@ -184,8 +182,61 @@ public class Controller {
     }
 
     private void certificarLecturas() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int lecturasCertificadas = 0;
+        int lecturasGenraronAlarma = 0;
+        int totalSuministros = 0;
+
+//Se evaluan todos los suministros del stack y se comparan con el stack de alarmas, si no generaron una ce certifican
+        ArrayList<AgendaLectura> agendaList = AgendaStack.getInstance().getItinerarios();
+        ArrayList<MovSuministrosPK> suministrosInvalidos = getSuministrosInvalidosFromAlarmas();
+        for (AgendaLectura agenda : agendaList) {
+            totalSuministros = agenda.getListaSuministros().size();
+            ArrayList<MovSuministros> itinerarios = agenda.getListaSuministros();
+            for (MovSuministros suministro : itinerarios) {
+                if (Utils.esItinerarioValido(suministro.getMovSuministrosPK(), suministrosInvalidos)) {
+                    lecturasCertificadas = lecturasCertificadas + 1;
+                    //certificar
+                } else {
+                    lecturasGenraronAlarma = lecturasGenraronAlarma + 1;
+                }
+            }
+        }
+
+        System.out.println("El total de suministros que generaron alarma es:  " + lecturasGenraronAlarma);
+        System.out.println("El total de suministros certificados es: " + lecturasCertificadas);
+        System.out.println("El total de suministros es: " + totalSuministros);
+        System.out.println("El total de alarmas es: " +  AlarmsStack.getInstance().getAlarmsStack().size());
+
     }
-    
-    
+
+    /**
+     * Retorna un arreglo con los pk itinerarios que no hayan sido validados
+     *
+     * @param itinerarios
+     * @return
+     */
+    private ArrayList<MovSuministrosPK> getSuministrosInvalidos(ArrayList<AgendaLectura> agendas) {
+        ArrayList<MovSuministrosPK> suministrosInvalidos = new ArrayList<>();
+        for (AgendaLectura agenda : agendas) {
+            for (MovSuministros suministrosInvalido : agenda.getListaSuministros()) {
+                if (suministrosInvalido.isSuministroInvalidado()) {
+                    suministrosInvalidos.add(suministrosInvalido.getMovSuministrosPK());
+                }
+            }
+        }
+        return suministrosInvalidos;
+    }
+
+    /**
+     * Retorna los PK del stack de alarmas almacenado
+     * @return 
+     */
+    private ArrayList<MovSuministrosPK> getSuministrosInvalidosFromAlarmas() {
+        ArrayList<MovSuministrosPK> suministrosInvalidos = new ArrayList<>();
+        for (MovAlarmas alarma : AlarmsStack.getInstance().getAlarmsStack()) {
+            suministrosInvalidos.add(alarma.getMovSuministrosPK());
+        }
+        return suministrosInvalidos;
+    }
+
 }

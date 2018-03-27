@@ -18,16 +18,15 @@ import com.metrolink.validatorservice.models.AgendaLecturaPK;
 import com.metrolink.validatorservice.models.MCalTou;
 import com.metrolink.validatorservice.models.MConfVal;
 import com.metrolink.validatorservice.models.MParametrosAdm;
-import com.metrolink.validatorservice.models.MovLectConsu;
 import com.metrolink.validatorservice.models.MovRegsSco;
 import com.metrolink.validatorservice.models.MovRegsScoPK;
 import com.metrolink.validatorservice.models.MovSuministros;
+import com.metrolink.validatorservice.models.MovSuministrosPK;
 import com.metrolink.validatorservice.preferencesmanager.IPreferencesManager;
 import com.metrolink.validatorservice.preferencesmanager.PreferencesManager;
 import com.metrolink.validatorservice.utils.Utils;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -63,6 +62,7 @@ public class ValidationsSCOTest {
     IIndividualValidationsSCO individualValidationsSCO;
     MParametrosAdm parametrosAdm;
     MConfVal parametrosConf;
+    ArrayList<MovSuministrosPK> itinerariosInvalidos;
     
     private  ArrayList<AgendaLectura> createUniqueElementAgendaArray() throws ParseException{
         ArrayList<AgendaLectura> intinerarios = new ArrayList<>();
@@ -73,6 +73,12 @@ public class ValidationsSCOTest {
         agenda.setAgendaLecturaPK(agendaLecturaPK);
         
         MovSuministros movSuministros = new MovSuministros();
+        MovSuministrosPK movSuministrosPK = new MovSuministrosPK();
+        movSuministrosPK.setNcodProv(123);
+        movSuministrosPK.setVccodtconsumo("TEST");
+        movSuministrosPK.setNnisRad(BigInteger.valueOf(123123));
+        movSuministros.setMovSuministrosPK(movSuministrosPK);
+        
         MCalTou mCalTou = new MCalTou();
         movSuministros.setNcodCalTou(mCalTou);
         movSuministros.setVctipoVal(MovSuministros.TIPO_LECTURA);
@@ -122,7 +128,8 @@ public class ValidationsSCOTest {
     public void setUp() throws Exception {
          MockitoAnnotations.initMocks(this);
          alarmsManager = mock(AlarmsManager.class);
-         individualValidationsSCO = new IndividualValidationsSCO(alarmsManager);   
+         individualValidationsSCO = new IndividualValidationsSCO(alarmsManager);  
+         itinerariosInvalidos = new ArrayList<>();
          loadAdminParamsFromDB();
          loadConfParamsFromDB();
          AgendaLectura lectura = new AgendaLectura();
@@ -134,15 +141,15 @@ public class ValidationsSCOTest {
     @Test
     public void validacionDesviacionLecturasExitoso() throws ParseException, Exception{
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray(); 
-        boolean result = individualValidationsSCO.verificarDesviacionConsumo(itinerarios.get(0).getListaSuministros());
+        boolean result = individualValidationsSCO.verificarDesviacionConsumo(itinerarios.get(0).getListaSuministros(), itinerariosInvalidos);
         Assert.assertTrue(result);
     }
-    
+            
     @Test
     public void validacionDesviacionConsumoExitoso() throws ParseException, Exception{
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray(); 
         itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_CONSUMO);
-        boolean result = individualValidationsSCO.verificarDesviacionConsumo(itinerarios.get(0).getListaSuministros());
+        boolean result = individualValidationsSCO.verificarDesviacionConsumo(itinerarios.get(0).getListaSuministros(), itinerariosInvalidos);
         Assert.assertTrue(result);
     }
     
@@ -150,7 +157,7 @@ public class ValidationsSCOTest {
     public void validacionDesviacionLecturasFallidaPorCodigoAnomalia() throws ParseException, Exception{
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray(); 
         itinerarios.get(0).getListaSuministros().get(0).getMovRegsScoCollection().get(0).setVccoan("ASDWA");
-        boolean result = individualValidationsSCO.verificarDesviacionConsumo(itinerarios.get(0).getListaSuministros());
+        boolean result = individualValidationsSCO.verificarDesviacionConsumo(itinerarios.get(0).getListaSuministros(), itinerariosInvalidos);
         Assert.assertFalse(result);
     }
     
@@ -159,7 +166,7 @@ public class ValidationsSCOTest {
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray(); 
         itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_CONSUMO);
         itinerarios.get(0).getListaSuministros().get(0).getMovRegsScoCollection().get(0).setVccoan("ASDWA");
-        boolean result = individualValidationsSCO.verificarDesviacionConsumo(itinerarios.get(0).getListaSuministros());
+        boolean result = individualValidationsSCO.verificarDesviacionConsumo(itinerarios.get(0).getListaSuministros(), itinerariosInvalidos);
         Assert.assertFalse(result);;
     }
     
@@ -167,20 +174,28 @@ public class ValidationsSCOTest {
     public void validacionDesviacionLecturasFallidaYEnvioAlarma() throws ParseException, Exception{
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray(); 
         itinerarios.get(0).getListaSuministros().get(0).getMovRegsScoCollection().get(0).setNlec(BigInteger.valueOf(VALOR_PARA_FORZAR_DESVIACION));
-        boolean result = individualValidationsSCO.verificarDesviacionConsumo(itinerarios.get(0).getListaSuministros());
+        boolean result = individualValidationsSCO.verificarDesviacionConsumo(itinerarios.get(0).getListaSuministros(), itinerariosInvalidos);
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.DESVIACION_DE_CONSUMO_ERROR_CODE);
     }
     
     @Test
-    public void validacionDesviacionLecturasConsumoYEnvioAlarma() throws ParseException, Exception{
+    public void validacionDesviacionConsumoYEnvioAlarma() throws ParseException, Exception{
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray(); 
         itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_CONSUMO);
         itinerarios.get(0).getListaSuministros().get(0).getMovRegsScoCollection().get(0).setNconsumo(BigInteger.valueOf(VALOR_PARA_FORZAR_DESVIACION));
-        boolean result = individualValidationsSCO.verificarDesviacionConsumo(itinerarios.get(0).getListaSuministros());
+        boolean result = individualValidationsSCO.verificarDesviacionConsumo(itinerarios.get(0).getListaSuministros(), itinerariosInvalidos);
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.DESVIACION_DE_CONSUMO_ERROR_CODE);
     
+    }
+    
+    @Test
+    public void validacionDesviacionSuministroInvalido() throws ParseException, Exception{
+        ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray(); 
+        itinerariosInvalidos.add(itinerarios.get(0).getListaSuministros().get(0).getMovSuministrosPK());
+        boolean result = individualValidationsSCO.verificarDesviacionConsumo(itinerarios.get(0).getListaSuministros(), itinerariosInvalidos);
+        Assert.assertFalse(result);
     }
     
     private void loadAdminParamsFromDB() throws IOException, FileNotFoundException, org.json.simple.parser.ParseException, Exception {

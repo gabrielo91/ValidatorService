@@ -6,6 +6,7 @@
 package com.metrolink.validatorservice.bussinesvalidations;
 
 import com.metrolink.validatorservice.models.MovSuministros;
+import com.metrolink.validatorservice.models.MovSuministrosPK;
 import java.util.List;
 
 /**
@@ -13,5 +14,5 @@ import java.util.List;
  * @author Gabriel Ortega
  */
 public interface IIndividualValidationsSCO {
-    public boolean verificarDesviacionConsumo(List<MovSuministros> itinerariosSCO)  throws Exception;
+    public boolean verificarDesviacionConsumo(List<MovSuministros> itinerariosSCO, List<MovSuministrosPK> suministrosInvalidos)  throws Exception;
 }
