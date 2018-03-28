@@ -15,7 +15,6 @@ import com.metrolink.validatorservice.preferencesmanager.IPreferencesManager;
 import com.metrolink.validatorservice.preferencesmanager.PreferencesManager;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Connection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.parser.ParseException;

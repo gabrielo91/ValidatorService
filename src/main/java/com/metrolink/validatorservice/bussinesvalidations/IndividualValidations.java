@@ -40,7 +40,7 @@ public class IndividualValidations implements IIndividualValidations {
                 result = true;
                 for (MovSuministros itinerario : itinerarios) {
                     if(!itinerario.isSuministroInvalidado()){
-                        if (!itinerario.getMovLectConsuCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)){
+                        if (!itinerario.getMovLectConsuCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_CONSUMO)){
                             Integer calendarioTOU = itinerarios.get(0).getNcodCalTou().getNcodCalTou();
                             if(null == calendarioTOU || calendarioTOU < 1){
                                 result = result && false;

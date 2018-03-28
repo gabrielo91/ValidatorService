@@ -63,7 +63,7 @@ public class ValidationsTest {
     
     
     private  ArrayList<AgendaLectura> createUniqueElementAgendaArray() throws ParseException{
-        Integer calTouNumber = 12345;
+        Integer calTouNumber = 1235456;
         ArrayList<AgendaLectura> intinerarios = new ArrayList<>();
         AgendaLectura agenda = new AgendaLectura();
         
@@ -112,7 +112,8 @@ public class ValidationsTest {
     @Test
     public void verificarCalendarioTOUTestExitoso() throws Exception{
         boolean result = false;        
-        ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();               
+        ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();      
+        itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_CONSUMO);
         result = individualValidations.verificarCalendarioTOU(itinerarios.get(0).getListaSuministros());
         Assert.assertTrue(result);
     }
@@ -122,6 +123,7 @@ public class ValidationsTest {
         boolean result = false;
         Integer calTouNumber = -1;
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
+        itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_CONSUMO);
         itinerarios.get(0).getListaSuministros().get(0).getNcodCalTou().setNcodCalTou(calTouNumber);      
         result = individualValidations.verificarCalendarioTOU(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
@@ -129,8 +131,16 @@ public class ValidationsTest {
     }
     
     @Test
-    public void verificarExistenciaDatosExitoso() throws Exception{
+    public void verificarExistenciaDatosLecturasExitoso() throws Exception{
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
+        boolean result = individualValidations.verificarExistenciaDatos(itinerarios.get(0).getListaSuministros());
+        Assert.assertTrue(result);
+    }
+    
+    @Test
+    public void verificarExistenciaDatosConsumosExitoso() throws Exception{
+        ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
+        itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_CONSUMO);
         boolean result = individualValidations.verificarExistenciaDatos(itinerarios.get(0).getListaSuministros());
         Assert.assertTrue(result);
     }
@@ -176,7 +186,7 @@ public class ValidationsTest {
     public void verificarCompletitudInformacionConsumosExitoso() throws Exception {
         boolean result; 
         final int diasDiferenciaMinimaPermitida = parametrosAdm.getNtolCompletud();
-        Date testingDateFLA = Utils.addDays(new Date(), - diasDiferenciaMinimaPermitida + UN_DIA);
+        Date testingDateFLA = Utils.addDays(new Date(), - (diasDiferenciaMinimaPermitida + UN_DIA));
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
         itinerarios.get(0).getListaSuministros().get(0).setTsfla(testingDateFLA);
         itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_CONSUMO);

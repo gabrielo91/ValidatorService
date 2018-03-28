@@ -12,7 +12,6 @@ import com.metrolink.validatorservice.models.AgendaLectura;
 import com.metrolink.validatorservice.models.MovAlarmas;
 import com.metrolink.validatorservice.models.MovAlarmasPK;
 import com.metrolink.validatorservice.models.MovSuministros;
-import com.metrolink.validatorservice.models.MovSuministrosPK;
 import java.util.ArrayList;
 import java.util.Date;
 

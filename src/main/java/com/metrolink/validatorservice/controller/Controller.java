@@ -62,11 +62,11 @@ public class Controller {
         System.out.println("El tamano es: : " + itinerariosMovLectConsu.size());
         AgendaStack.getInstance().setAgendaValues(itinerariosMovLectConsu);
 
-        int i = 0;
-        for (AgendaLectura intinerario : AgendaStack.getInstance().getItinerarios()) {
-            i++;
-            System.out.println("i: " + i + "La fecha es: " + intinerario.getAgendaLecturaPK().getDfechaTeo() + " vdtcodconsumo: " + intinerario.getAgendaLecturaPK().getVcparam());
-        }
+//        int i = 0;
+//        for (AgendaLectura intinerario : AgendaStack.getInstance().getItinerarios()) {
+//            i++;
+//            System.out.println("i: " + i + "La fecha es: " + intinerario.getAgendaLecturaPK().getDfechaTeo() + " vdtcodconsumo: " + intinerario.getAgendaLecturaPK().getVcparam());
+//        }
 
         lockUnlockSuministros(DAOSuministros.BLOQUEADO);
         performIndividualValidations();
@@ -96,8 +96,8 @@ public class Controller {
         daoAgendaLectura = new DAOAgendaLectura(databaseController);
         Date startingDate = new Date();
         Date endingDate = Utils.addDays(startingDate, diasABuscar);//addDays
-        //itinerarios = daoAgendaLectura.listAgendaBetweenDates(startingDate, endingDate);
-        itinerarios = daoAgendaLectura.listAgendaBetweenDates(Utils.addDays(startingDate, -14), Utils.addDays(endingDate, -14), DAOAgendaLectura.CONSULTA_MOV_LECT_CONSU);
+        itinerarios = daoAgendaLectura.listAgendaBetweenDates(startingDate, endingDate, DAOAgendaLectura.CONSULTA_MOV_LECT_CONSU);
+        //itinerarios = daoAgendaLectura.listAgendaBetweenDates(Utils.addDays(startingDate, -14), Utils.addDays(endingDate, -14), DAOAgendaLectura.CONSULTA_MOV_LECT_CONSU);
         return itinerarios;
     }
 
