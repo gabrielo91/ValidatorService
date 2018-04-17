@@ -13,9 +13,6 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -41,6 +38,12 @@ public class MovLectConsu implements Serializable {
     @Basic(optional = false)
     @Column(name = "NCONS_PROCESO")
     private int nconsProceso;
+    @Basic(optional = false)
+    @Column(name = "NCOD_PROV")
+    private int ncodProv;
+    @Basic(optional = false)
+    @Column(name = "NNIS_RAD")
+    private BigInteger nnisRad;
     @Basic(optional = false)
     @Column(name = "TSFECHA_LEC")
     @Temporal(TemporalType.TIMESTAMP)
@@ -76,12 +79,8 @@ public class MovLectConsu implements Serializable {
     private Short lcertificada;
     @Column(name = "NNIC")
     private BigInteger nnic;
-    @JoinColumns({
-        @JoinColumn(name = "NCOD_PROV", referencedColumnName = "NCOD_PROV")
-        , @JoinColumn(name = "NNIS_RAD", referencedColumnName = "NNIS_RAD")
-        , @JoinColumn(name = "VCCODTCONSUMO", referencedColumnName = "VCCODTCONSUMO")})
-    @ManyToOne(optional = false)
-    private MovSuministros movSuministros;
+    @Column(name = "VCCODTCONSUMO")
+    private String vccodtconsumo;
 
     public MovLectConsu() {
     }
@@ -90,9 +89,11 @@ public class MovLectConsu implements Serializable {
         this.id = id;
     }
 
-    public MovLectConsu(BigDecimal id, int nconsProceso, Date tsfechaLec) {
+    public MovLectConsu(BigDecimal id, int nconsProceso, int ncodProv, BigInteger nnisRad, Date tsfechaLec) {
         this.id = id;
         this.nconsProceso = nconsProceso;
+        this.ncodProv = ncodProv;
+        this.nnisRad = nnisRad;
         this.tsfechaLec = tsfechaLec;
     }
 
@@ -110,6 +111,22 @@ public class MovLectConsu implements Serializable {
 
     public void setNconsProceso(int nconsProceso) {
         this.nconsProceso = nconsProceso;
+    }
+
+    public int getNcodProv() {
+        return ncodProv;
+    }
+
+    public void setNcodProv(int ncodProv) {
+        this.ncodProv = ncodProv;
+    }
+
+    public BigInteger getNnisRad() {
+        return nnisRad;
+    }
+
+    public void setNnisRad(BigInteger nnisRad) {
+        this.nnisRad = nnisRad;
     }
 
     public Date getTsfechaLec() {
@@ -240,12 +257,12 @@ public class MovLectConsu implements Serializable {
         this.nnic = nnic;
     }
 
-    public MovSuministros getMovSuministros() {
-        return movSuministros;
+    public String getVccodtconsumo() {
+        return vccodtconsumo;
     }
 
-    public void setMovSuministros(MovSuministros movSuministros) {
-        this.movSuministros = movSuministros;
+    public void setVccodtconsumo(String vccodtconsumo) {
+        this.vccodtconsumo = vccodtconsumo;
     }
 
     @Override

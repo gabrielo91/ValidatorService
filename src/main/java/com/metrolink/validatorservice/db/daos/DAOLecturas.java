@@ -9,6 +9,7 @@ import com.metrolink.validatorservice.db.controller.IDatabaseController;
 import com.metrolink.validatorservice.models.MovLectConsu;
 import com.metrolink.validatorservice.models.MovSuministros;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -75,6 +76,10 @@ public class DAOLecturas implements IDAOLecturas {
     public static MovLectConsu createMovLecConsuEntity(ResultSet resultSet) throws SQLException {
         MovLectConsu lectura = new MovLectConsu();
         lectura.setId(resultSet.getBigDecimal("ID"));
+        lectura.setNnisRad(BigInteger.valueOf(resultSet.getLong("NNIS_RAD")));
+        lectura.setNcodProv(resultSet.getInt("NCOD_PROV"));
+        lectura.setVccodtconsumo(resultSet.getString("VCCODTCONSUMO"));
+        lectura.setNnic(BigInteger.valueOf(resultSet.getLong("NNIC")));
         lectura.setLbloqueado(resultSet.getShort("LBLOQUEADO"));
         lectura.setLcertificada(resultSet.getShort("LCERTIFICADA"));
         lectura.setLenviado(resultSet.getShort("LENVIADO"));
