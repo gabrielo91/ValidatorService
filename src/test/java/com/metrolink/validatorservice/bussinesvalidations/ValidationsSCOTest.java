@@ -75,7 +75,7 @@ public class ValidationsSCOTest {
         MovSuministros movSuministros = new MovSuministros();
         MovSuministrosPK movSuministrosPK = new MovSuministrosPK();
         movSuministrosPK.setNcodProv(123);
-        movSuministrosPK.setVccodtconsumo("TEST");
+        movSuministrosPK.setVctipoEnergia("TEST");
         movSuministrosPK.setNnisRad(BigInteger.valueOf(123123));
         movSuministros.setMovSuministrosPK(movSuministrosPK);
         

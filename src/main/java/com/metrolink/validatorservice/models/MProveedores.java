@@ -7,6 +7,7 @@ package com.metrolink.validatorservice.models;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -16,6 +17,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -26,6 +29,12 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "MProveedores.findAll", query = "SELECT m FROM MProveedores m")})
 public class MProveedores implements Serializable {
+
+    @Column(name = "DFECHA_INT_FALL")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dfechaIntFall;
+    @Column(name = "NINT_FALL")
+    private Short nintFall;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -207,6 +216,22 @@ public class MProveedores implements Serializable {
     @Override
     public String toString() {
         return "com.metrolink.validatorservice.models.MProveedores[ ncodProv=" + ncodProv + " ]";
+    }
+
+    public Date getDfechaIntFall() {
+        return dfechaIntFall;
+    }
+
+    public void setDfechaIntFall(Date dfechaIntFall) {
+        this.dfechaIntFall = dfechaIntFall;
+    }
+
+    public Short getNintFall() {
+        return nintFall;
+    }
+
+    public void setNintFall(Short nintFall) {
+        this.nintFall = nintFall;
     }
     
 }

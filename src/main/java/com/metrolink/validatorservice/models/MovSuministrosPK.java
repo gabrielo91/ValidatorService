@@ -25,16 +25,16 @@ public class MovSuministrosPK implements Serializable {
     @Column(name = "NNIS_RAD")
     private BigInteger nnisRad;
     @Basic(optional = false)
-    @Column(name = "VCCODTCONSUMO")
-    private String vccodtconsumo;
+    @Column(name = "VCTIPO_ENERGIA")
+    private String vctipoEnergia;
 
     public MovSuministrosPK() {
     }
 
-    public MovSuministrosPK(int ncodProv, BigInteger nnisRad, String vccodtconsumo) {
+    public MovSuministrosPK(int ncodProv, BigInteger nnisRad, String vctipoEnergia) {
         this.ncodProv = ncodProv;
         this.nnisRad = nnisRad;
-        this.vccodtconsumo = vccodtconsumo;
+        this.vctipoEnergia = vctipoEnergia;
     }
 
     public int getNcodProv() {
@@ -53,12 +53,12 @@ public class MovSuministrosPK implements Serializable {
         this.nnisRad = nnisRad;
     }
 
-    public String getVccodtconsumo() {
-        return vccodtconsumo;
+    public String getVctipoEnergia() {
+        return vctipoEnergia;
     }
 
-    public void setVccodtconsumo(String vccodtconsumo) {
-        this.vccodtconsumo = vccodtconsumo;
+    public void setVctipoEnergia(String vctipoEnergia) {
+        this.vctipoEnergia = vctipoEnergia;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class MovSuministrosPK implements Serializable {
         int hash = 0;
         hash += (int) ncodProv;
         hash += (nnisRad != null ? nnisRad.hashCode() : 0);
-        hash += (vccodtconsumo != null ? vccodtconsumo.hashCode() : 0);
+        hash += (vctipoEnergia != null ? vctipoEnergia.hashCode() : 0);
         return hash;
     }
 
@@ -83,7 +83,7 @@ public class MovSuministrosPK implements Serializable {
         if ((this.nnisRad == null && other.nnisRad != null) || (this.nnisRad != null && !this.nnisRad.equals(other.nnisRad))) {
             return false;
         }
-        if ((this.vccodtconsumo == null && other.vccodtconsumo != null) || (this.vccodtconsumo != null && !this.vccodtconsumo.equals(other.vccodtconsumo))) {
+        if ((this.vctipoEnergia == null && other.vctipoEnergia != null) || (this.vctipoEnergia != null && !this.vctipoEnergia.equals(other.vctipoEnergia))) {
             return false;
         }
         return true;
@@ -91,7 +91,7 @@ public class MovSuministrosPK implements Serializable {
 
     @Override
     public String toString() {
-        return "com.metrolink.validatorservice.models.MovSuministrosPK[ ncodProv=" + ncodProv + ", nnisRad=" + nnisRad + ", vccodtconsumo=" + vccodtconsumo + " ]";
+        return "com.metrolink.validatorservice.models.MovSuministrosPK[ ncodProv=" + ncodProv + ", nnisRad=" + nnisRad + ", vctipoEnergia=" + vctipoEnergia + " ]";
     }
     
 }

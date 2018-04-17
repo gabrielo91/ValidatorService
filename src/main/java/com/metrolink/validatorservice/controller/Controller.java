@@ -41,6 +41,7 @@ import com.metrolink.validatorservice.models.MovSuministrosPK;
  */
 public class Controller {
 
+    private static final int UN_DIA = 1;
     private IDAOLecturas daoLecturas;
     private IDAOParametrosAdmin daoParametrosAdmin;
     private IDAOAgendaLectura daoAgendaLectura;
@@ -96,6 +97,7 @@ public class Controller {
         daoAgendaLectura = new DAOAgendaLectura(databaseController);
         Date startingDate = new Date();
         Date endingDate = Utils.addDays(startingDate, diasABuscar);//addDays
+        startingDate = Utils.addDays(startingDate, - UN_DIA);       
         itinerarios = daoAgendaLectura.listAgendaBetweenDates(startingDate, endingDate, DAOAgendaLectura.CONSULTA_MOV_LECT_CONSU);
         //itinerarios = daoAgendaLectura.listAgendaBetweenDates(Utils.addDays(startingDate, -14), Utils.addDays(endingDate, -14), DAOAgendaLectura.CONSULTA_MOV_LECT_CONSU);
         return itinerarios;

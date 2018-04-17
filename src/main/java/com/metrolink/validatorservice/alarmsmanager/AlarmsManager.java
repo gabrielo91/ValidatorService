@@ -71,7 +71,7 @@ public class AlarmsManager implements IAlarmsManager{
         alarm.setNunicom(suministro.getNunicom().shortValue());
         alarm.setVcitinerario(suministro.getVcitinerario());
         alarm.setVcruta(suministro.getVcruta());
-        alarm.setVctipoEnergia(suministro.getVctipoEnergia());
+        alarm.setVctipoEnergia(suministro.getMovSuministrosPK().getVctipoEnergia());
         
         //Se almacenan los datos del suminsitro que genera la alarma
         alarm.setMovSuministrosPK(suministro.getMovSuministrosPK());

@@ -42,10 +42,10 @@ public class Utils {
     public static boolean esItinerarioValido(MovSuministrosPK movSuministrosPK, List<MovSuministrosPK> suministrosInvalidos) {
         boolean itinerarioValido = true;
         for (MovSuministrosPK suministrosInvalido : suministrosInvalidos) {
-            String codConsumo = movSuministrosPK.getVccodtconsumo();
+            String tipoEnergia = movSuministrosPK.getVctipoEnergia();
             int codProv = movSuministrosPK.getNcodProv();
             BigInteger nnisRad = movSuministrosPK.getNnisRad();
-            if (codConsumo.equals(suministrosInvalido.getVccodtconsumo())
+            if (tipoEnergia.equals(suministrosInvalido.getVctipoEnergia())
                     && codProv == suministrosInvalido.getNcodProv()
                     && nnisRad.compareTo(suministrosInvalido.getNnisRad()) == 0) {
 

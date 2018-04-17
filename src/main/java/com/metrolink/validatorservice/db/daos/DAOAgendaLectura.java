@@ -52,10 +52,11 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
                 + "ON AL.NUNICOM = MSUM.NUNICOM \n"
                 + "AND AL.VCITINERARIO = MSUM.VCITINERARIO \n"
                 + "AND AL.VCRUTA = MSUM.VCRUTA\n"
+                + "AND AL.VCCICLO = MSUM.VCCICLO\n"
                 + "LEFT JOIN MOV_LECT_CONSU MLEC\n"
-                + "ON MLEC.NCOD_PROV = MSUM.NCOD_PROV\n"
-                + "AND MLEC.NNIC = MSUM.NNIC\n"
-                + "AND MLEC.NNIS_RAD = MSUM.NNIS_RAD \n"
+                + "ON ((MLEC.NNIC = MSUM.NNIC AND MLEC.NNIS_RAD IS NULL) \n" 
+                + "OR (MLEC.NNIS_RAD = MSUM.NNIS_RAD AND MLEC.NNIC IS NULL)\n" 
+                + "OR (MLEC.NNIC = MSUM.NNIC AND MLEC.NNIS_RAD = MSUM.NNIS_RAD))\n" 
                 + "WHERE AL.DFECHA_TEO BETWEEN ? AND ?\n"
                 + "ORDER BY AL.DFECHA_TEO, AL.VCPARAM, AL.NPERICONS";
 
@@ -114,19 +115,31 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
         String vccodtconsumoPrev;        
         AgendaLectura agendaLectura = new AgendaLectura();
 
+        int contador = 0;
+        
         while (result.next()) {
+            contador = contador +1;
             long npericonsCurr = result.getLong("NPERICONS");;
             Date dfechaTeoCurr = result.getDate("DFECHA_TEO");;
             String vcparamCurr = result.getString("VCPARAM");
             AgendaLecturaPK agendaLecturaPKCurr = new AgendaLecturaPK(npericonsCurr, dfechaTeoCurr, vcparamCurr);
             System.err.println("VCINTINERARIO ES: "+result.getString("VCITINERARIO"));
  
-            int ncodProvCurr; 
-            BigInteger nnisRadCurr; 
-            String vccodtconsumoCurr;
-            MovSuministrosPK suministrosPKCurr;
+            int ncodProvCurr = -1; 
+            BigInteger nnisRadCurr = null; 
+            String vccodtconsumoCurr = null;
+            MovSuministrosPK suministrosPKCurr = null;
             MovSuministros suministro;
             
+            
+            if(result.getBigDecimal("NNIS_RAD") != null){
+                ncodProvCurr = result.getInt("NCOD_PROV");
+                nnisRadCurr = result.getBigDecimal("NNIS_RAD").toBigInteger(); 
+                vccodtconsumoCurr = result.getString("VCTIPO_ENERGIA"); 
+                suministrosPKCurr = new MovSuministrosPK(ncodProvCurr, nnisRadCurr, vccodtconsumoCurr); 
+            }
+            
+                
             //Iterates over each distinc row of AgendaLectura
             if(null == agendaLecturaPKPrev || !agendaLecturaPKPrev.equals(agendaLecturaPKCurr)){
                 agendaLectura = createAgendaEntity(result);    
@@ -136,12 +149,6 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
                 listAgenda.add(agendaLectura);
                 
             } else if (agendaLecturaPKPrev.equals(agendaLecturaPKCurr)){
-                
-                ncodProvCurr = result.getInt("NCOD_PROV"); 
-                nnisRadCurr = result.getBigDecimal("NNIS_RAD").toBigInteger(); 
-                vccodtconsumoCurr = result.getString("VCCODTCONSUMO"); 
-                suministrosPKCurr = new MovSuministrosPK(ncodProvCurr, nnisRadCurr, vccodtconsumoCurr);               
-                
                 
                 //Iterates over each distinc row of Suministros
                 if (null == movSuministrosPKPrev || !movSuministrosPKPrev.equals(suministrosPKCurr)){
@@ -165,7 +172,12 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
                 nnisRadPrev = nnisRadCurr; 
                 vccodtconsumoPrev = vccodtconsumoCurr;
                 movSuministrosPKPrev = new MovSuministrosPK(ncodProvPrev, nnisRadPrev, vccodtconsumoPrev);                
-            }
+            }          
+            
+            ncodProvPrev = ncodProvCurr; 
+            nnisRadPrev = nnisRadCurr; 
+            vccodtconsumoPrev = vccodtconsumoCurr;
+            movSuministrosPKPrev = new MovSuministrosPK(ncodProvPrev, nnisRadPrev, vccodtconsumoPrev);   
             
             npericonsPrev = npericonsCurr;
             dfechaTeoPrev = new Date(dfechaTeoCurr.getTime());
@@ -173,6 +185,7 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
             agendaLecturaPKPrev = new AgendaLecturaPK(npericonsPrev, dfechaTeoPrev, vcparamPrev);
             
         }
+        System.out.println("contador es: "+contador);
         return listAgenda;
     }
     
@@ -191,9 +204,9 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
        
         MovSuministros movSuministros = DAOSuministros.createMovSuministrosEntity(result);
         System.err.println("ncodProv es: "+movSuministros.getMovSuministrosPK().getNcodProv());
-        if(0 != movSuministros.getMovSuministrosPK().getNcodProv() 
+        if(movSuministros.getMovSuministrosPK().getNcodProv() >= 0
                 && null != movSuministros.getMovSuministrosPK().getNnisRad() 
-                && null != movSuministros.getMovSuministrosPK().getVccodtconsumo()){
+                && null != movSuministros.getMovSuministrosPK().getVctipoEnergia()){
             agendaLectura.getListaSuministros().add(movSuministros);
         }
         
