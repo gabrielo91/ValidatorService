@@ -64,8 +64,9 @@ public class AlarmsManager implements IAlarmsManager{
         alarmasPK.setNcodAlarma(codigoAlarma);
         alarmasPK.setNconsProceso(0);
         alarmasPK.setNnisRad(suministro.getMovSuministrosPK().getNnisRad().intValue());
+        System.out.println("NISRAD CREATE ALARM "+suministro.getMovSuministrosPK().getNnisRad());
         alarm.setMovAlarmasPK(alarmasPK);
-        alarm.setNnic(suministro.getNnic().intValue());
+        alarm.setNnic(suministro.getNnic());
         //TODO where this value does come from? ******
         alarm.setNperiodo(0);
         alarm.setNunicom(suministro.getNunicom().shortValue());

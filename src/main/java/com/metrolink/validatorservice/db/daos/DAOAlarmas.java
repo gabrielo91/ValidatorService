@@ -30,16 +30,16 @@ public class DAOAlarmas implements IDAOAlarmas {
         int[] resultList;
         
         String sql = "INSERT INTO MOV_ALARMAS ("
-                + " NUNICOM" 
-                + " NCONS_PROCESO"
-                + " NPERIODO" 
-                + " VCRUTA" 
-                + " VCITINERARIO"
-                + " DFECHA_VAL"
-                + " NNIC"
-                + " NNIS_RAD" 
-                + " NCOD_ALARMA" 
-                + " VCTIPO_ENERGIA) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)";
+                + " NUNICOM," 
+                + " NCONS_PROCESO,"
+                + " NPERICONS," 
+                + " VCRUTA," 
+                + " VCITINERARIO,"
+                + " DFECHA_VAL,"
+                + " NNIC,"
+                + " NNIS_RAD," 
+                + " NCOD_ALARMA," 
+                + " VCTIPO_ENERGIA) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection con = databaseController.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(sql);

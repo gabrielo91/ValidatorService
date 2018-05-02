@@ -16,7 +16,7 @@ import javax.persistence.TemporalType;
 
 /**
  *
- * @author USUARIO
+ * @author G 50-70
  */
 @Embeddable
 public class MovRegsScoPK implements Serializable {

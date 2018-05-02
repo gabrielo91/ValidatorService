@@ -34,7 +34,7 @@ public class MovAlarmas implements Serializable {
     protected MovAlarmasPK movAlarmasPK;
     @Column(name = "NUNICOM")
     private Short nunicom;
-    @Column(name = "NPERIODO")
+    @Column(name = "NPERICONS")
     private Integer nperiodo;
     @Column(name = "VCRUTA")
     private String vcruta;

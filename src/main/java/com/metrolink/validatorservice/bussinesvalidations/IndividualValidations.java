@@ -34,18 +34,18 @@ public class IndividualValidations implements IIndividualValidations {
     public boolean verificarCalendarioTOU(List<MovSuministros> itinerarios) throws Exception  { 
         
         boolean result = false;
-       
+      
         try {
             if(itinerarios.size() > 0){
                 result = true;
                 for (MovSuministros itinerario : itinerarios) {
-                    if(!itinerario.isSuministroInvalidado()){
-                        if (!itinerario.getMovLectConsuCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_CONSUMO)){
+                    if(!itinerario.isSuministroInvalidado()){                        
+                        if (!itinerario.getMovLectConsuCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_CONSUMO)){                           
                             Integer calendarioTOU = itinerarios.get(0).getNcodCalTou().getNcodCalTou();
-                            if(null == calendarioTOU || calendarioTOU < 1){
+                            if(null == calendarioTOU || calendarioTOU < 1){                                
                                 result = result && false;
                                 alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.CALENDARIO_TOU_VALIDATION_ERROR_CODE);
-                            } else {
+                            } else {                                
                                 result = result && true;
                             }
                         }
@@ -141,26 +141,24 @@ public class IndividualValidations implements IIndividualValidations {
     
     @Override
     public boolean comparacionLectuaDiaria(List<MovSuministros> itinerarios) throws Exception  {
-        boolean result = false;
-        
+        boolean result = false;        
         try {
             //TODO REPLACE THIS VALUES
             final double MAX_VALUE = 0.9;
             final double MIN_VALUE = 0.2;
 
             int i = 1;
-            System.out.println("empezando "+itinerarios.size());
+           // System.out.println("EMPEZANDO...... "+itinerarios.size());
             if(itinerarios.size() > 0){
                 for (MovSuministros itinerario : itinerarios) {
-                    if(!itinerario.isSuministroInvalidado()){
+                    if(!itinerario.isSuministroInvalidado()){                       
                         result = true;
-                        if (!itinerario.getMovLectConsuCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
-                            List<MovLectConsu> listaLecturas = itinerario.getMovLectConsuCollection();
+                        if (!itinerario.getMovLectConsuCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {                            
+                            List<MovLectConsu> listaLecturas = itinerario.getMovLectConsuCollection();                            
                             if (listaLecturas.size() >= 2) {
                                 BigDecimal ultimaLectura =  listaLecturas.get(0).getNlectura();
-                                BigDecimal penUltimaLectura =  listaLecturas.get(1).getNlectura();
-                                BigDecimal vav = ultimaLectura.subtract(penUltimaLectura);                         
-
+                                BigDecimal penUltimaLectura =  listaLecturas.get(1).getNlectura();                              
+                                BigDecimal vav = ultimaLectura.subtract(penUltimaLectura);                                                     
                                 switch (vav.signum()) {
                                     case -1:
                                         alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.DEVOLUCION_DE_REGISTRO_ERROR_CODE);
