@@ -111,6 +111,7 @@ public class IndividualValidations implements IIndividualValidations {
                             System.out.println("Dias de diferencia: "+daysDiff);
                             if (daysDiff > toleranciaCompletitudLecturas) {
                                 alarmsManager.reportAlarm(itinerario, AlarmsManager.COMPLETITUD_INFO_VALIDATION_ERROR_CODE);
+                                itinerario.setSuministroInvalidado(true);
                                 result = false;
                             } else {
                                 result = true;

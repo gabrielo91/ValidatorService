@@ -63,7 +63,7 @@ public class AlarmsManager implements IAlarmsManager{
         MovAlarmasPK alarmasPK = new MovAlarmasPK();
         alarmasPK.setNcodAlarma(codigoAlarma);
         alarmasPK.setNconsProceso(0);
-        alarmasPK.setNnisRad(0);
+        alarmasPK.setNnisRad(suministro.getMovSuministrosPK().getNnisRad().intValue());
         alarm.setMovAlarmasPK(alarmasPK);
         alarm.setNnic(suministro.getNnic().intValue());
         //TODO where this value does come from? ******
