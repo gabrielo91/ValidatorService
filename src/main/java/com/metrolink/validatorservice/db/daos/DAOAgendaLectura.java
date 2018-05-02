@@ -123,7 +123,7 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
             Date dfechaTeoCurr = result.getDate("DFECHA_TEO");;
             String vcparamCurr = result.getString("VCPARAM");
             AgendaLecturaPK agendaLecturaPKCurr = new AgendaLecturaPK(npericonsCurr, dfechaTeoCurr, vcparamCurr);
-            System.err.println("VCINTINERARIO ES: "+result.getString("VCITINERARIO"));
+            //System.err.println("VCINTINERARIO ES: "+result.getString("VCITINERARIO"));
  
             int ncodProvCurr = -1; 
             BigInteger nnisRadCurr = null; 
@@ -203,7 +203,7 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
         agendaLectura.setVcruta(result.getString("VCRUTA"));
        
         MovSuministros movSuministros = DAOSuministros.createMovSuministrosEntity(result);
-        System.err.println("ncodProv es: "+movSuministros.getMovSuministrosPK().getNcodProv());
+       // System.err.println("ncodProv es: "+movSuministros.getMovSuministrosPK().getNcodProv());
         if(movSuministros.getMovSuministrosPK().getNcodProv() >= 0
                 && null != movSuministros.getMovSuministrosPK().getNnisRad() 
                 && null != movSuministros.getMovSuministrosPK().getVctipoEnergia()){

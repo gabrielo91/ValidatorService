@@ -40,7 +40,7 @@ public class MovSuministros implements Serializable {
     @EmbeddedId
     protected MovSuministrosPK movSuministrosPK;
     @Column(name = "VCNUM_MED")
-    private String vcnumMed;
+    private String vcnumMed;    
     @Column(name = "VCTIPO_MED")
     private String vctipoMed;
     @Column(name = "VCTIPO_LEC")

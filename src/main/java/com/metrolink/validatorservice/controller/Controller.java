@@ -72,7 +72,7 @@ public class Controller {
         lockUnlockSuministros(DAOSuministros.BLOQUEADO);
         performIndividualValidations();
         ArrayList<MovSuministrosPK> suministrosInvalidos = getSuministrosInvalidos(AgendaStack.getInstance().getItinerarios());
-        performIndividualValidationsSCO(itinerariosMovRegsSco, suministrosInvalidos);
+      //  performIndividualValidationsSCO(itinerariosMovRegsSco, suministrosInvalidos);
         certificarLecturas();
         lockUnlockSuministros(DAOSuministros.DESBLOQUEADO);
         saveAlarmas();
@@ -115,7 +115,7 @@ public class Controller {
     public void performIndividualValidations() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException, Exception {
         int j = 0;
         for (AgendaLectura intinerario : AgendaStack.getInstance().getItinerarios()) {
-            System.out.println("******************************* INTINERARIO: " + intinerario.getVcitinerario());
+            //System.out.println("******************************* INTINERARIO: " + intinerario.getVcitinerario());
             for (int i = 0; i < intinerario.getListaSuministros().size(); i++) {
                 performIndividualValidations(j);
             }
@@ -139,7 +139,7 @@ public class Controller {
 
         Class validations = idividualValidationsClass.getClass();
         for (Method bussinesValidation : IIndividualValidations.class.getMethods()) {
-            System.out.println("La validacion a ejecutar es: " + bussinesValidation.getName());
+            //System.out.println("La validacion a ejecutar es: " + bussinesValidation.getName());
             Method validation = validations.getMethod(bussinesValidation.getName(), List.class);
             validation.invoke(idividualValidationsClass, AgendaStack.getInstance().getItinerarios().get(indexToValidate).getListaSuministros());
         }
@@ -164,7 +164,7 @@ public class Controller {
         for (AgendaLectura intinerario : itinerariosMovRegsSco) {
             Class validations = generalValidationsClass.getClass();
             for (Method bussinesValidation : IIndividualValidationsSCO.class.getMethods()) {
-                System.out.println("La validacion a ejecutar es: " + bussinesValidation.getName());
+               // System.out.println("La validacion a ejecutar es: " + bussinesValidation.getName());
                 Method validation = validations.getMethod(bussinesValidation.getName(), List.class, List.class);
                 validation.invoke(generalValidationsClass, intinerario.getListaSuministros(), suministrosInvalidos);
             }
