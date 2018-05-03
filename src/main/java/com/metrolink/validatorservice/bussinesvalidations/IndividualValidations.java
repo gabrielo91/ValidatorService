@@ -63,20 +63,22 @@ public class IndividualValidations implements IIndividualValidations {
 
     @Override
     public boolean verificarExistenciaDatos(List<MovSuministros> itinerarios) throws Exception {
-        boolean result = false;
+        boolean result = false;       
+        
         try {
             if(itinerarios.size() > 0){
                 result = true;
                 for (MovSuministros itinerario : itinerarios) {
                     if(!itinerario.isSuministroInvalidado()){
-                        if(itinerario.getMovLectConsuCollection().isEmpty()){
+                        
+                        if(itinerario.getMovLectConsuCollection().isEmpty() || !validarFechasLecturas(itinerario)){
                             alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.EXISTENCIA_DE_DATOS_ERROR_CODE);
                             itinerario.setSuministroInvalidado(true);
                             result = result && false;
                         } else {
                             result = result && true;
                         }
-                    }
+                    } 
                 }
             }
         } catch (Exception e) {
@@ -281,4 +283,18 @@ public class IndividualValidations implements IIndividualValidations {
         
         return result;
     }       
+
+    private boolean validarFechasLecturas(MovSuministros itinerario) {
+        boolean result = false;
+        Date fechaActual = new Date();
+        final int UN_DIA = 1;
+        Date fechaUltimaLecturaReportada = itinerario.getTsful();
+        fechaUltimaLecturaReportada = Utils.addDays(fechaUltimaLecturaReportada, UN_DIA);
+        
+        for (MovLectConsu lectura : itinerario.getMovLectConsuCollection()) {
+            result = result || (lectura.getTsfechaLec().compareTo(fechaUltimaLecturaReportada) >= 0  && lectura.getTsfechaLec().compareTo(fechaActual) <= 0 );
+        }
+        
+        return result;
+    }
 }

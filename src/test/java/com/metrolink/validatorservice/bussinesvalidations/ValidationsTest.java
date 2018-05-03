@@ -132,7 +132,11 @@ public class ValidationsTest {
     
     @Test
     public void verificarExistenciaDatosLecturasExitoso() throws Exception{
-        ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
+        ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray(); 
+        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setTsfechaLec(new Date());
+        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setTsfechaLec(new Date());
+        Date tsfulSimulada = Utils.addDays(new Date(), - UN_DIA*5);
+        itinerarios.get(0).getListaSuministros().get(0).setTsful(tsfulSimulada);
         boolean result = individualValidations.verificarExistenciaDatos(itinerarios.get(0).getListaSuministros());
         Assert.assertTrue(result);
     }
@@ -140,6 +144,10 @@ public class ValidationsTest {
     @Test
     public void verificarExistenciaDatosConsumosExitoso() throws Exception{
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
+        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setTsfechaLec(new Date());
+        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setTsfechaLec(new Date());
+        Date tsfulSimulada = Utils.addDays(new Date(), - UN_DIA*5);
+        itinerarios.get(0).getListaSuministros().get(0).setTsful(tsfulSimulada);
         itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_CONSUMO);
         boolean result = individualValidations.verificarExistenciaDatos(itinerarios.get(0).getListaSuministros());
         Assert.assertTrue(result);
