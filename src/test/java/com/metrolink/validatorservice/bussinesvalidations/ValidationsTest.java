@@ -85,7 +85,7 @@ public class ValidationsTest {
         MovLectConsu movLectConsu2 = new MovLectConsu();
         movLectConsu2.setId(BigDecimal.valueOf(2));
         movLectConsu2.setTsfechaLec(new SimpleDateFormat(DATE_FORMAT_YYYY_MM_DD).parse("2018-03-09"));
-        movLectConsu2.setNlectura(BigDecimal.valueOf(100));
+        movLectConsu2.setNlectura(BigDecimal.valueOf(68));
         movSuministros.getMovLectConsuCollection().add(movLectConsu2);
         
         movSuministros.setNnumRegs((short)1);
@@ -180,10 +180,10 @@ public class ValidationsTest {
     @Test
     public void verificarCompletitudInformacionLecturasFallidoYEnvioAlarmaCompletitud() throws Exception {
         boolean result; 
-        final int diasDiferenciaMinimaPermitidaConsumos = parametrosAdm.getNvpCompletud();
-        Date testingDateFLA = Utils.addDays(new Date(), - diasDiferenciaMinimaPermitidaConsumos - UN_DIA);
+        final int diasDiferenciaMinimaPermitidaLecturas = parametrosAdm.getNvpCompletud();
+        Date testingDateFul = Utils.addDays(new Date(), - (diasDiferenciaMinimaPermitidaLecturas + UN_DIA));
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();       
-        itinerarios.get(0).getListaSuministros().get(0).setTsfla(testingDateFLA);
+        itinerarios.get(0).getListaSuministros().get(0).setTsful(testingDateFul);
         itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_LECTURA);
         result = individualValidations.verificarCompletitudInformacion(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
@@ -194,7 +194,7 @@ public class ValidationsTest {
     public void verificarCompletitudInformacionConsumosExitoso() throws Exception {
         boolean result; 
         final int diasDiferenciaMinimaPermitida = parametrosAdm.getNtolCompletud();
-        Date testingDateFLA = Utils.addDays(new Date(), - (diasDiferenciaMinimaPermitida + UN_DIA));
+        Date testingDateFLA = Utils.addDays(new Date(), + (diasDiferenciaMinimaPermitida + UN_DIA));
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
         itinerarios.get(0).getListaSuministros().get(0).setTsfla(testingDateFLA);
         itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_CONSUMO);

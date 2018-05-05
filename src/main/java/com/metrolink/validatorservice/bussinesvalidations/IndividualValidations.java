@@ -106,7 +106,7 @@ public class IndividualValidations implements IIndividualValidations {
                     if(!itinerario.isSuministroInvalidado()){
                         if (itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
 
-                            Date maxFechaLectura = itinerario.getTsfla();
+                            Date maxFechaLectura = itinerario.getTsful();
                             long diffTime = fechaActual.getTime() - maxFechaLectura.getTime();
                             long daysDiff =  TimeUnit.DAYS.convert(diffTime, TimeUnit.MILLISECONDS);
 
@@ -146,11 +146,10 @@ public class IndividualValidations implements IIndividualValidations {
         boolean result = false;        
         try {
             //TODO REPLACE THIS VALUES
-            final double MAX_VALUE = 0.9;
-            final double MIN_VALUE = 0.2;
+            MConfVal parametrosConf = ParametrosConf.getParametrosConf();
+            final double MAX_VALUE  = parametrosConf.getNranDiaMax().doubleValue();
+            final double MIN_VALUE = parametrosConf.getNranDiaMin().doubleValue();            
 
-            int i = 1;
-           // System.out.println("EMPEZANDO...... "+itinerarios.size());
             if(itinerarios.size() > 0){
                 for (MovSuministros itinerario : itinerarios) {
                     if(!itinerario.isSuministroInvalidado()){                       
@@ -186,7 +185,6 @@ public class IndividualValidations implements IIndividualValidations {
                                     default:
                                         break;
                                 }
-                                i++;
                             }
                         }
                     }
@@ -204,9 +202,10 @@ public class IndividualValidations implements IIndividualValidations {
     public boolean comparacionLectuaDiariaMensual(List<MovSuministros> itinerarios) throws Exception  {
         boolean result = false;
         try {
-            //TODO REPLACE THIS VALUES
-            final double MAX_VALUE = 0.9;
-            final double MIN_VALUE = 0.2;
+            
+            MConfVal parametrosConf = ParametrosConf.getParametrosConf();
+            final double MAX_VALUE  = parametrosConf.getNranMesMax().doubleValue();
+            final double MIN_VALUE = parametrosConf.getNranMesMin().doubleValue();  
 
             if(itinerarios.size() > 0){
                 result = true;

@@ -11,8 +11,6 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -29,8 +27,11 @@ public class MConfVal implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Basic(optional = false)
-    @Column(name = "NDIAS_INI_VAL")
-    private short ndiasIniVal;
+    @Column(name = "NCOD_AREA")
+    private int ncodArea;
+    @Basic(optional = false)
+    @Column(name = "VTIPO_VAL")
+    private String vtipoVal;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "NRAN_DIA_MIN")
     private BigDecimal nranDiaMin;
@@ -53,12 +54,6 @@ public class MConfVal implements Serializable {
     @Basic(optional = false)
     @Column(name = "ID")
     private BigDecimal id;
-    @JoinColumn(name = "NCOD_AREA", referencedColumnName = "NCOD_AREA")
-    @ManyToOne(optional = false)
-    private MAreas ncodArea;
-    @JoinColumn(name = "VTIPO_VAL", referencedColumnName = "VCTIPO_VAL")
-    @ManyToOne(optional = false)
-    private MTipoValidacion vtipoVal;
 
     public MConfVal() {
     }
@@ -67,18 +62,27 @@ public class MConfVal implements Serializable {
         this.id = id;
     }
 
-    public MConfVal(BigDecimal id, short ndiasIniVal, BigDecimal ndesConCoe) {
+    public MConfVal(BigDecimal id, int ncodArea, String vtipoVal, BigDecimal ndesConCoe) {
         this.id = id;
-        this.ndiasIniVal = ndiasIniVal;
+        this.ncodArea = ncodArea;
+        this.vtipoVal = vtipoVal;
         this.ndesConCoe = ndesConCoe;
     }
 
-    public short getNdiasIniVal() {
-        return ndiasIniVal;
+    public int getNcodArea() {
+        return ncodArea;
     }
 
-    public void setNdiasIniVal(short ndiasIniVal) {
-        this.ndiasIniVal = ndiasIniVal;
+    public void setNcodArea(int ncodArea) {
+        this.ncodArea = ncodArea;
+    }
+
+    public String getVtipoVal() {
+        return vtipoVal;
+    }
+
+    public void setVtipoVal(String vtipoVal) {
+        this.vtipoVal = vtipoVal;
     }
 
     public BigDecimal getNranDiaMin() {
@@ -151,22 +155,6 @@ public class MConfVal implements Serializable {
 
     public void setId(BigDecimal id) {
         this.id = id;
-    }
-
-    public MAreas getNcodArea() {
-        return ncodArea;
-    }
-
-    public void setNcodArea(MAreas ncodArea) {
-        this.ncodArea = ncodArea;
-    }
-
-    public MTipoValidacion getVtipoVal() {
-        return vtipoVal;
-    }
-
-    public void setVtipoVal(MTipoValidacion vtipoVal) {
-        this.vtipoVal = vtipoVal;
     }
 
     @Override
