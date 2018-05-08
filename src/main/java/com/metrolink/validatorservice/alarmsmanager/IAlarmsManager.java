@@ -17,3 +17,4 @@ public interface IAlarmsManager {
     public void reportAlarm(MovSuministros suministro, int codigoAlarma);
     public void reportAlarm(AgendaLectura agenda, int codigoAlarma);
 }
+

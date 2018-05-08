@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import org.json.simple.parser.ParseException;
 import com.metrolink.validatorservice.bussinesvalidations.IIndividualValidations;
 import com.metrolink.validatorservice.bussinesvalidations.IIndividualValidationsSCO;
+import com.metrolink.validatorservice.db.controller.DataBaseManager;
 
 
 /**
@@ -40,7 +41,8 @@ public class Main {
         try {
 
             String configFilePath = "resources/config.json";
-            IPreferencesManager preferencesManager = new PreferencesManager(configFilePath);
+            DataBaseManager.getInstance().setPreferencesManager(configFilePath); //set gloabl db access object
+            IPreferencesManager preferencesManager = DataBaseManager.getInstance().getPreferencesManager();
             IAlarmsManager alarmsManager = new AlarmsManager();
             IIndividualValidations individualValidations = new IndividualValidations(alarmsManager);
             IIndividualValidationsSCO generalValidations = new IndividualValidationsSCO(alarmsManager);

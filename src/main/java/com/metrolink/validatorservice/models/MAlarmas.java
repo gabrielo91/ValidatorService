@@ -36,6 +36,8 @@ public class MAlarmas implements Serializable {
     private String vcdesAlarma;
     @Column(name = "LESTADO")
     private Short lestado;
+    @Column(name = "NCOD_TIPO_ALARMA")
+    private Integer ncodTipoAlarma;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "mAlarmas")
     private Collection<MovAlarmas> movAlarmasCollection;
 
@@ -68,6 +70,14 @@ public class MAlarmas implements Serializable {
 
     public void setLestado(Short lestado) {
         this.lestado = lestado;
+    }
+
+    public Integer getNcodTipoAlarma() {
+        return ncodTipoAlarma;
+    }
+
+    public void setNcodTipoAlarma(Integer ncodTipoAlarma) {
+        this.ncodTipoAlarma = ncodTipoAlarma;
     }
 
     public Collection<MovAlarmas> getMovAlarmasCollection() {

@@ -187,7 +187,6 @@ public class ValidationsTest {
         itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_LECTURA);
         result = individualValidations.verificarCompletitudInformacion(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
-        verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.COMPLETITUD_INFO_VALIDATION_ERROR_CODE);
     }
     
     @Test
@@ -206,7 +205,7 @@ public class ValidationsTest {
     public void verificarCompletitudInformacionConsumosFallidoYEnvioAlarmaCompletitud() throws Exception {
         boolean result; 
         final int diasDiferenciaMinimaPermitida = parametrosAdm.getNtolCompletud();
-        Date testingDateFLA = Utils.addDays(new Date(), - diasDiferenciaMinimaPermitida - UN_DIA);
+        Date testingDateFLA = Utils.addDays(new Date(), - diasDiferenciaMinimaPermitida - 2 * UN_DIA);
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
         itinerarios.get(0).getListaSuministros().get(0).setTsfla(testingDateFLA);
         itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_CONSUMO);

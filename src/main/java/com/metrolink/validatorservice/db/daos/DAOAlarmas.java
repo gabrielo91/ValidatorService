@@ -25,7 +25,7 @@ public class DAOAlarmas implements IDAOAlarmas {
     
     
     @Override
-    public void insertAlarmas(ArrayList<MovAlarmas> alarmas) throws Exception {
+    public void insertAlarmas(ArrayList<MovAlarmas> alarmas, String processId) throws Exception {
         boolean result = false;
         int[] resultList;
         
@@ -48,7 +48,7 @@ public class DAOAlarmas implements IDAOAlarmas {
                 
                 preparedStatement.setShort(1, alarma.getNunicom());
                 preparedStatement.setInt(2, alarma.getMovAlarmasPK().getNconsProceso());
-                preparedStatement.setInt(3, alarma.getNperiodo());
+                preparedStatement.setInt(3, alarma.getNpericons());
                 preparedStatement.setString(4, alarma.getVcruta());
                 preparedStatement.setString(5, alarma.getVcitinerario());
                 preparedStatement.setDate(6, new java.sql.Date(alarma.getDfechaVal().getTime()) );

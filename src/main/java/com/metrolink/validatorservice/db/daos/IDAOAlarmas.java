@@ -13,5 +13,5 @@ import java.util.ArrayList;
  * @author Gabriel Ortega
  */
 public interface IDAOAlarmas {
-    void insertAlarmas(ArrayList<MovAlarmas> alarmas)throws Exception;
+    void insertAlarmas(ArrayList<MovAlarmas> alarmas, String processId)throws Exception;
 }

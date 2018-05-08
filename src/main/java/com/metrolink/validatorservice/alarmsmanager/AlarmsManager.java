@@ -39,10 +39,10 @@ public class AlarmsManager implements IAlarmsManager{
     public final static Short INACTIVE_ALARM = 0;
     
     
-    public static void saveAlarms(IDatabaseController databaseController) throws Exception{
+    public static void saveAlarms(IDatabaseController databaseController, String processId) throws Exception{
         ArrayList<MovAlarmas> listAlarmas =  AlarmsStack.getInstance().getAlarmsStack();
         IDAOAlarmas daoAlarmas = new DAOAlarmas(databaseController);
-        daoAlarmas.insertAlarmas(listAlarmas);
+        daoAlarmas.insertAlarmas(listAlarmas, processId);
     }
     
     public void cleanAalrmsStack(){
@@ -64,11 +64,10 @@ public class AlarmsManager implements IAlarmsManager{
         alarmasPK.setNcodAlarma(codigoAlarma);
         alarmasPK.setNconsProceso(0);
         alarmasPK.setNnisRad(suministro.getMovSuministrosPK().getNnisRad().intValue());
-        System.out.println("NISRAD CREATE ALARM "+suministro.getMovSuministrosPK().getNnisRad());
         alarm.setMovAlarmasPK(alarmasPK);
         alarm.setNnic(suministro.getNnic());
         //TODO where this value does come from? ******
-        alarm.setNperiodo(0);
+        //alarm.setNperiodo(suministro.get);
         alarm.setNunicom(suministro.getNunicom().shortValue());
         alarm.setVcitinerario(suministro.getVcitinerario());
         alarm.setVcruta(suministro.getVcruta());
@@ -82,7 +81,7 @@ public class AlarmsManager implements IAlarmsManager{
 
     @Override
     public void reportAlarm(AgendaLectura agenda, int codigoAlarma) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        MovAlarmas alarm = createAlarm(agenda.getListaSuministros().get(0), codigoAlarma);
+        AlarmsStack.getInstance().addAlarmToStack(alarm);
     }
-    
 }

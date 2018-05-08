@@ -62,20 +62,14 @@ public class Controller {
         ArrayList<AgendaLectura> itinerariosMovRegsSco = getValuesForChecking();
         System.out.println("El tamano es: : " + itinerariosMovLectConsu.size());
         AgendaStack.getInstance().setAgendaValues(itinerariosMovLectConsu);
-
-//        int i = 0;
-//        for (AgendaLectura intinerario : AgendaStack.getInstance().getItinerarios()) {
-//            i++;
-//            System.out.println("i: " + i + "La fecha es: " + intinerario.getAgendaLecturaPK().getDfechaTeo() + " vdtcodconsumo: " + intinerario.getAgendaLecturaPK().getVcparam());
-//        }
-
         lockUnlockSuministros(DAOSuministros.BLOQUEADO);
         performIndividualValidations();
         ArrayList<MovSuministrosPK> suministrosInvalidos = getSuministrosInvalidos(AgendaStack.getInstance().getItinerarios());
-      //  performIndividualValidationsSCO(itinerariosMovRegsSco, suministrosInvalidos);
+        performIndividualValidationsSCO(itinerariosMovRegsSco, suministrosInvalidos);
         certificarLecturas();
         lockUnlockSuministros(DAOSuministros.DESBLOQUEADO);
-        saveAlarmas();
+        String processId = getProcessId();
+        saveAlarmas(processId);
     }
 
     /**
@@ -172,10 +166,10 @@ public class Controller {
         }
     }
 
-    private void saveAlarmas() throws Exception {
+    private void saveAlarmas(String processId) throws Exception {
         try {
             IDatabaseController databaseController = new DatabaseController(preferencesManager);
-            AlarmsManager.saveAlarms(databaseController);
+            AlarmsManager.saveAlarms(databaseController, processId);
         } catch (Exception ex) {
             String mensaje = "Error guardando alarmas";
             DataLogger.Log(ex, mensaje);
@@ -188,7 +182,7 @@ public class Controller {
         int lecturasGenraronAlarma = 0;
         int totalSuministros = 0;
 
-//Se evaluan todos los suministros del stack y se comparan con el stack de alarmas, si no generaron una ce certifican
+        //Se evaluan todos los suministros del stack y se comparan con el stack de alarmas, si no generaron una ce certifican
         ArrayList<AgendaLectura> agendaList = AgendaStack.getInstance().getItinerarios();
         ArrayList<MovSuministrosPK> suministrosInvalidos = getSuministrosInvalidosFromAlarmas();
         for (AgendaLectura agenda : agendaList) {
@@ -197,7 +191,7 @@ public class Controller {
             for (MovSuministros suministro : itinerarios) {
                 if (Utils.esItinerarioValido(suministro.getMovSuministrosPK(), suministrosInvalidos)) {
                     lecturasCertificadas = lecturasCertificadas + 1;
-                    //certificar
+                    //TODO certificar
                 } else {
                     lecturasGenraronAlarma = lecturasGenraronAlarma + 1;
                 }
@@ -239,6 +233,17 @@ public class Controller {
             suministrosInvalidos.add(alarma.getMovSuministrosPK());
         }
         return suministrosInvalidos;
+    }
+
+    /**
+     * Retorna el ultimo process ID registrado en la base de datos
+     * @return
+     * @throws Exception 
+     */
+    private String getProcessId()  throws Exception {
+        IDatabaseController databaseController = new DatabaseController(preferencesManager);
+        String processId = new DAOMovProcessRegistry(databaseController).getProcessRgistry().get(0);
+        return processId;
     }
 
 }

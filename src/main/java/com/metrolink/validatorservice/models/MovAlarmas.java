@@ -35,7 +35,7 @@ public class MovAlarmas implements Serializable {
     @Column(name = "NUNICOM")
     private Short nunicom;
     @Column(name = "NPERICONS")
-    private Integer nperiodo;
+    private Integer npericons;
     @Column(name = "VCRUTA")
     private String vcruta;
     @Column(name = "VCITINERARIO")
@@ -87,12 +87,12 @@ public class MovAlarmas implements Serializable {
         this.nunicom = nunicom;
     }
 
-    public Integer getNperiodo() {
-        return nperiodo;
+    public Integer getNpericons() {
+        return npericons;
     }
 
-    public void setNperiodo(Integer nperiodo) {
-        this.nperiodo = nperiodo;
+    public void setNpericons(Integer npericons) {
+        this.npericons = npericons;
     }
 
     public String getVcruta() {
@@ -143,6 +143,15 @@ public class MovAlarmas implements Serializable {
         this.mAlarmas = mAlarmas;
     }
 
+    public MovSuministrosPK getMovSuministrosPK() {
+        return movSuministrosPK;
+    }
+
+    public void setMovSuministrosPK(MovSuministrosPK movSuministrosPK) {
+        this.movSuministrosPK = movSuministrosPK;
+    }
+
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -167,15 +176,5 @@ public class MovAlarmas implements Serializable {
     public String toString() {
         return "com.metrolink.validatorservice.models.MovAlarmas[ movAlarmasPK=" + movAlarmasPK + " ]";
     }
-
-    public MovSuministrosPK getMovSuministrosPK() {
-        return movSuministrosPK;
-    }
-
-    public void setMovSuministrosPK(MovSuministrosPK movSuministrosPK) {
-        this.movSuministrosPK = movSuministrosPK;
-    }
-    
-    
     
 }

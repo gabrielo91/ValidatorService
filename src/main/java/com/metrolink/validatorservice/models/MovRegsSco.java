@@ -6,6 +6,7 @@
 package com.metrolink.validatorservice.models;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import javax.persistence.Column;
@@ -58,11 +59,11 @@ public class MovRegsSco implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dflean;
     @Column(name = "NLEAN")
-    private BigInteger nlean;
+    private BigDecimal nlean;
     @Column(name = "NLEMAX")
-    private BigInteger nlemax;
+    private BigDecimal nlemax;
     @Column(name = "NLEMIN")
-    private BigInteger nlemin;
+    private BigDecimal nlemin;
     @Column(name = "NNUMRUE")
     private BigInteger nnumrue;
     @Column(name = "NMULTI")
@@ -219,27 +220,27 @@ public class MovRegsSco implements Serializable {
         this.dflean = dflean;
     }
 
-    public BigInteger getNlean() {
+    public BigDecimal getNlean() {
         return nlean;
     }
 
-    public void setNlean(BigInteger nlean) {
+    public void setNlean(BigDecimal nlean) {
         this.nlean = nlean;
     }
 
-    public BigInteger getNlemax() {
+    public BigDecimal getNlemax() {
         return nlemax;
     }
 
-    public void setNlemax(BigInteger nlemax) {
+    public void setNlemax(BigDecimal nlemax) {
         this.nlemax = nlemax;
     }
 
-    public BigInteger getNlemin() {
+    public BigDecimal getNlemin() {
         return nlemin;
     }
 
-    public void setNlemin(BigInteger nlemin) {
+    public void setNlemin(BigDecimal nlemin) {
         this.nlemin = nlemin;
     }
 

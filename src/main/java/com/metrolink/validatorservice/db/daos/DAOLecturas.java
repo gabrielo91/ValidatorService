@@ -7,7 +7,6 @@ package com.metrolink.validatorservice.db.daos;
 
 import com.metrolink.validatorservice.db.controller.IDatabaseController;
 import com.metrolink.validatorservice.models.MovLectConsu;
-import com.metrolink.validatorservice.models.MovSuministros;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
