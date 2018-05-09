@@ -29,10 +29,12 @@ import com.metrolink.validatorservice.utils.Utils;
 import java.util.ArrayList;
 import java.util.Date;
 import com.metrolink.validatorservice.bussinesvalidations.IIndividualValidationsSCO;
+import com.metrolink.validatorservice.db.daos.DAOMovProcessRegistry;
 import com.metrolink.validatorservice.db.daos.DAOParametrosConf;
 import com.metrolink.validatorservice.db.daos.IDAOParametrosConf;
 import com.metrolink.validatorservice.logger.DataLogger;
 import com.metrolink.validatorservice.models.MovAlarmas;
+import com.metrolink.validatorservice.models.MovProcessRegistry;
 import com.metrolink.validatorservice.models.MovSuministrosPK;
 
 /**
@@ -242,7 +244,13 @@ public class Controller {
      */
     private String getProcessId()  throws Exception {
         IDatabaseController databaseController = new DatabaseController(preferencesManager);
-        String processId = new DAOMovProcessRegistry(databaseController).getProcessRgistry().get(0);
+        String processId = "";
+        ArrayList<MovProcessRegistry> movProcessRegistryList = new DAOMovProcessRegistry(databaseController).getProcessRgistry();
+        
+        if(!movProcessRegistryList.isEmpty()){
+            processId = movProcessRegistryList.get(0).getVcprocessId();
+        }
+        
         return processId;
     }
 

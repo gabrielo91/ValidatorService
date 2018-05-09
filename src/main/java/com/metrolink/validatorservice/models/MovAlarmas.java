@@ -51,10 +51,10 @@ public class MovAlarmas implements Serializable {
     @JoinColumn(name = "NCOD_ALARMA", referencedColumnName = "NCOD_ALARMA", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private MAlarmas mAlarmas;
-
+    
     //Campo para almacenar los datos de los suministros que generaron alarmas y que por tanto no se deben validar
     private MovSuministrosPK movSuministrosPK;
-    
+
     public MovAlarmas() {
     }
 
@@ -67,7 +67,7 @@ public class MovAlarmas implements Serializable {
         this.vctipoEnergia = vctipoEnergia;
     }
 
-    public MovAlarmas(int nconsProceso, int nnisRad, int ncodAlarma) {
+    public MovAlarmas(String nconsProceso, int nnisRad, int ncodAlarma) {
         this.movAlarmasPK = new MovAlarmasPK(nconsProceso, nnisRad, ncodAlarma);
     }
 

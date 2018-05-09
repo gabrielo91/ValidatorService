@@ -47,7 +47,7 @@ public class DAOAlarmas implements IDAOAlarmas {
             for (MovAlarmas alarma : alarmas) {
                 
                 preparedStatement.setShort(1, alarma.getNunicom());
-                preparedStatement.setInt(2, alarma.getMovAlarmasPK().getNconsProceso());
+                preparedStatement.setString(2, processId);
                 preparedStatement.setInt(3, alarma.getNpericons());
                 preparedStatement.setString(4, alarma.getVcruta());
                 preparedStatement.setString(5, alarma.getVcitinerario());

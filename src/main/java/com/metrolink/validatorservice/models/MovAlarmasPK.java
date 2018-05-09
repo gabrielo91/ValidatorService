@@ -19,7 +19,7 @@ public class MovAlarmasPK implements Serializable {
 
     @Basic(optional = false)
     @Column(name = "NCONS_PROCESO")
-    private int nconsProceso;
+    private String nconsProceso;
     @Basic(optional = false)
     @Column(name = "NNIS_RAD")
     private int nnisRad;
@@ -30,17 +30,17 @@ public class MovAlarmasPK implements Serializable {
     public MovAlarmasPK() {
     }
 
-    public MovAlarmasPK(int nconsProceso, int nnisRad, int ncodAlarma) {
+    public MovAlarmasPK(String nconsProceso, int nnisRad, int ncodAlarma) {
         this.nconsProceso = nconsProceso;
         this.nnisRad = nnisRad;
         this.ncodAlarma = ncodAlarma;
     }
 
-    public int getNconsProceso() {
+    public String getNconsProceso() {
         return nconsProceso;
     }
 
-    public void setNconsProceso(int nconsProceso) {
+    public void setNconsProceso(String nconsProceso) {
         this.nconsProceso = nconsProceso;
     }
 
@@ -63,7 +63,7 @@ public class MovAlarmasPK implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (int) nconsProceso;
+        hash += (nconsProceso != null ? nconsProceso.hashCode() : 0);
         hash += (int) nnisRad;
         hash += (int) ncodAlarma;
         return hash;
@@ -76,7 +76,7 @@ public class MovAlarmasPK implements Serializable {
             return false;
         }
         MovAlarmasPK other = (MovAlarmasPK) object;
-        if (this.nconsProceso != other.nconsProceso) {
+        if ((this.nconsProceso == null && other.nconsProceso != null) || (this.nconsProceso != null && !this.nconsProceso.equals(other.nconsProceso))) {
             return false;
         }
         if (this.nnisRad != other.nnisRad) {

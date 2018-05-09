@@ -5,13 +5,18 @@
  */
 package com.metrolink.validatorservice.alarmsmanager;
 
+import com.metrolink.validatorservice.db.controller.DataBaseManager;
+import com.metrolink.validatorservice.db.controller.DatabaseController;
 import com.metrolink.validatorservice.db.controller.IDatabaseController;
 import com.metrolink.validatorservice.db.daos.DAOAlarmas;
+import com.metrolink.validatorservice.db.daos.DAORegsSco;
 import com.metrolink.validatorservice.db.daos.IDAOAlarmas;
 import com.metrolink.validatorservice.models.AgendaLectura;
 import com.metrolink.validatorservice.models.MovAlarmas;
 import com.metrolink.validatorservice.models.MovAlarmasPK;
+import com.metrolink.validatorservice.models.MovRegsSco;
 import com.metrolink.validatorservice.models.MovSuministros;
+import com.metrolink.validatorservice.preferencesmanager.IPreferencesManager;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -50,37 +55,46 @@ public class AlarmsManager implements IAlarmsManager{
     }
 
     @Override
-    public void reportAlarm(MovSuministros suministro, int codigoAlarma) {
+    public void reportAlarm(MovSuministros suministro, int codigoAlarma) throws Exception {
         MovAlarmas alarm = createAlarm(suministro, codigoAlarma);
         AlarmsStack.getInstance().addAlarmToStack(alarm);
     }
 
-    //TODO lo mas probable es qwue necesite otro dato de  suministros para sacar los datos de la alarma
-    private MovAlarmas createAlarm(MovSuministros suministro, int codigoAlarma) {
-        MovAlarmas alarm = new MovAlarmas();
-        alarm.setDfechaVal(new Date());
-         
-        MovAlarmasPK alarmasPK = new MovAlarmasPK();
-        alarmasPK.setNcodAlarma(codigoAlarma);
-        alarmasPK.setNconsProceso(0);
-        alarmasPK.setNnisRad(suministro.getMovSuministrosPK().getNnisRad().intValue());
-        alarm.setMovAlarmasPK(alarmasPK);
-        alarm.setNnic(suministro.getNnic());
-        //TODO where this value does come from? ******
-        //alarm.setNperiodo(suministro.get);
-        alarm.setNunicom(suministro.getNunicom().shortValue());
-        alarm.setVcitinerario(suministro.getVcitinerario());
-        alarm.setVcruta(suministro.getVcruta());
-        alarm.setVctipoEnergia(suministro.getMovSuministrosPK().getVctipoEnergia());
+    private MovAlarmas createAlarm(MovSuministros suministro, int codigoAlarma) throws Exception {
         
-        //Se almacenan los datos del suminsitro que genera la alarma
-        alarm.setMovSuministrosPK(suministro.getMovSuministrosPK());
+        IPreferencesManager preferencesManager = DataBaseManager.getInstance().getPreferencesManager();
+        IDatabaseController databaseController = new DatabaseController(preferencesManager);
+        ArrayList<MovRegsSco> movRegsScoAsociados = new DAORegsSco(databaseController).consultarMovRegScoAsociado(suministro);
+        MovAlarmas alarm = new MovAlarmas();
+        
+        if(!movRegsScoAsociados.isEmpty()){
+            
+            alarm.setDfechaVal(new Date());
+
+            MovAlarmasPK alarmasPK = new MovAlarmasPK();
+            alarmasPK.setNcodAlarma(codigoAlarma);
+            alarmasPK.setNnisRad(suministro.getMovSuministrosPK().getNnisRad().intValue());
+            alarm.setMovAlarmasPK(alarmasPK);
+            alarm.setNnic(suministro.getNnic());
+            alarm.setNpericons(movRegsScoAsociados.get(0).getNperiodo().intValue());
+            alarm.setNunicom(suministro.getNunicom().shortValue());
+            alarm.setVcitinerario(suministro.getVcitinerario());
+            alarm.setVcruta(suministro.getVcruta());
+            alarm.setVctipoEnergia(suministro.getMovSuministrosPK().getVctipoEnergia());
+
+            //Se almacenan los datos del suminsitro que genera la alarma
+            alarm.setMovSuministrosPK(suministro.getMovSuministrosPK());
+        } else {
+             throw new Exception("There is not an MovRegsSco related for creating alarm");
+        }
+        
+        
         
         return alarm;
     }
 
     @Override
-    public void reportAlarm(AgendaLectura agenda, int codigoAlarma) {
+    public void reportAlarm(AgendaLectura agenda, int codigoAlarma)  throws Exception{
         MovAlarmas alarm = createAlarm(agenda.getListaSuministros().get(0), codigoAlarma);
         AlarmsStack.getInstance().addAlarmToStack(alarm);
     }
