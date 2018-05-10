@@ -67,16 +67,21 @@ public class DAORegsSco {
         return movRegsScoList;
     }
 
+    /**
+     * Consulta el mov reg suministro asociado al suministro pasado como paràmetro
+     * @param suministro
+     * @return
+     * @throws Exception 
+     */
     public ArrayList<MovRegsSco> consultarMovRegScoAsociado(MovSuministros suministro) throws Exception {
         ArrayList<MovRegsSco> movRegsScoList = null;
-        String sql = "SELECT * FROM MOV_REGS_SCO WHERE NNIS_RAD = ? and TSFECLET = ? and VCTIPO_LEC = ?";
+        String sql = "SELECT * FROM MOV_REGS_SCO WHERE NNIS_RAD = ? and VCTIPO_LEC = ?";
 
         try (Connection con = databaseController.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(sql);
-                        
+            //NNIS_RAD y VCTIPO_LEC.            
             preparedStatement.setInt(1, suministro.getMovSuministrosPK().getNnisRad().intValue());
-            preparedStatement.setDate(2, new java.sql.Date(movLectConsu.getTsfechaLec().getTime()));
-            preparedStatement.setString(3, movLectConsu.getVctipoLec());
+            preparedStatement.setString(2, suministro.getVctipoLec());
             ResultSet resultSet = preparedStatement.executeQuery();
             
             MovRegsSco movRegsSco;

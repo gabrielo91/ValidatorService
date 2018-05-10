@@ -27,7 +27,7 @@ public class DAOMovProcessRegistry {
 
     public ArrayList<MovProcessRegistry> getProcessRgistry() throws Exception {
         ArrayList<MovProcessRegistry> movProcessRegistryList = new ArrayList<>();
-        String sql = "SELECT * FROM (SELECT * FROM MOV_PROCESS_REGISTRY WHERE VCPROCESS_ID_PADRE IS NULL ORDER BY FECHA DESC) WHERE ROWNUM <2;";
+        String sql = "SELECT VCPROCESS_ID FROM (SELECT VCPROCESS_ID FROM MOV_PROCESS_REGISTRY WHERE VCPROCESS_ID_PADRE IS NULL ORDER BY FECHA DESC) WHERE ROWNUM <2";
         
         try (Connection con = databaseController.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(sql);
