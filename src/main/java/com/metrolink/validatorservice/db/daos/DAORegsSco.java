@@ -74,7 +74,7 @@ public class DAORegsSco {
      * @throws Exception 
      */
     public ArrayList<MovRegsSco> consultarMovRegScoAsociado(MovSuministros suministro) throws Exception {
-        ArrayList<MovRegsSco> movRegsScoList = null;
+        ArrayList<MovRegsSco> movRegsScoList = new ArrayList<>();
         String sql = "SELECT * FROM MOV_REGS_SCO WHERE NNIS_RAD = ? and VCTIPO_LEC = ?";
 
         try (Connection con = databaseController.getConnection()) {
