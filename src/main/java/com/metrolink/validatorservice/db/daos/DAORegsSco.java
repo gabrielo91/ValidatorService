@@ -40,6 +40,7 @@ public class DAORegsSco {
         movRegsSco.setNconsumo(BigInteger.valueOf(resultSet.getLong("NCONSUMO")));
         movRegsSco.setNlec(BigInteger.valueOf(resultSet.getLong("NLEC")));
         movRegsSco.setVccoan(resultSet.getString("VCCOAN"));
+        movRegsSco.setNperiodo(BigInteger.valueOf(resultSet.getLong("NPERIODO")));
         return movRegsSco;
     }
 

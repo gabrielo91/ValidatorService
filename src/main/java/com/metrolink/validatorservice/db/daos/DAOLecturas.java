@@ -46,7 +46,7 @@ public class DAOLecturas implements IDAOLecturas {
                 + "JOIN MOV_SUMINISTROS MS "
                 + "ON MLC.NCOD_PROV = MS.NCOD_PROV "
                 + "AND  MLC.NNIS_RAD = MS.NNIS_RAD "
-                + "AND  MLC.VCCODTCONSUMO = MS.VCCODTCONSUMO "
+                + "AND  MLC.VCTIPO_LEC = MS.VCTIPO_LEC "
                 + "AND MLC.LCERTIFICADA = ?";
 
         try (Connection con = databaseController.getConnection()) {
