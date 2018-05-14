@@ -8,6 +8,7 @@ package com.metrolink.validatorservice.alarmsmanager;
 import com.metrolink.validatorservice.db.controller.DataBaseManager;
 import com.metrolink.validatorservice.db.controller.DatabaseController;
 import com.metrolink.validatorservice.db.controller.IDatabaseController;
+import com.metrolink.validatorservice.db.daos.DAOAgendaLectura;
 import com.metrolink.validatorservice.db.daos.DAOAlarmas;
 import com.metrolink.validatorservice.db.daos.DAORegsSco;
 import com.metrolink.validatorservice.db.daos.IDAOAlarmas;
@@ -64,10 +65,10 @@ public class AlarmsManager implements IAlarmsManager{
         
         IPreferencesManager preferencesManager = DataBaseManager.getInstance().getPreferencesManager();
         IDatabaseController databaseController = new DatabaseController(preferencesManager);
-        ArrayList<MovRegsSco> movRegsScoAsociados = new DAORegsSco(databaseController).consultarMovRegScoAsociado(suministro);
+        ArrayList<AgendaLectura> agendaAsociada = new DAOAgendaLectura(databaseController).getAgendaAsociada(suministro);
         MovAlarmas alarm = new MovAlarmas();
         
-        if(!movRegsScoAsociados.isEmpty()){
+        if(!agendaAsociada.isEmpty()){
             
             alarm.setDfechaVal(new Date());
 
@@ -76,7 +77,7 @@ public class AlarmsManager implements IAlarmsManager{
             alarmasPK.setNnisRad(suministro.getMovSuministrosPK().getNnisRad().intValue());
             alarm.setMovAlarmasPK(alarmasPK);
             alarm.setNnic(suministro.getNnic());
-            alarm.setNpericons(movRegsScoAsociados.get(0).getNperiodo().intValue());
+            alarm.setNpericons((int)agendaAsociada.get(0).getAgendaLecturaPK().getNpericons());
             alarm.setNunicom(suministro.getNunicom().shortValue());
             alarm.setVcitinerario(suministro.getVcitinerario());
             alarm.setVcruta(suministro.getVcruta());
@@ -85,7 +86,7 @@ public class AlarmsManager implements IAlarmsManager{
             //Se almacenan los datos del suminsitro que genera la alarma
             alarm.setMovSuministrosPK(suministro.getMovSuministrosPK());
         } else {
-             throw new Exception("There is not an MovRegsSco related for creating alarm");
+             throw new Exception("Error creating alarm");
         }
         
         

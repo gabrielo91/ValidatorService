@@ -63,64 +63,68 @@ public class DAOSuministros implements IDAOSuministros {
     }
 
     public static MovSuministros createMovSuministrosEntity(ResultSet resultSet) throws SQLException {
-        MovSuministros movSuministros = new MovSuministros();
+        MovSuministros movSuministros = null;
 
-        MovSuministrosPK movSuministrosPK = new MovSuministrosPK();
-        movSuministrosPK.setNcodProv(resultSet.getInt("NCOD_PROV"));
-        movSuministrosPK.setNnisRad(BigInteger.valueOf(resultSet.getLong("NNIS_RAD")));
-        movSuministrosPK.setVctipoEnergia(resultSet.getString("VCTIPO_ENERGIA"));
-        movSuministros.setMovSuministrosPK(movSuministrosPK);
+        if(Utils.doesColumnExist("NCOD_PROV", resultSet)){
+            movSuministros = new MovSuministros();
+            MovSuministrosPK movSuministrosPK = new MovSuministrosPK();
+            movSuministrosPK.setNcodProv(resultSet.getInt("NCOD_PROV"));
+            movSuministrosPK.setNnisRad(BigInteger.valueOf(resultSet.getLong("NNIS_RAD")));
+            movSuministrosPK.setVctipoEnergia(resultSet.getString("VCTIPO_ENERGIA"));
+            movSuministros.setMovSuministrosPK(movSuministrosPK);
 
-        movSuministros.setVcnumMed(resultSet.getString("VCNUM_MED"));
-        movSuministros.setVctipoMed(resultSet.getString("VCTIPO_MED"));
-        movSuministros.setVctipoLec(resultSet.getString("VCTIPO_LEC"));
-        movSuministros.setVccentTec(resultSet.getString("VCCENT_TEC"));
-        movSuministros.setTsful(resultSet.getDate("TSFUL"));
-        movSuministros.setTsflt(resultSet.getDate("TSFLT"));
-        movSuministros.setTsfla(resultSet.getDate("TSFLA"));
-        movSuministros.setNnic(resultSet.getInt("NNIC"));
-        movSuministros.setVctipoVal(resultSet.getString("VCTIPO_VAL"));
-        movSuministros.setLestado(resultSet.getShort("LESTADO"));
-        movSuministros.setVcnif(resultSet.getString("LESTADO"));
-        movSuministros.setNunicom(BigInteger.valueOf(resultSet.getInt("NUNICOM")));
-        movSuministros.setVcruta(resultSet.getString("VCRUTA"));
-        movSuministros.setVcitinerario(resultSet.getString("VCITINERARIO"));
-        movSuministros.setVcciclo(resultSet.getString("VCCICLO"));
+            movSuministros.setVcnumMed(resultSet.getString("VCNUM_MED"));
+            movSuministros.setVctipoMed(resultSet.getString("VCTIPO_MED"));
+            movSuministros.setVctipoLec(resultSet.getString("VCTIPO_LEC"));
+            movSuministros.setVccentTec(resultSet.getString("VCCENT_TEC"));
+            movSuministros.setTsful(resultSet.getDate("TSFUL"));
+            movSuministros.setTsflt(resultSet.getDate("TSFLT"));
+            movSuministros.setTsfla(resultSet.getDate("TSFLA"));
+            movSuministros.setNnic(resultSet.getInt("NNIC"));
+            movSuministros.setVctipoVal(resultSet.getString("VCTIPO_VAL"));
+            movSuministros.setLestado(resultSet.getShort("LESTADO"));
+            movSuministros.setVcnif(resultSet.getString("LESTADO"));
+            movSuministros.setNunicom(BigInteger.valueOf(resultSet.getInt("NUNICOM")));
+            movSuministros.setVcruta(resultSet.getString("VCRUTA"));
+            movSuministros.setVcitinerario(resultSet.getString("VCITINERARIO"));
+            movSuministros.setVcciclo(resultSet.getString("VCCICLO"));
 
-        MCalTou ncodCalTou = new MCalTou();
-        ncodCalTou.setNcodCalTou(resultSet.getInt("NCOD_CAL_TOU"));
-        movSuministros.setNcodCalTou(ncodCalTou);
+            MCalTou ncodCalTou = new MCalTou();
+            ncodCalTou.setNcodCalTou(resultSet.getInt("NCOD_CAL_TOU"));
+            movSuministros.setNcodCalTou(ncodCalTou);
 
-        MJurisdicciones ncodJurisdiccion = new MJurisdicciones();
-        ncodJurisdiccion.setNcodJurisdiccion(resultSet.getInt("NCOD_JURISDICCION"));
-        movSuministros.setNcodJurisdiccion(ncodJurisdiccion);
+            MJurisdicciones ncodJurisdiccion = new MJurisdicciones();
+            ncodJurisdiccion.setNcodJurisdiccion(resultSet.getInt("NCOD_JURISDICCION"));
+            movSuministros.setNcodJurisdiccion(ncodJurisdiccion);
 
-        MMarcasmedidor vccodmarca = new MMarcasmedidor();
-        vccodmarca.setVccodmarca(resultSet.getString("VCCODMARCA"));
-        movSuministros.setVccodmarca(vccodmarca);
+            MMarcasmedidor vccodmarca = new MMarcasmedidor();
+            vccodmarca.setVccodmarca(resultSet.getString("VCCODMARCA"));
+            movSuministros.setVccodmarca(vccodmarca);
 
-        MProveedores mProveedores = new MProveedores();
-        mProveedores.setNcodProv(resultSet.getInt("NCOD_PROV"));
-        movSuministros.setMProveedores(mProveedores);
+            MProveedores mProveedores = new MProveedores();
+            mProveedores.setNcodProv(resultSet.getInt("NCOD_PROV"));
+            movSuministros.setMProveedores(mProveedores);
 
-        MTarifas vccodtarifa = new MTarifas();
-        vccodtarifa.setVccodtarifa(resultSet.getString("VCCODTARIFA"));
-        movSuministros.setVccodtarifa(vccodtarifa);
+            MTarifas vccodtarifa = new MTarifas();
+            vccodtarifa.setVccodtarifa(resultSet.getString("VCCODTARIFA"));
+            movSuministros.setVccodtarifa(vccodtarifa);
 
-        movSuministros.setVccodtconsumo(resultSet.getString("VCCODTCONSUMO"));
+            movSuministros.setVccodtconsumo(resultSet.getString("VCCODTCONSUMO"));
 
-        if (Utils.doesColumnExist("VCCOAN", resultSet)) { // Es una consulta de MOV_REGS_SCO
-            MovRegsSco movRegsSco = DAORegsSco.createMovLecConsuEntity(resultSet);
-            if (null != movRegsSco.getMovRegsScoPK() && null != movRegsSco.getMovRegsScoPK().getNnisRad()) {
-                movSuministros.getMovRegsScoCollection().add(movRegsSco);
+            if (Utils.doesColumnExist("VCCOAN", resultSet)) { // Es una consulta de MOV_REGS_SCO
+                MovRegsSco movRegsSco = DAORegsSco.createMovLecConsuEntity(resultSet);
+                if (null != movRegsSco.getMovRegsScoPK() && null != movRegsSco.getMovRegsScoPK().getNnisRad()) {
+                    movSuministros.getMovRegsScoCollection().add(movRegsSco);
+                }
             }
-        }
 
-        if (Utils.doesColumnExist("NLECTURA", resultSet)) {// Es una consulta de MOV_LECT_CONSU
-            MovLectConsu lectConsu = DAOLecturas.createMovLecConsuEntity(resultSet);
-            if (null != lectConsu.getId()) {
-                movSuministros.getMovLectConsuCollection().add(lectConsu);
+            if (Utils.doesColumnExist("NLECTURA", resultSet)) {// Es una consulta de MOV_LECT_CONSU
+                MovLectConsu lectConsu = DAOLecturas.createMovLecConsuEntity(resultSet);
+                if (null != lectConsu.getId()) {
+                    movSuministros.getMovLectConsuCollection().add(lectConsu);
+                }
             }
+        
         }
         return movSuministros;
     }

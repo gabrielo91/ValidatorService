@@ -203,8 +203,8 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
         agendaLectura.setVcruta(result.getString("VCRUTA"));
        
         MovSuministros movSuministros = DAOSuministros.createMovSuministrosEntity(result);
-       // System.err.println("ncodProv es: "+movSuministros.getMovSuministrosPK().getNcodProv());
-        if(movSuministros.getMovSuministrosPK().getNcodProv() >= 0
+
+        if(null != movSuministros && movSuministros.getMovSuministrosPK().getNcodProv() >= 0
                 && null != movSuministros.getMovSuministrosPK().getNnisRad() 
                 && null != movSuministros.getMovSuministrosPK().getVctipoEnergia()){
             agendaLectura.getListaSuministros().add(movSuministros);
@@ -214,6 +214,31 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
         return agendaLectura;
     }
 
+    public ArrayList<AgendaLectura> getAgendaAsociada(MovSuministros movSuministros) throws Exception{
+        ArrayList<AgendaLectura> listaAgendas = new ArrayList<>();
+        String sql = "SELECT * FROM AGENDA_LECTURA WHERE VCITINERARIO = ? AND VCRUTA = ? AND VCCICLO = ? AND NUNICOM = ?";
+        
+        try (Connection con = databaseController.getConnection()) {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+                        
+            preparedStatement.setString(1, movSuministros.getVcitinerario());
+            preparedStatement.setString(2, movSuministros.getVcruta());
+            preparedStatement.setString(3, movSuministros.getVcciclo());
+            preparedStatement.setInt(4, movSuministros.getNunicom().intValue());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            
+            AgendaLectura agenda;
+            
+            while (resultSet.next()) {
+                agenda = createAgendaEntity(resultSet);
+                listaAgendas.add(agenda);
+            }
+        
+        }
+        
+        
+        return listaAgendas;
+    }
     
 
 
