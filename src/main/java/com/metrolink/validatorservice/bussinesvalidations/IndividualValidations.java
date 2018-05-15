@@ -12,10 +12,15 @@ import com.metrolink.validatorservice.db.controller.DatabaseController;
 import com.metrolink.validatorservice.db.controller.IDatabaseController;
 import com.metrolink.validatorservice.db.controller.ParametrosAdmin;
 import com.metrolink.validatorservice.db.controller.ParametrosConf;
+import com.metrolink.validatorservice.db.daos.DAOMCalTou;
 import com.metrolink.validatorservice.db.daos.DAORegsSco;
+import com.metrolink.validatorservice.db.daos.DAOSuministros;
+import com.metrolink.validatorservice.db.daos.IDAOSuministros;
 import com.metrolink.validatorservice.logger.DataLogger;
+import com.metrolink.validatorservice.models.MCalTou;
 import com.metrolink.validatorservice.models.MConfVal;
 import com.metrolink.validatorservice.models.MParametrosAdm;
+import com.metrolink.validatorservice.models.MovCalTou;
 import com.metrolink.validatorservice.models.MovLectConsu;
 import com.metrolink.validatorservice.models.MovRegsSco;
 import com.metrolink.validatorservice.models.MovSuministros;
@@ -34,6 +39,7 @@ import java.util.concurrent.TimeUnit;
 public class IndividualValidations implements IIndividualValidations {
 
     private IAlarmsManager alarmsManager;
+    private IDAOSuministros suministrodao;
 
     public IndividualValidations(IAlarmsManager alarmsManager) {
         this.alarmsManager = alarmsManager;
@@ -41,21 +47,26 @@ public class IndividualValidations implements IIndividualValidations {
 
     @Override
     public boolean verificarCalendarioTOU(List<MovSuministros> itinerarios) throws Exception {
-
-        boolean result = false;
-
+        boolean result = false;       
         try {
-            if (itinerarios.size() > 0) {
+            if (itinerarios.size() > 0) {               
                 result = true;
-                for (MovSuministros itinerario : itinerarios) {
-                    if (!itinerario.isSuministroInvalidado()) {
-                        if (!itinerario.getMovLectConsuCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_CONSUMO)) {
-                            Integer calendarioTOU = itinerarios.get(0).getNcodCalTou().getNcodCalTou();
-                            if (null == calendarioTOU || calendarioTOU < 1) {
+                for (MovSuministros itinerario : itinerarios) {                 
+                    if (!itinerario.isSuministroInvalidado()) {                      
+                        if (!itinerario.getMovLectConsuCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_CONSUMO)) {                        
+                            IPreferencesManager preferencesManager = DataBaseManager.getInstance().getPreferencesManager();
+                            IDatabaseController databaseController = new DatabaseController(preferencesManager);
+                            MovCalTou calendario = new DAOMCalTou(databaseController).buscaCalendarioTou(itinerario);
+
+                            suministrodao = new DAOSuministros(databaseController);
+                            if (calendario.getMovCalTouPK() == null) {                               
                                 result = result && false;
-                                alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.CALENDARIO_TOU_VALIDATION_ERROR_CODE);
-                            } else {
+                                alarmsManager.reportAlarm(itinerario, AlarmsManager.CALENDARIO_TOU_VALIDATION_ERROR_CODE);
+                            } else {                               
+                                MCalTou caltou = new MCalTou(calendario.getMovCalTouPK().getNcodCalTou());
                                 result = result && true;
+                                itinerario.setNcodCalTou(caltou);
+                                suministrodao.actualizaCalendarioTou(itinerario);
                             }
                         }
                     }
@@ -72,8 +83,7 @@ public class IndividualValidations implements IIndividualValidations {
 
     @Override
     public boolean verificarExistenciaDatos(List<MovSuministros> itinerarios) throws Exception {
-        boolean result = false;
-
+        boolean result = false;        
         try {
             if (itinerarios.size() > 0) {
                 result = true;
@@ -99,8 +109,7 @@ public class IndividualValidations implements IIndividualValidations {
     }
 
     @Override
-    public boolean verificarCompletitudInformacion(List<MovSuministros> itinerarios) throws Exception {
-
+    public boolean verificarCompletitudInformacion(List<MovSuministros> itinerarios) throws Exception {        
         boolean result = false;
         final int UN_DIA = 1;
         try {
@@ -118,8 +127,7 @@ public class IndividualValidations implements IIndividualValidations {
                             Date maxFechaLectura = itinerario.getTsful();
                             long diffTime = fechaActual.getTime() - maxFechaLectura.getTime();
                             long daysDiff = TimeUnit.DAYS.convert(diffTime, TimeUnit.MILLISECONDS);
-
-                            System.out.println("Dias de diferencia: " + daysDiff);
+                          
                             if (daysDiff > toleranciaCompletitudLecturas) {
                                 alarmsManager.reportAlarm(itinerario, AlarmsManager.COMPLETITUD_INFO_VALIDATION_ERROR_CODE);
                                 result = false;
@@ -152,7 +160,7 @@ public class IndividualValidations implements IIndividualValidations {
     }
 
     @Override
-    public boolean comparacionLectuaDiaria(List<MovSuministros> itinerarios) throws Exception {
+    public boolean comparacionLectuaDiaria(List<MovSuministros> itinerarios) throws Exception {       
         boolean result = false;
         try {
 
@@ -210,7 +218,7 @@ public class IndividualValidations implements IIndividualValidations {
     }
 
     @Override
-    public boolean comparacionLectuaDiariaMensual(List<MovSuministros> itinerarios) throws Exception {
+    public boolean comparacionLectuaDiariaMensual(List<MovSuministros> itinerarios) throws Exception {        
         boolean result = false;
         try {
 
@@ -266,14 +274,13 @@ public class IndividualValidations implements IIndividualValidations {
     }
 
     @Override
-    public boolean verificarPorcentajeMaximoSuperiorInferior(List<MovSuministros> itinerarios) throws Exception {
+    public boolean verificarPorcentajeMaximoSuperiorInferior(List<MovSuministros> itinerarios) throws Exception {        
         boolean result = false;
         if (itinerarios.size() > 0) {
 
             for (MovSuministros itinerario : itinerarios) {
                 if (!itinerario.isSuministroInvalidado()) {
                     if (!itinerario.getMovLectConsuCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
-                        
 
                         IPreferencesManager preferencesManager = DataBaseManager.getInstance().getPreferencesManager();
                         IDatabaseController databaseController = new DatabaseController(preferencesManager);
@@ -281,7 +288,7 @@ public class IndividualValidations implements IIndividualValidations {
 
                         if (!movRegsScoAsociados.isEmpty()) {
                             result = true;
-                            
+
                             MovRegsSco movRegsSco = movRegsScoAsociados.get(0);
                             BigDecimal lecturaEsperadaMinima = movRegsSco.getNlemin();
                             BigDecimal lecturaEsperadaMaxima = movRegsSco.getNlemax();

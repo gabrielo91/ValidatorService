@@ -44,8 +44,7 @@ public class DAOAlarmas implements IDAOAlarmas {
         try (Connection con = databaseController.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(sql);
            
-            for (MovAlarmas alarma : alarmas) {
-                
+            for (MovAlarmas alarma : alarmas) {               
                 preparedStatement.setShort(1, alarma.getNunicom());
                 preparedStatement.setString(2, processId);
                 preparedStatement.setInt(3, alarma.getNpericons());

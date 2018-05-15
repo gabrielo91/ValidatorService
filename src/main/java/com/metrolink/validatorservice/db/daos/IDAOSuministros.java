@@ -13,5 +13,6 @@ import java.util.ArrayList;
  * @author Gabriel Ortega
  */
 public interface IDAOSuministros {
-    boolean lockUnlockSuministros(ArrayList<MovSuministros> listSuministros, short lockStatus) throws Exception;     
+    boolean lockUnlockSuministros(ArrayList<MovSuministros> listSuministros, short lockStatus) throws Exception;    
+    boolean actualizaCalendarioTou(MovSuministros suministro) throws Exception;
 }

@@ -65,7 +65,7 @@ public class DAOSuministros implements IDAOSuministros {
     public static MovSuministros createMovSuministrosEntity(ResultSet resultSet) throws SQLException {
         MovSuministros movSuministros = null;
 
-        if(Utils.doesColumnExist("NCOD_PROV", resultSet)){
+        if (Utils.doesColumnExist("NCOD_PROV", resultSet)) {
             movSuministros = new MovSuministros();
             MovSuministrosPK movSuministrosPK = new MovSuministrosPK();
             movSuministrosPK.setNcodProv(resultSet.getInt("NCOD_PROV"));
@@ -124,9 +124,31 @@ public class DAOSuministros implements IDAOSuministros {
                     movSuministros.getMovLectConsuCollection().add(lectConsu);
                 }
             }
-        
+
         }
         return movSuministros;
+    }
+@Override
+    public boolean actualizaCalendarioTou(MovSuministros suministro) throws Exception {
+
+        String sql = "UPDATE MOV_SUMINISTROS SET NCOD_CAL_TOU = ? WHERE NCOD_PROV = ? AND NNIS_RAD = ? AND VCTIPO_ENERGIA = ?";
+        int result = 0;
+        boolean resultado = false;
+        try (Connection con = databaseController.getConnection()) {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            System.out.println("Codigo calendario en actualizar "+suministro.getNcodCalTou().getNcodCalTou());
+            preparedStatement.setInt(1, suministro.getNcodCalTou().getNcodCalTou());
+            preparedStatement.setInt(2, suministro.getMovSuministrosPK().getNcodProv());
+            preparedStatement.setLong(3, suministro.getMovSuministrosPK().getNnisRad().longValue());
+            preparedStatement.setString(4, suministro.getMovSuministrosPK().getVctipoEnergia());
+            result = preparedStatement.executeUpdate();
+
+            if (result == 1) {
+                resultado = true;
+            }
+        }
+
+        return resultado;
     }
 
 }
