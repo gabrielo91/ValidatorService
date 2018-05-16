@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  *
@@ -25,24 +26,27 @@ public class DAOMovProcessRegistry {
         this.databaseController = databaseController;
     }
 
-    public ArrayList<MovProcessRegistry> getProcessRgistry() throws Exception {
-        ArrayList<MovProcessRegistry> movProcessRegistryList = new ArrayList<>();
-        String sql = "SELECT VCPROCESS_ID FROM (SELECT VCPROCESS_ID FROM MOV_PROCESS_REGISTRY WHERE VCPROCESS_ID_PADRE IS NULL ORDER BY FECHA DESC) WHERE ROWNUM <2";
+    public String getProcessRgistry() throws Exception {
+        String processId = String.valueOf(UUID.randomUUID());
+        final int TRANSACCION_EXITOSA = 1;
+        
+        String sql = "INSERT INTO MOV_PROCESS_REGISTRY  (VCPROCESS_ID, VCESTADO_TRANSACCION) VALUES (?,?)";
         
         try (Connection con = databaseController.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(sql);
            
-            ResultSet resultSet = preparedStatement.executeQuery();
-            MovProcessRegistry movProcessRegistry;
+            preparedStatement.setString(1, processId);
+            preparedStatement.setInt(2, TRANSACCION_EXITOSA);
+            int a = preparedStatement.executeUpdate();
             
-            while (resultSet.next()) {
-                movProcessRegistry = createMovProcessRegistryEntity(resultSet);
-                movProcessRegistryList.add(movProcessRegistry);
+            if (a <= 0){
+                throw new Exception("No se pudo insertar la alarma");
             }
+
         
         }
         
-        return movProcessRegistryList;
+        return processId;
     }
 
     private MovProcessRegistry createMovProcessRegistryEntity(ResultSet resultSet) throws SQLException {

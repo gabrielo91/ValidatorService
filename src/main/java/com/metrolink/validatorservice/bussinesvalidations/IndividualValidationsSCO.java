@@ -58,7 +58,7 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
                                 double coeficienteVariacion = desviacionEstandar / Math.abs(promedio);
 
                                 if (coeficienteVariacion > COEFICIENTE_VARIACION_MAX) {
-                                    alarmsManager.reportAlarm(itinerariosSCO.get(0), AlarmsManager.DESVIACION_DE_CONSUMO_ERROR_CODE);
+                                    alarmsManager.reportAlarm(itinerario, AlarmsManager.DESVIACION_DE_CONSUMO_ERROR_CODE);
                                     result = result && false;
                                 } else {
                                     result = result && true;
@@ -79,7 +79,7 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
                                 double coeficienteVariacion = desviacionEstandar / Math.abs(promedio);
 
                                 if (coeficienteVariacion > COEFICIENTE_VARIACION_MAX) {
-                                    alarmsManager.reportAlarm(itinerariosSCO.get(0), AlarmsManager.DESVIACION_DE_CONSUMO_ERROR_CODE);
+                                    alarmsManager.reportAlarm(itinerario, AlarmsManager.DESVIACION_DE_CONSUMO_ERROR_CODE);
                                     result = result && false;
                                 } else {
                                     result = result && true;

@@ -244,13 +244,7 @@ public class Controller {
      */
     private String getProcessId()  throws Exception {
         IDatabaseController databaseController = new DatabaseController(preferencesManager);
-        String processId = "";
-        ArrayList<MovProcessRegistry> movProcessRegistryList = new DAOMovProcessRegistry(databaseController).getProcessRgistry();
-        
-        if(!movProcessRegistryList.isEmpty()){
-            processId = movProcessRegistryList.get(0).getVcprocessId();
-        }
-        
+        String processId = new DAOMovProcessRegistry(databaseController).getProcessRgistry();
         return processId;
     }
 

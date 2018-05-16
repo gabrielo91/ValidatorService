@@ -91,7 +91,7 @@ public class IndividualValidations implements IIndividualValidations {
                     if (!itinerario.isSuministroInvalidado()) {
 
                         if (itinerario.getMovLectConsuCollection().isEmpty() || !validarFechasLecturas(itinerario)) {
-                            alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.EXISTENCIA_DE_DATOS_ERROR_CODE);
+                            alarmsManager.reportAlarm(itinerario, AlarmsManager.EXISTENCIA_DE_DATOS_ERROR_CODE);
                             itinerario.setSuministroInvalidado(true);
                             result = result && false;
                         } else {
@@ -241,18 +241,18 @@ public class IndividualValidations implements IIndividualValidations {
                                     Integer vav = ultimaLectura - ultimaLecturaReportadaEnOpen;
 
                                     if (vav.intValue() < 0) {
-                                        alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.DEVOLUCION_DE_REGISTRO_MENSUAL_ERROR_CODE);
+                                        alarmsManager.reportAlarm(itinerario, AlarmsManager.DEVOLUCION_DE_REGISTRO_MENSUAL_ERROR_CODE);
                                         result = result && false;
                                     } else if (vav.intValue() == 0) {
-                                        alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.LECTURA_REPETIDA_MENSUAL_ERROR_CODE);
+                                        alarmsManager.reportAlarm(itinerario, AlarmsManager.LECTURA_REPETIDA_MENSUAL_ERROR_CODE);
                                         result = result && false;
                                     } else if (vav.intValue() > 0) {
                                         double porcentaje = vav.doubleValue() / ultimaLectura.doubleValue();
                                         if (porcentaje < MIN_VALUE) {
-                                            alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.INCREMENTO_MINIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
+                                            alarmsManager.reportAlarm(itinerario, AlarmsManager.INCREMENTO_MINIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
                                             result = result && false;
                                         } else if (porcentaje > MAX_VALUE) {
-                                            alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.INCREMENTO_MAXIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
+                                            alarmsManager.reportAlarm(itinerario, AlarmsManager.INCREMENTO_MAXIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
                                             result = result && false;
                                         } else {
                                             itinerario.certificarLecturas();
@@ -295,7 +295,7 @@ public class IndividualValidations implements IIndividualValidations {
                             BigDecimal ultimaLectura = itinerario.getMovLectConsuCollection().get(0).getNlectura();
 
                             if (ultimaLectura.compareTo(lecturaEsperadaMinima) < 0 || ultimaLectura.compareTo(lecturaEsperadaMaxima) > 0) {
-                                alarmsManager.reportAlarm(itinerarios.get(0), AlarmsManager.PORCENTAJE_MAXIMO_SUPERIOR_INFERIOR_ERROR_CODE);
+                                alarmsManager.reportAlarm(itinerario, AlarmsManager.PORCENTAJE_MAXIMO_SUPERIOR_INFERIOR_ERROR_CODE);
                                 result = result && false;
                             } else {
                                 result = result && true;
