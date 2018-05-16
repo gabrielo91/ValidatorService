@@ -114,7 +114,7 @@ public class ValidationsTest {
         boolean result = false;        
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();      
         itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_CONSUMO);
-        result = individualValidations.verificarCalendarioTOU(itinerarios.get(0).getListaSuministros());
+        result = individualValidations.V1verificarCalendarioTOU(itinerarios.get(0).getListaSuministros());
         Assert.assertTrue(result);
     }
     
@@ -125,7 +125,7 @@ public class ValidationsTest {
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
         itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_CONSUMO);
         itinerarios.get(0).getListaSuministros().get(0).getNcodCalTou().setNcodCalTou(calTouNumber);      
-        result = individualValidations.verificarCalendarioTOU(itinerarios.get(0).getListaSuministros());
+        result = individualValidations.V1verificarCalendarioTOU(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.CALENDARIO_TOU_VALIDATION_ERROR_CODE);
     }
@@ -137,7 +137,7 @@ public class ValidationsTest {
         itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setTsfechaLec(new Date());
         Date tsfulSimulada = Utils.addDays(new Date(), - UN_DIA*5);
         itinerarios.get(0).getListaSuministros().get(0).setTsful(tsfulSimulada);
-        boolean result = individualValidations.verificarExistenciaDatos(itinerarios.get(0).getListaSuministros());
+        boolean result = individualValidations.V2verificarExistenciaDatos(itinerarios.get(0).getListaSuministros());
         Assert.assertTrue(result);
     }
     
@@ -149,7 +149,7 @@ public class ValidationsTest {
         Date tsfulSimulada = Utils.addDays(new Date(), - UN_DIA*5);
         itinerarios.get(0).getListaSuministros().get(0).setTsful(tsfulSimulada);
         itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_CONSUMO);
-        boolean result = individualValidations.verificarExistenciaDatos(itinerarios.get(0).getListaSuministros());
+        boolean result = individualValidations.V2verificarExistenciaDatos(itinerarios.get(0).getListaSuministros());
         Assert.assertTrue(result);
     }
     
@@ -159,7 +159,7 @@ public class ValidationsTest {
         boolean result;
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();   
         itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().clear();
-        result = individualValidations.verificarExistenciaDatos(itinerarios.get(0).getListaSuministros());
+        result = individualValidations.V2verificarExistenciaDatos(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.EXISTENCIA_DE_DATOS_ERROR_CODE);
         Assert.assertTrue(itinerarios.get(0).getListaSuministros().get(0).isSuministroInvalidado());
@@ -173,7 +173,7 @@ public class ValidationsTest {
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();       
         itinerarios.get(0).getListaSuministros().get(0).setTsfla(testingDateFLA);
         itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_LECTURA);
-        result = individualValidations.verificarCompletitudInformacion(itinerarios.get(0).getListaSuministros());
+        result = individualValidations.V3verificarCompletitudInformacion(itinerarios.get(0).getListaSuministros());
         Assert.assertTrue(result);
     }
     
@@ -185,7 +185,7 @@ public class ValidationsTest {
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();       
         itinerarios.get(0).getListaSuministros().get(0).setTsful(testingDateFul);
         itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_LECTURA);
-        result = individualValidations.verificarCompletitudInformacion(itinerarios.get(0).getListaSuministros());
+        result = individualValidations.V3verificarCompletitudInformacion(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
     }
     
@@ -197,7 +197,7 @@ public class ValidationsTest {
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
         itinerarios.get(0).getListaSuministros().get(0).setTsfla(testingDateFLA);
         itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_CONSUMO);
-        result = individualValidations.verificarCompletitudInformacion(itinerarios.get(0).getListaSuministros());
+        result = individualValidations.V3verificarCompletitudInformacion(itinerarios.get(0).getListaSuministros());
         Assert.assertTrue(result);
     }
     
@@ -209,7 +209,7 @@ public class ValidationsTest {
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
         itinerarios.get(0).getListaSuministros().get(0).setTsfla(testingDateFLA);
         itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_CONSUMO);
-        result = individualValidations.verificarCompletitudInformacion(itinerarios.get(0).getListaSuministros());
+        result = individualValidations.V3verificarCompletitudInformacion(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.COMPLETITUD_INFO_VALIDATION_ERROR_CODE);
         Assert.assertTrue(itinerarios.get(0).getListaSuministros().get(0).isSuministroInvalidado()); //Validar que se invalidó el suministro correctamente
@@ -219,7 +219,7 @@ public class ValidationsTest {
     @Test
     public void comparacionLectuaDiariaExitoso() throws Exception {
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
-        boolean result = individualValidations.comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
+        boolean result = individualValidations.V4comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
         Assert.assertTrue(result);
     }
     
@@ -229,7 +229,7 @@ public class ValidationsTest {
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
         itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNlectura(BigDecimal.valueOf(200));
         itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNlectura(BigDecimal.valueOf(300));
-        boolean result = individualValidations.comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
+        boolean result = individualValidations.V4comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.DEVOLUCION_DE_REGISTRO_ERROR_CODE);
     }
@@ -240,7 +240,7 @@ public class ValidationsTest {
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
         itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNlectura(BigDecimal.ONE);
         itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNlectura(BigDecimal.ONE);
-        boolean result = individualValidations.comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
+        boolean result = individualValidations.V4comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.LECTURA_REPETIDA_ERROR_CODE);
     }
@@ -251,7 +251,7 @@ public class ValidationsTest {
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
         itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNlectura(BigDecimal.valueOf(120));
         itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNlectura(BigDecimal.valueOf(100));
-        boolean result  = individualValidations.comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
+        boolean result  = individualValidations.V4comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.INCREMENTO_MINIMO_NO_ESPERADO_ERROR_CODE);
     }
@@ -262,7 +262,7 @@ public class ValidationsTest {
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
         itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNlectura(BigDecimal.valueOf(1100));
         itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNlectura(BigDecimal.valueOf(100));
-        boolean result = individualValidations.comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
+        boolean result = individualValidations.V4comparacionLectuaDiaria(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.INCREMENTO_MAXIMO_NO_ESPERADO_ERROR_CODE);
     }
@@ -272,7 +272,7 @@ public class ValidationsTest {
     public void comparacionLectuaDiariaMensualExitoso() throws Exception {
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
         itinerarios.get(0).getListaSuministros().get(0).setNulReportada(70);
-        boolean result = individualValidations.comparacionLectuaDiariaMensual(itinerarios.get(0).getListaSuministros());
+        boolean result = individualValidations.V5comparacionLectuaDiariaMensual(itinerarios.get(0).getListaSuministros());
         Assert.assertTrue(result);
     }
     
@@ -282,7 +282,7 @@ public class ValidationsTest {
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
         itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNlectura(BigDecimal.valueOf(200));
         itinerarios.get(0).getListaSuministros().get(0).setNulReportada(300);
-        boolean result = individualValidations.comparacionLectuaDiariaMensual(itinerarios.get(0).getListaSuministros());
+        boolean result = individualValidations.V5comparacionLectuaDiariaMensual(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.DEVOLUCION_DE_REGISTRO_MENSUAL_ERROR_CODE);
     }
@@ -293,7 +293,7 @@ public class ValidationsTest {
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
         itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNlectura(BigDecimal.ONE);
         itinerarios.get(0).getListaSuministros().get(0).setNulReportada(1);
-        boolean result = individualValidations.comparacionLectuaDiariaMensual(itinerarios.get(0).getListaSuministros());
+        boolean result = individualValidations.V5comparacionLectuaDiariaMensual(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.LECTURA_REPETIDA_MENSUAL_ERROR_CODE);
     }
@@ -304,7 +304,7 @@ public class ValidationsTest {
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
         itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNlectura(BigDecimal.valueOf(120));
         itinerarios.get(0).getListaSuministros().get(0).setNulReportada(100);
-        boolean result  = individualValidations.comparacionLectuaDiariaMensual(itinerarios.get(0).getListaSuministros());
+        boolean result  = individualValidations.V5comparacionLectuaDiariaMensual(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.INCREMENTO_MINIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
     }
@@ -319,7 +319,7 @@ public class ValidationsTest {
         ArrayList<AgendaLectura> itinerarios = createUniqueElementAgendaArray();  
         itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNlectura(BigDecimal.valueOf(2000));
         itinerarios.get(0).getListaSuministros().get(0).setNulReportada(50);
-        boolean result = individualValidations.comparacionLectuaDiariaMensual(itinerarios.get(0).getListaSuministros());
+        boolean result = individualValidations.V5comparacionLectuaDiariaMensual(itinerarios.get(0).getListaSuministros());
         Assert.assertFalse(result);
         verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.INCREMENTO_MAXIMO_NO_ESPERADO_MENSUAL_ERROR_CODE);
     }
@@ -332,7 +332,7 @@ public class ValidationsTest {
 //        itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_LECTURA);
 //        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNlectura(valorMinimoAceptado);
 //        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNlectura(valorMinimoAceptado);
-//        boolean result = individualValidations.verificarPorcentajeMaximoSuperiorInferior(itinerarios.get(0).getListaSuministros());
+//        boolean result = individualValidations.V6verificarPorcentajeMaximoSuperiorInferior(itinerarios.get(0).getListaSuministros());
 //        Assert.assertTrue(result);
 //    }
 //    
@@ -344,7 +344,7 @@ public class ValidationsTest {
 //        itinerarios.get(0).getListaSuministros().get(0).setVctipoVal(MovSuministros.TIPO_LECTURA);
 //        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(0).setNlectura(valorMinimoAceptado);
 //        itinerarios.get(0).getListaSuministros().get(0).getMovLectConsuCollection().get(1).setNlectura(valorMinimoAceptado);
-//        boolean result = individualValidations.verificarPorcentajeMaximoSuperiorInferior(itinerarios.get(0).getListaSuministros());
+//        boolean result = individualValidations.V6verificarPorcentajeMaximoSuperiorInferior(itinerarios.get(0).getListaSuministros());
 //        Assert.assertFalse(result);
 //        verify(alarmsManager).reportAlarm(itinerarios.get(0).getListaSuministros().get(0), AlarmsManager.PORCENTAJE_MAXIMO_SUPERIOR_INFERIOR_ERROR_CODE);
 //    }

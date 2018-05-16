@@ -46,7 +46,7 @@ public class IndividualValidations implements IIndividualValidations {
     }
 
     @Override
-    public boolean verificarCalendarioTOU(List<MovSuministros> itinerarios) throws Exception {
+    public boolean V1verificarCalendarioTOU(List<MovSuministros> itinerarios) throws Exception {
         boolean result = false;       
         try {
             if (itinerarios.size() > 0) {               
@@ -82,7 +82,7 @@ public class IndividualValidations implements IIndividualValidations {
     }
 
     @Override
-    public boolean verificarExistenciaDatos(List<MovSuministros> itinerarios) throws Exception {
+    public boolean V2verificarExistenciaDatos(List<MovSuministros> itinerarios) throws Exception {
         boolean result = false;        
         try {
             if (itinerarios.size() > 0) {
@@ -109,7 +109,7 @@ public class IndividualValidations implements IIndividualValidations {
     }
 
     @Override
-    public boolean verificarCompletitudInformacion(List<MovSuministros> itinerarios) throws Exception {        
+    public boolean V3verificarCompletitudInformacion(List<MovSuministros> itinerarios) throws Exception {  
         boolean result = false;
         final int UN_DIA = 1;
         try {
@@ -160,7 +160,7 @@ public class IndividualValidations implements IIndividualValidations {
     }
 
     @Override
-    public boolean comparacionLectuaDiaria(List<MovSuministros> itinerarios) throws Exception {       
+    public boolean V4comparacionLectuaDiaria(List<MovSuministros> itinerarios) throws Exception {    
         boolean result = false;
         try {
 
@@ -218,7 +218,7 @@ public class IndividualValidations implements IIndividualValidations {
     }
 
     @Override
-    public boolean comparacionLectuaDiariaMensual(List<MovSuministros> itinerarios) throws Exception {        
+    public boolean V5comparacionLectuaDiariaMensual(List<MovSuministros> itinerarios) throws Exception {  
         boolean result = false;
         try {
 
@@ -274,7 +274,7 @@ public class IndividualValidations implements IIndividualValidations {
     }
 
     @Override
-    public boolean verificarPorcentajeMaximoSuperiorInferior(List<MovSuministros> itinerarios) throws Exception {        
+    public boolean V6verificarPorcentajeMaximoSuperiorInferior(List<MovSuministros> itinerarios) throws Exception {     
         boolean result = false;
         if (itinerarios.size() > 0) {
 

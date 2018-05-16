@@ -14,11 +14,11 @@ import java.util.List;
  */
 public interface IIndividualValidations {
     
-    public boolean verificarCalendarioTOU(List<MovSuministros> itinerarios)  throws Exception;
-    public boolean verificarExistenciaDatos(List<MovSuministros> itinerarios)  throws Exception;
-    public boolean verificarCompletitudInformacion(List<MovSuministros> listaLecuras) throws Exception;
-    public boolean comparacionLectuaDiaria(List<MovSuministros> itinerarios) throws Exception;
-    public boolean comparacionLectuaDiariaMensual(List<MovSuministros> itinerarios)  throws Exception;
-    public boolean verificarPorcentajeMaximoSuperiorInferior(List<MovSuministros> itinerarios)  throws Exception;
+    public boolean V1verificarCalendarioTOU(List<MovSuministros> itinerarios)  throws Exception;
+    public boolean V2verificarExistenciaDatos(List<MovSuministros> itinerarios)  throws Exception;
+    public boolean V3verificarCompletitudInformacion(List<MovSuministros> listaLecuras) throws Exception;
+    public boolean V4comparacionLectuaDiaria(List<MovSuministros> itinerarios) throws Exception;
+    public boolean V5comparacionLectuaDiariaMensual(List<MovSuministros> itinerarios)  throws Exception;
+    public boolean V6verificarPorcentajeMaximoSuperiorInferior(List<MovSuministros> itinerarios)  throws Exception;
     
 }

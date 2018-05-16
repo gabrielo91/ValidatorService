@@ -36,6 +36,8 @@ import com.metrolink.validatorservice.logger.DataLogger;
 import com.metrolink.validatorservice.models.MovAlarmas;
 import com.metrolink.validatorservice.models.MovProcessRegistry;
 import com.metrolink.validatorservice.models.MovSuministrosPK;
+import com.metrolink.validatorservice.utils.CustomComparator;
+import java.util.Collections;
 
 /**
  *
@@ -134,8 +136,9 @@ public class Controller {
     private void performIndividualValidations(int indexToValidate) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException {
 
         Class validations = idividualValidationsClass.getClass();
-        for (Method bussinesValidation : IIndividualValidations.class.getMethods()) {
-            //System.out.println("La validacion a ejecutar es: " + bussinesValidation.getName());
+        ArrayList<Method> sortedValidations = sortValidations(IIndividualValidations.class.getMethods());
+        for (Method bussinesValidation : sortedValidations) {
+            System.out.println("La validacion a ejecutar es: " + bussinesValidation.getName());
             Method validation = validations.getMethod(bussinesValidation.getName(), List.class);
             validation.invoke(idividualValidationsClass, AgendaStack.getInstance().getItinerarios().get(indexToValidate).getListaSuministros());
         }
@@ -159,6 +162,7 @@ public class Controller {
     private void performIndividualValidationsSCO(ArrayList<AgendaLectura> itinerariosMovRegsSco, ArrayList<MovSuministrosPK> suministrosInvalidos) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         for (AgendaLectura intinerario : itinerariosMovRegsSco) {
             Class validations = generalValidationsClass.getClass();
+            
             for (Method bussinesValidation : IIndividualValidationsSCO.class.getMethods()) {
                // System.out.println("La validacion a ejecutar es: " + bussinesValidation.getName());
                 Method validation = validations.getMethod(bussinesValidation.getName(), List.class, List.class);
@@ -246,6 +250,13 @@ public class Controller {
         IDatabaseController databaseController = new DatabaseController(preferencesManager);
         String processId = new DAOMovProcessRegistry(databaseController).getProcessRgistry();
         return processId;
+    }
+
+    private ArrayList<Method> sortValidations(Method[] methods) {
+        ArrayList<Method> sortedMethods = new ArrayList<>();
+        Collections.addAll(sortedMethods, methods);
+        Collections.sort(sortedMethods , new CustomComparator());
+        return sortedMethods;
     }
 
 }

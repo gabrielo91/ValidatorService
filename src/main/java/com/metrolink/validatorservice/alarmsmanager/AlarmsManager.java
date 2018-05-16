@@ -72,7 +72,6 @@ public class AlarmsManager implements IAlarmsManager{
 
             MovAlarmasPK alarmasPK = new MovAlarmasPK();
             alarmasPK.setNcodAlarma(codigoAlarma);
-            System.out.println("NISRAD EN CREAR ALARMAS  ===============> "+suministro.getMovSuministrosPK().getNnisRad().intValue());
             alarmasPK.setNnisRad(suministro.getMovSuministrosPK().getNnisRad().intValue());
             alarm.setMovAlarmasPK(alarmasPK);
             alarm.setNnic(suministro.getNnic());
