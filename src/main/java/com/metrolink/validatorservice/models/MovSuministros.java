@@ -31,6 +31,20 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "MovSuministros.findAll", query = "SELECT m FROM MovSuministros m")})
 public class MovSuministros implements Serializable {
 
+    /**
+     * @return the resultado
+     */
+    public String getResultado() {
+        return resultado;
+    }
+
+    /**
+     * @param resultado the resultado to set
+     */
+    public void setResultado(String resultado) {
+        this.resultado = resultado;
+    }
+
     private static final long serialVersionUID = 1L;
     public static final String TIPO_LECTURA = "1";
     public static final String TIPO_CONSUMO = "2";
@@ -158,6 +172,7 @@ public class MovSuministros implements Serializable {
     private ArrayList<MovRegsSco> movRegsScoCollection = new ArrayList<>();
     private ArrayList<MovLectConsu> movLectConsuCollection = new ArrayList<MovLectConsu>();
     private boolean suministroInvalidado;
+    private String resultado;
 
     public MovSuministros(MovSuministrosPK movSuministrosPK, String vcnumMed, String vctipoMed, String vctipoLec, String vccentTec, Date tsful, Date tsflt, Date tsfla, Integer nnic, String vctipoVal, Short lestado, String vcnif, BigInteger nunicom, String vcruta, String vcitinerario, String vcciclo, Short nnumRegs, Short lbloqueado, Integer nulReportada, BigInteger nreg, BigInteger norden, String vccodcalle, String vcpta, String vcdup, String vcpisoMed, String vccgv, String vcaccPto, String vcidServ, String vccodtconsumo, String vcdestconsumo, String vcpisoServ, String vcnombre, BigInteger nnumrue, String vcdestarifa, String vccodDep, String vcnomDep, String vccodMun, String vcnomMun, String vccodLoc, String vcnomLoc, String vcdir, String vcsecmodCon, String vcrefDir, String vctipAsoc, String vcdesAsoc, BigInteger nmulti, String numPadron, String vccodTserv, String vcdesTserv, MCalTou ncodCalTou, MJurisdicciones ncodJurisdiccion, MMarcasmedidor vccodmarca, MProveedores mProveedores, MTarifas vccodtarifa) {
         this.movSuministrosPK = movSuministrosPK;

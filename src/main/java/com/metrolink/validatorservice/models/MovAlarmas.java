@@ -29,6 +29,20 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "MovAlarmas.findAll", query = "SELECT m FROM MovAlarmas m")})
 public class MovAlarmas implements Serializable {
 
+    /**
+     * @return the vcresultado
+     */
+    public String getVcresultado() {
+        return vcresultado;
+    }
+
+    /**
+     * @param vcresultado the vcresultado to set
+     */
+    public void setVcresultado(String vcresultado) {
+        this.vcresultado = vcresultado;
+    }
+
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected MovAlarmasPK movAlarmasPK;
@@ -51,6 +65,8 @@ public class MovAlarmas implements Serializable {
     @JoinColumn(name = "NCOD_ALARMA", referencedColumnName = "NCOD_ALARMA", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private MAlarmas mAlarmas;
+    @Column(name = "VCRESULTADO")
+    private String vcresultado;
     
     //Campo para almacenar los datos de los suministros que generaron alarmas y que por tanto no se deben validar
     private MovSuministrosPK movSuministrosPK;

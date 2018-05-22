@@ -86,9 +86,7 @@ public class Controller {
         ArrayList<AgendaLectura> itinerarios = null;
         IDatabaseController databaseController = new DatabaseController(preferencesManager);
         daoParametrosAdmin = new DAOParametrosAdmin(databaseController);
-        MParametrosAdm parametrosAdm = daoParametrosAdmin.getParametrosAdm().get(0);
-        IDAOParametrosConf daoParametrosConf = new DAOParametrosConf(databaseController);
-        daoParametrosConf.getParametrosConf().get(0);//necesaria para inicialziar los valores
+        MParametrosAdm parametrosAdm = daoParametrosAdmin.getParametrosAdm().get(0);        
         short diasABuscar = parametrosAdm.getNdiasBusca();
         System.out.println("dias busca es: " + diasABuscar);
         daoLecturas = new DAOLecturas(databaseController);
@@ -112,8 +110,7 @@ public class Controller {
      */
     public void performIndividualValidations() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException, Exception {
         int j = 0;
-        for (AgendaLectura intinerario : AgendaStack.getInstance().getItinerarios()) {
-            //System.out.println("******************************* INTINERARIO: " + intinerario.getVcitinerario());
+        for (AgendaLectura intinerario : AgendaStack.getInstance().getItinerarios()) {            
             for (int i = 0; i < intinerario.getListaSuministros().size(); i++) {
                 performIndividualValidations(j);
             }

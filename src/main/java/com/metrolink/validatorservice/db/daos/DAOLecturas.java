@@ -50,8 +50,7 @@ public class DAOLecturas implements IDAOLecturas {
                 + "AND MLC.LCERTIFICADA = ?";
 
         try (Connection con = databaseController.getConnection()) {
-
-            System.out.println("sql: "+sql);
+          
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.setInt(1, LECTURA_NO_VALIDADA);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -86,8 +85,8 @@ public class DAOLecturas implements IDAOLecturas {
         lectura.setNconsProceso(resultSet.getInt("NCONS_PROCESO"));
         lectura.setNconsumoMod(resultSet.getBigDecimal("NCONSUMO_MOD"));
         lectura.setNconsumoOri(resultSet.getBigDecimal("NCONSUMO_ORI"));
-        lectura.setNlectura(BigDecimal.valueOf(resultSet.getInt("NLECTURA")));
-        lectura.setTsfechaLec(resultSet.getDate("TSFECHA_LEC"));
+        lectura.setNlectura(BigDecimal.valueOf(resultSet.getInt("NLECTURA")));        
+        lectura.setTsfechaLec(resultSet.getTimestamp("TSFECHA_LEC"));
         lectura.setTsfechaTran(resultSet.getDate("TSFECHA_TRAN"));
         lectura.setVccodmarca(resultSet.getString("VCCODMARCA"));
         lectura.setVccoduser(resultSet.getString("VCCODUSER"));
@@ -121,4 +120,6 @@ public class DAOLecturas implements IDAOLecturas {
         } 
         return result;
     }
+    
+    
 }

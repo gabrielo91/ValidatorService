@@ -33,8 +33,7 @@ public class DAOMCalTou {
         String sql = "SELECT * FROM MOV_CAL_TOU WHERE NCOD_TIPO_TARIFA in (select NCOD_TIPO_TARIFA from m_tarifas where VCCODTARIFA = ?) AND VCCODTCONSUMO = ?";
 
         try (Connection con = databaseController.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
-            System.out.println("Busca calendario Nisrad = > "+suministro.getMovSuministrosPK().getNnisRad() + " VCCODTARIFA = > "+ suministro.getVccodtarifa().getVccodtarifa() + " VCCODTCONSUMO = > " + suministro.getVccodtconsumo());
+            PreparedStatement preparedStatement = con.prepareStatement(sql);            
             preparedStatement.setString(1, suministro.getVccodtarifa().getVccodtarifa());
             preparedStatement.setString(2, suministro.getVccodtconsumo());
 

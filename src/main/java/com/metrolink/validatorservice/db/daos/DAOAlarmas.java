@@ -39,7 +39,8 @@ public class DAOAlarmas implements IDAOAlarmas {
                 + " NNIC,"
                 + " NNIS_RAD," 
                 + " NCOD_ALARMA," 
-                + " VCTIPO_ENERGIA) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + " VCTIPO_ENERGIA," 
+                + " VCRESULTADO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection con = databaseController.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(sql);
@@ -55,6 +56,7 @@ public class DAOAlarmas implements IDAOAlarmas {
                 preparedStatement.setInt(8, alarma.getMovAlarmasPK().getNnisRad());
                 preparedStatement.setInt(9, alarma.getMovAlarmasPK().getNcodAlarma());
                 preparedStatement.setString(10, alarma.getVctipoEnergia());
+                preparedStatement.setString(11, alarma.getVcresultado());
                 
                 preparedStatement.addBatch();
             }

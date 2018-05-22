@@ -15,6 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -41,20 +42,21 @@ public class DAORegsSco {
         movRegsSco.setNlec(BigInteger.valueOf(resultSet.getLong("NLEC")));
         movRegsSco.setVccoan(resultSet.getString("VCCOAN"));
         movRegsSco.setNperiodo(BigInteger.valueOf(resultSet.getLong("NPERIODO")));
+        movRegsSco.setNlemin(resultSet.getBigDecimal("NLEMIN"));
+        movRegsSco.setNlemax(resultSet.getBigDecimal("NLEMAX"));
         return movRegsSco;
     }
 
     public ArrayList<MovRegsSco> consultarMovRegScoAsociado(MovLectConsu movLectConsu) throws Exception {
-
-        ArrayList<MovRegsSco> movRegsScoList = null;
-        String sql = "SELECT * FROM MOV_REGS_SCO WHERE NNIS_RAD = ? and TSFECLET = ? and VCTIPO_LEC = ?";
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        ArrayList<MovRegsSco> movRegsScoList = new ArrayList<>();
+        String sql = "SELECT * FROM MOV_REGS_SCO WHERE NNIS_RAD = ? and TSFECLET = '" + sdf.format(new java.sql.Timestamp(movLectConsu.getTsfechaLec().getTime())) +  "' and VCTIPO_LEC = ?";
 
         try (Connection con = databaseController.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
-                        
+            PreparedStatement preparedStatement = con.prepareStatement(sql);            
             preparedStatement.setInt(1, movLectConsu.getNnisRad().intValue());
-            preparedStatement.setDate(2, new java.sql.Date(movLectConsu.getTsfechaLec().getTime()));
-            preparedStatement.setString(3, movLectConsu.getVctipoLec());
+            //preparedStatement.setString(2, sdf.format(new java.sql.Timestamp(movLectConsu.getTsfechaLec().getTime())));
+            preparedStatement.setString(2, movLectConsu.getVctipoLec());
             ResultSet resultSet = preparedStatement.executeQuery();
             
             MovRegsSco movRegsSco;

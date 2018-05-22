@@ -6,6 +6,7 @@
 package com.metrolink.validatorservice.db.daos;
 
 import com.metrolink.validatorservice.models.MConfVal;
+import com.metrolink.validatorservice.models.MovSuministros;
 import java.util.ArrayList;
 
 /**
@@ -13,5 +14,5 @@ import java.util.ArrayList;
  * @author USUARIO
  */
 public interface IDAOParametrosConf {
-    ArrayList<MConfVal> getParametrosConf () throws  Exception;
+    public MConfVal getParametrosConf(MovSuministros suministro) throws Exception;
 }

@@ -15,4 +15,6 @@ import java.util.ArrayList;
 public interface IDAOSuministros {
     boolean lockUnlockSuministros(ArrayList<MovSuministros> listSuministros, short lockStatus) throws Exception;    
     boolean actualizaCalendarioTou(MovSuministros suministro) throws Exception;
+    public MovSuministros buscaFechaPerseoPenultimaSuministro() throws Exception;
+    public MovSuministros buscaFechaOpenPenultimaLectura() throws Exception;
 }

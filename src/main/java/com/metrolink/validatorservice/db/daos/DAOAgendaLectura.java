@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -44,7 +45,8 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
      */
     @Override
     public ArrayList<AgendaLectura> listAgendaBetweenDates(Date startingDate, Date endingDate, int tipoConsulta) throws Exception {
-        System.out.println("DATES ARE: "+startingDate.toString() + " AND "+endingDate.toString());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        System.out.println("DATES ARE: "+sdf.format(startingDate.getTime()) + " AND "+sdf.format(endingDate.getTime()));
         
         ArrayList<AgendaLectura> listAgenda = new ArrayList<>();
         String sqlMovLectConsumo = "SELECT  AL.*,  MSUM.*, MLEC.*  FROM AGENDA_LECTURA AL  \n"
@@ -57,7 +59,7 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
                 + "ON ((MLEC.NNIC = MSUM.NNIC AND MLEC.NNIS_RAD IS NULL) \n" 
                 + "OR (MLEC.NNIS_RAD = MSUM.NNIS_RAD AND MLEC.NNIC IS NULL)\n" 
                 + "OR (MLEC.NNIC = MSUM.NNIC AND MLEC.NNIS_RAD = MSUM.NNIS_RAD))\n" 
-                + "WHERE AL.DFECHA_TEO BETWEEN ? AND ?\n"
+                + "WHERE AL.DFECHA_TEO BETWEEN to_date(?,'dd/MM/yyyy') AND to_date(?,'dd/MM/yyyy')\n"
                 + "ORDER BY AL.DFECHA_TEO, AL.VCPARAM, AL.NPERICONS";
 
         String sqlMovRegsSco = "SELECT  AL.*,  MSUM.*, MRSCO.*  FROM AGENDA_LECTURA AL  \n" +
@@ -77,8 +79,8 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
             
             if (tipoConsulta == CONSULTA_MOV_LECT_CONSU){
                 preparedStatement = con.prepareStatement(sqlMovLectConsumo);
-                preparedStatement.setDate(1, new java.sql.Date(startingDate.getTime()));
-                preparedStatement.setDate(2, new java.sql.Date(endingDate.getTime()));
+                preparedStatement.setString(1, sdf.format(startingDate.getTime()));
+                preparedStatement.setString(2, sdf.format(endingDate.getTime()));
                 result = preparedStatement.executeQuery();
                 listAgenda = mapRows(result, CONSULTA_MOV_LECT_CONSU);
             

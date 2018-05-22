@@ -22,6 +22,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -88,6 +89,8 @@ public class DAOSuministros implements IDAOSuministros {
             movSuministros.setVcruta(resultSet.getString("VCRUTA"));
             movSuministros.setVcitinerario(resultSet.getString("VCITINERARIO"));
             movSuministros.setVcciclo(resultSet.getString("VCCICLO"));
+            movSuministros.setNmulti(BigInteger.valueOf(resultSet.getInt("NMULTI")));
+            movSuministros.setNulReportada(resultSet.getInt("NUL_REPORTADA"));
 
             MCalTou ncodCalTou = new MCalTou();
             ncodCalTou.setNcodCalTou(resultSet.getInt("NCOD_CAL_TOU"));
@@ -128,15 +131,15 @@ public class DAOSuministros implements IDAOSuministros {
         }
         return movSuministros;
     }
-@Override
+
+    @Override
     public boolean actualizaCalendarioTou(MovSuministros suministro) throws Exception {
 
         String sql = "UPDATE MOV_SUMINISTROS SET NCOD_CAL_TOU = ? WHERE NCOD_PROV = ? AND NNIS_RAD = ? AND VCTIPO_ENERGIA = ?";
         int result = 0;
         boolean resultado = false;
         try (Connection con = databaseController.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
-            System.out.println("Codigo calendario en actualizar "+suministro.getNcodCalTou().getNcodCalTou());
+            PreparedStatement preparedStatement = con.prepareStatement(sql);           
             preparedStatement.setInt(1, suministro.getNcodCalTou().getNcodCalTou());
             preparedStatement.setInt(2, suministro.getMovSuministrosPK().getNcodProv());
             preparedStatement.setLong(3, suministro.getMovSuministrosPK().getNnisRad().longValue());
@@ -149,6 +152,40 @@ public class DAOSuministros implements IDAOSuministros {
         }
 
         return resultado;
+    }
+
+    @Override
+    public MovSuministros buscaFechaPerseoPenultimaSuministro() throws Exception {
+        MovSuministros suministro = new MovSuministros();
+        String sql = "SELECT MAX(TSFLA) FECHA FROM MOV_SUMINISTROS WHERE TSFLA < (SELECT MAX(TSFLA) FROM MOV_SUMINISTROS)";
+
+        try (Connection con = databaseController.getConnection()) {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                suministro.setTsful(resultSet.getDate("FECHA"));
+            }
+        }
+
+        return suministro;
+    }
+    
+    @Override
+    public MovSuministros buscaFechaOpenPenultimaLectura() throws Exception {
+        MovSuministros suministro = new MovSuministros();
+        String sql = "SELECT MAX(TSFUL) FECHA FROM MOV_SUMINISTROS WHERE TSFUL < (SELECT MAX(TSFUL) FROM MOV_SUMINISTROS)";
+
+        try (Connection con = databaseController.getConnection()) {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                suministro.setTsful(resultSet.getDate("FECHA"));
+            }
+        }
+
+        return suministro;
     }
 
 }

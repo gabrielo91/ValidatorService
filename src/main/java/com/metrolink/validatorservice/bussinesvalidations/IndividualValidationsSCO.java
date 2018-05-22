@@ -7,10 +7,18 @@ package com.metrolink.validatorservice.bussinesvalidations;
 
 import com.metrolink.validatorservice.alarmsmanager.AlarmsManager;
 import com.metrolink.validatorservice.alarmsmanager.IAlarmsManager;
+import com.metrolink.validatorservice.db.controller.DataBaseManager;
+import com.metrolink.validatorservice.db.controller.DatabaseController;
+import com.metrolink.validatorservice.db.controller.IDatabaseController;
+import com.metrolink.validatorservice.db.controller.ParametrosConf;
+import com.metrolink.validatorservice.db.daos.DAOParametrosConf;
+import com.metrolink.validatorservice.db.daos.IDAOParametrosConf;
 import com.metrolink.validatorservice.logger.DataLogger;
+import com.metrolink.validatorservice.models.MConfVal;
 import com.metrolink.validatorservice.models.MovRegsSco;
 import com.metrolink.validatorservice.models.MovSuministros;
 import com.metrolink.validatorservice.models.MovSuministrosPK;
+import com.metrolink.validatorservice.preferencesmanager.IPreferencesManager;
 import com.metrolink.validatorservice.utils.Utils;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -26,6 +34,7 @@ import java.util.stream.DoubleStream;
 public class IndividualValidationsSCO implements IIndividualValidationsSCO {
 
     private IAlarmsManager alarmsManager;
+    private IDAOParametrosConf parametrosconfvaldao;
 
     public IndividualValidationsSCO(IAlarmsManager alarmsManager) {
         this.alarmsManager = alarmsManager;
@@ -34,22 +43,25 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
     //para probar este metodo adicionar cinco lecturas  con una que tenga el vccoan > 0
     @Override
     public boolean verificarDesviacionConsumo(List<MovSuministros> itinerariosSCO, List<MovSuministrosPK> suministrosInvalidos) throws Exception {
+        System.out.println("La validacion a ejecutar es: V7verificarDesviacionConsumo");
+        IPreferencesManager preferencesManager = DataBaseManager.getInstance().getPreferencesManager();
+        IDatabaseController databaseController = new DatabaseController(preferencesManager);
         boolean result = false;
+        parametrosconfvaldao = new DAOParametrosConf(databaseController);
         try {
             if (itinerariosSCO.size() > 0) {
-                result = true;
-
-                //TODO REEMPLAZAR VALORES
-                final int RANGO_MESES = 4;
-                final double COEFICIENTE_VARIACION_MAX = 0.3;
-
+                result = true;                 
+                //TODO REEMPLAZAR VALORES                
                 for (MovSuministros itinerario : itinerariosSCO) {
-
-                    if (Utils.esItinerarioValido(itinerario.getMovSuministrosPK(), suministrosInvalidos)) {
+                    if (Utils.esItinerarioValido(itinerario.getMovSuministrosPK(), suministrosInvalidos)) {                        
                         if (!itinerario.getMovRegsScoCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
-                            List<MovRegsSco> movLectConsuAnalizables = itinerario.getMovRegsScoCollection().subList(0, RANGO_MESES);
+                            MConfVal parametrosConf = parametrosconfvaldao.getParametrosConf(itinerario);
+                            final int RANGO_MESES_MAXIMO = parametrosConf.getNranDesMax().intValue();
+                            final int RANGO_MESES_MINIMO = parametrosConf.getNranDesMin().intValue();
+                            final double COEFICIENTE_VARIACION_MAX = parametrosConf.getNdesConCoe().doubleValue();                           
+                            List<MovRegsSco> movLectConsuAnalizables = itinerario.getMovRegsScoCollection().subList(0, RANGO_MESES_MAXIMO);
                             validarAusenciaDeAnomalias(movLectConsuAnalizables);
-                            if (movLectConsuAnalizables.size() >= RANGO_MESES) {
+                            if (movLectConsuAnalizables.size() >= RANGO_MESES_MINIMO) {
                                 Collections.sort(movLectConsuAnalizables, sorterByDate()); // Se organiza por fechas en orden descendente
 
                                 double[] diferencias = obtenerDiferenciasLecturas(itinerario.getMovRegsScoCollection());
@@ -66,11 +78,14 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
                             } else {
                                 result = result && false;
                             }
-                        } else { //Analisis para consumo
-
-                            List<MovRegsSco> movLectConsuAnalizables = itinerario.getMovRegsScoCollection().subList(0, RANGO_MESES);
+                        } else if(!itinerario.getMovRegsScoCollection().isEmpty()){ //Analisis para consumo
+                             MConfVal parametrosConf = parametrosconfvaldao.getParametrosConf(itinerario);
+                            final int RANGO_MESES_MAXIMO = parametrosConf.getNranDesMax().intValue();
+                            final int RANGO_MESES_MINIMO = parametrosConf.getNranDesMin().intValue();
+                            final double COEFICIENTE_VARIACION_MAX = parametrosConf.getNdesConCoe().doubleValue();
+                            List<MovRegsSco> movLectConsuAnalizables = itinerario.getMovRegsScoCollection().subList(0, RANGO_MESES_MAXIMO);
                             validarAusenciaDeAnomalias(movLectConsuAnalizables);
-                            if (movLectConsuAnalizables.size() >= RANGO_MESES) {
+                            if (movLectConsuAnalizables.size() >= RANGO_MESES_MINIMO) {
                                 Collections.sort(movLectConsuAnalizables, sorterByDate()); // Se organiza por fechas en orden descendente
 
                                 double[] valoresConsumo = obtenerConsumos(itinerario.getMovRegsScoCollection());

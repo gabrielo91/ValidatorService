@@ -15,5 +15,5 @@ import java.util.ArrayList;
 public interface IDAOLecturas {
     ArrayList<MovLectConsu> getLecturasNoValidadas()  throws Exception;
     MovLectConsu getLecturaForUpdate(String id)  throws Exception;
-    boolean lockUnlockLecturas(ArrayList<MovLectConsu> listLecturas, short LockStatus) throws Exception;
+    boolean lockUnlockLecturas(ArrayList<MovLectConsu> listLecturas, short LockStatus) throws Exception;   
 }

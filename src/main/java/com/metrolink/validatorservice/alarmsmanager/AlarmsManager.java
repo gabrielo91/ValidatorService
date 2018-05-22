@@ -80,6 +80,7 @@ public class AlarmsManager implements IAlarmsManager{
             alarm.setVcitinerario(suministro.getVcitinerario());
             alarm.setVcruta(suministro.getVcruta());
             alarm.setVctipoEnergia(suministro.getMovSuministrosPK().getVctipoEnergia());
+            alarm.setVcresultado(suministro.getResultado());
 
             //Se almacenan los datos del suminsitro que genera la alarma
             alarm.setMovSuministrosPK(suministro.getMovSuministrosPK());
