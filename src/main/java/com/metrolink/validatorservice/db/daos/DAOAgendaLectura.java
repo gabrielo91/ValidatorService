@@ -37,17 +37,18 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
 
     /**
      * Retorna un arreglo den agendas con los suministros y lecturas asociadas.
+     *
      * @param startingDate
      * @param endingDate
      * @param tipoConsulta
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     @Override
     public ArrayList<AgendaLectura> listAgendaBetweenDates(Date startingDate, Date endingDate, int tipoConsulta) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        System.out.println("DATES ARE: "+sdf.format(startingDate.getTime()) + " AND "+sdf.format(endingDate.getTime()));
-        
+        System.out.println("DATES ARE: " + sdf.format(startingDate.getTime()) + " AND " + sdf.format(endingDate.getTime()));
+
         ArrayList<AgendaLectura> listAgenda = new ArrayList<>();
         String sqlMovLectConsumo = "SELECT  AL.*,  MSUM.*, MLEC.*  FROM AGENDA_LECTURA AL  \n"
                 + "LEFT OUTER JOIN MOV_SUMINISTROS MSUM\n"
@@ -56,42 +57,42 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
                 + "AND AL.VCRUTA = MSUM.VCRUTA\n"
                 + "AND AL.VCCICLO = MSUM.VCCICLO\n"
                 + "LEFT JOIN MOV_LECT_CONSU MLEC\n"
-                + "ON ((MLEC.NNIC = MSUM.NNIC AND MLEC.NNIS_RAD IS NULL) \n" 
-                + "OR (MLEC.NNIS_RAD = MSUM.NNIS_RAD AND MLEC.NNIC IS NULL)\n" 
-                + "OR (MLEC.NNIC = MSUM.NNIC AND MLEC.NNIS_RAD = MSUM.NNIS_RAD))\n" 
+                + "ON ((MLEC.NNIC = MSUM.NNIC AND MLEC.NNIS_RAD IS NULL) \n"
+                + "OR (MLEC.NNIS_RAD = MSUM.NNIS_RAD AND MLEC.NNIC IS NULL)\n"
+                + "OR (MLEC.NNIC = MSUM.NNIC AND MLEC.NNIS_RAD = MSUM.NNIS_RAD))\n"
                 + "WHERE AL.DFECHA_TEO BETWEEN to_date(?,'dd/MM/yyyy') AND to_date(?,'dd/MM/yyyy')\n"
                 + "ORDER BY AL.DFECHA_TEO, AL.VCPARAM, AL.NPERICONS";
 
-        String sqlMovRegsSco = "SELECT  AL.*,  MSUM.*, MRSCO.*  FROM AGENDA_LECTURA AL  \n" +
-                "LEFT OUTER JOIN MOV_SUMINISTROS MSUM\n" +
-                "ON AL.NUNICOM = MSUM.NUNICOM \n" +
-                "AND AL.VCITINERARIO = MSUM.VCITINERARIO \n" +
-                "AND AL.VCRUTA = MSUM.VCRUTA\n" +
-                "LEFT JOIN MOV_REGS_SCO MRSCO\n" +
-                "ON MRSCO.NNIS_RAD = MSUM.NNIS_RAD\n" +
-                "WHERE AL.DFECHA_TEO BETWEEN ? AND ? \n" +
-                "ORDER BY AL.DFECHA_TEO, AL.VCPARAM,  AL.NPERICONS";
-        
+        String sqlMovRegsSco = "SELECT  AL.*,  MSUM.*, MRSCO.*  FROM AGENDA_LECTURA AL "
+                + "LEFT OUTER JOIN MOV_SUMINISTROS MSUM "
+                + "ON AL.NUNICOM = MSUM.NUNICOM "
+                + "AND AL.VCITINERARIO = MSUM.VCITINERARIO "
+                + "AND AL.VCRUTA = MSUM.VCRUTA "
+                + "LEFT JOIN MOV_REGS_SCO MRSCO "
+                + "ON MRSCO.NNIS_RAD = MSUM.NNIS_RAD "
+                + "WHERE AL.DFECHA_TEO BETWEEN to_date(?,'dd/MM/yyyy') AND to_date(?,'dd/MM/yyyy') "
+                + "ORDER BY AL.DFECHA_TEO, AL.VCPARAM,  AL.NPERICONS";
+
         try (Connection con = databaseController.getConnection()) {
-            
+
             PreparedStatement preparedStatement;
             ResultSet result = null;
-            
-            if (tipoConsulta == CONSULTA_MOV_LECT_CONSU){
+            System.out.println("********************* tipo consulta = > " + tipoConsulta);
+            if (tipoConsulta == CONSULTA_MOV_LECT_CONSU) {
                 preparedStatement = con.prepareStatement(sqlMovLectConsumo);
                 preparedStatement.setString(1, sdf.format(startingDate.getTime()));
                 preparedStatement.setString(2, sdf.format(endingDate.getTime()));
                 result = preparedStatement.executeQuery();
                 listAgenda = mapRows(result, CONSULTA_MOV_LECT_CONSU);
-            
+
             } else {
-                
+                System.out.println("********************* ENTRO EN ELSE " + tipoConsulta);
                 preparedStatement = con.prepareStatement(sqlMovRegsSco);
-                preparedStatement.setDate(1, new java.sql.Date(startingDate.getTime()));
-                preparedStatement.setDate(2, new java.sql.Date(endingDate.getTime()));
+                preparedStatement.setString(1, sdf.format(startingDate.getTime()));
+                preparedStatement.setString(2, sdf.format(endingDate.getTime()));
                 result = preparedStatement.executeQuery();
                 listAgenda = mapRows(result, CONSULTA_MOV_REGS_SCO);
-                
+
             }
 
         } catch (Exception ex) {
@@ -100,9 +101,9 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
 
         return listAgenda;
     }
-    
+
     private ArrayList<AgendaLectura> mapRows(ResultSet result, int tipoConsulta) throws SQLException {
-        
+
         //Agenda
         ArrayList<AgendaLectura> listAgenda = new ArrayList<>();
         AgendaLecturaPK agendaLecturaPKPrev = null;
@@ -112,85 +113,84 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
 
         //Suministros
         MovSuministrosPK movSuministrosPKPrev = null;
-        int ncodProvPrev; 
-        BigInteger nnisRadPrev; 
-        String vccodtconsumoPrev;        
+        int ncodProvPrev;
+        BigInteger nnisRadPrev;
+        String vccodtconsumoPrev;
         AgendaLectura agendaLectura = new AgendaLectura();
 
         int contador = 0;
-        
+
         while (result.next()) {
-            contador = contador +1;
+            contador = contador + 1;
             long npericonsCurr = result.getLong("NPERICONS");;
             Date dfechaTeoCurr = result.getDate("DFECHA_TEO");;
             String vcparamCurr = result.getString("VCPARAM");
             AgendaLecturaPK agendaLecturaPKCurr = new AgendaLecturaPK(npericonsCurr, dfechaTeoCurr, vcparamCurr);
             //System.err.println("VCINTINERARIO ES: "+result.getString("VCITINERARIO"));
- 
-            int ncodProvCurr = -1; 
-            BigInteger nnisRadCurr = null; 
+
+            int ncodProvCurr = -1;
+            BigInteger nnisRadCurr = null;
             String vccodtconsumoCurr = null;
             MovSuministrosPK suministrosPKCurr = null;
             MovSuministros suministro;
-            
-            
-            if(result.getBigDecimal("NNIS_RAD") != null){
+
+            if (result.getBigDecimal("NNIS_RAD") != null) {
                 ncodProvCurr = result.getInt("NCOD_PROV");
-                nnisRadCurr = result.getBigDecimal("NNIS_RAD").toBigInteger(); 
-                vccodtconsumoCurr = result.getString("VCTIPO_ENERGIA"); 
-                suministrosPKCurr = new MovSuministrosPK(ncodProvCurr, nnisRadCurr, vccodtconsumoCurr); 
+                nnisRadCurr = result.getBigDecimal("NNIS_RAD").toBigInteger();
+                vccodtconsumoCurr = result.getString("VCTIPO_ENERGIA");
+                suministrosPKCurr = new MovSuministrosPK(ncodProvCurr, nnisRadCurr, vccodtconsumoCurr);
             }
-            
-                
+
             //Iterates over each distinc row of AgendaLectura
-            if(null == agendaLecturaPKPrev || !agendaLecturaPKPrev.equals(agendaLecturaPKCurr)){
-                agendaLectura = createAgendaEntity(result);    
+            if (null == agendaLecturaPKPrev || !agendaLecturaPKPrev.equals(agendaLecturaPKCurr)) {
+                agendaLectura = createAgendaEntity(result);
                 suministro = null;
                 suministrosPKCurr = null;
                 movSuministrosPKPrev = null;
                 listAgenda.add(agendaLectura);
-                
-            } else if (agendaLecturaPKPrev.equals(agendaLecturaPKCurr)){
-                
+
+            } else if (agendaLecturaPKPrev.equals(agendaLecturaPKCurr)) {
+
                 //Iterates over each distinc row of Suministros
-                if (null == movSuministrosPKPrev || !movSuministrosPKPrev.equals(suministrosPKCurr)){
-                    suministro = DAOSuministros.createMovSuministrosEntity(result);                                        
+                if (null == movSuministrosPKPrev || !movSuministrosPKPrev.equals(suministrosPKCurr)) {
+                    suministro = DAOSuministros.createMovSuministrosEntity(result);
                     agendaLectura.getListaSuministros().add(suministro);
 
-                } else if (movSuministrosPKPrev.equals(suministrosPKCurr)){
-                    
-                    int lastElementIndex = agendaLectura.getListaSuministros().size()-1;
-                    if(tipoConsulta == CONSULTA_MOV_LECT_CONSU){
-                        MovLectConsu movLectConsu = DAOLecturas.createMovLecConsuEntity(result);   
+                } else if (movSuministrosPKPrev.equals(suministrosPKCurr)) {
+                    System.out.println("MAPROWS TIPO CONSULTA " + tipoConsulta);
+                    int lastElementIndex = agendaLectura.getListaSuministros().size() - 1;
+                    if (tipoConsulta == CONSULTA_MOV_LECT_CONSU) {
+                        MovLectConsu movLectConsu = DAOLecturas.createMovLecConsuEntity(result);
                         agendaLectura.getListaSuministros().get(lastElementIndex).getMovLectConsuCollection().add(movLectConsu);
-                    }else {
+                    } else {
+                        System.out.println("Entro en else maprows " + tipoConsulta);
                         MovRegsSco movRegsSco = DAORegsSco.createMovLecConsuEntity(result);
                         agendaLectura.getListaSuministros().get(lastElementIndex).getMovRegsScoCollection().add(movRegsSco);
                     }
-                    
+
                 }
 
-                ncodProvPrev = ncodProvCurr; 
-                nnisRadPrev = nnisRadCurr; 
+                ncodProvPrev = ncodProvCurr;
+                nnisRadPrev = nnisRadCurr;
                 vccodtconsumoPrev = vccodtconsumoCurr;
-                movSuministrosPKPrev = new MovSuministrosPK(ncodProvPrev, nnisRadPrev, vccodtconsumoPrev);                
-            }          
-            
-            ncodProvPrev = ncodProvCurr; 
-            nnisRadPrev = nnisRadCurr; 
+                movSuministrosPKPrev = new MovSuministrosPK(ncodProvPrev, nnisRadPrev, vccodtconsumoPrev);
+            }
+
+            ncodProvPrev = ncodProvCurr;
+            nnisRadPrev = nnisRadCurr;
             vccodtconsumoPrev = vccodtconsumoCurr;
-            movSuministrosPKPrev = new MovSuministrosPK(ncodProvPrev, nnisRadPrev, vccodtconsumoPrev);   
-            
+            movSuministrosPKPrev = new MovSuministrosPK(ncodProvPrev, nnisRadPrev, vccodtconsumoPrev);
+
             npericonsPrev = npericonsCurr;
             dfechaTeoPrev = new Date(dfechaTeoCurr.getTime());
             vcparamPrev = vcparamCurr;
             agendaLecturaPKPrev = new AgendaLecturaPK(npericonsPrev, dfechaTeoPrev, vcparamPrev);
-            
+
         }
-        System.out.println("contador es: "+contador);
+        System.out.println("contador es: " + contador);
         return listAgenda;
     }
-    
+
     private AgendaLectura createAgendaEntity(ResultSet result) throws SQLException {
 
         AgendaLectura agendaLectura = new AgendaLectura();
@@ -203,45 +203,41 @@ public class DAOAgendaLectura implements IDAOAgendaLectura {
         agendaLectura.setVcciclo(result.getString("VCCICLO"));
         agendaLectura.setVcitinerario(result.getString("VCITINERARIO"));
         agendaLectura.setVcruta(result.getString("VCRUTA"));
-       
+
         MovSuministros movSuministros = DAOSuministros.createMovSuministrosEntity(result);
 
-        if(null != movSuministros && movSuministros.getMovSuministrosPK().getNcodProv() >= 0
-                && null != movSuministros.getMovSuministrosPK().getNnisRad() 
-                && null != movSuministros.getMovSuministrosPK().getVctipoEnergia()){
+        if (null != movSuministros && movSuministros.getMovSuministrosPK().getNcodProv() >= 0
+                && null != movSuministros.getMovSuministrosPK().getNnisRad()
+                && null != movSuministros.getMovSuministrosPK().getVctipoEnergia()) {
             agendaLectura.getListaSuministros().add(movSuministros);
         }
-        
-        
+
         return agendaLectura;
     }
 
-    public ArrayList<AgendaLectura> getAgendaAsociada(MovSuministros movSuministros) throws Exception{
+    public ArrayList<AgendaLectura> getAgendaAsociada(MovSuministros movSuministros) throws Exception {
         ArrayList<AgendaLectura> listaAgendas = new ArrayList<>();
         String sql = "SELECT * FROM AGENDA_LECTURA WHERE VCITINERARIO = ? AND VCRUTA = ? AND VCCICLO = ? AND NUNICOM = ?";
-        
+
         try (Connection con = databaseController.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(sql);
-                        
+
             preparedStatement.setString(1, movSuministros.getVcitinerario());
             preparedStatement.setString(2, movSuministros.getVcruta());
             preparedStatement.setString(3, movSuministros.getVcciclo());
             preparedStatement.setInt(4, movSuministros.getNunicom().intValue());
             ResultSet resultSet = preparedStatement.executeQuery();
-            
+
             AgendaLectura agenda;
-            
+
             while (resultSet.next()) {
                 agenda = createAgendaEntity(resultSet);
                 listaAgendas.add(agenda);
             }
-        
+
         }
-        
-        
+
         return listaAgendas;
     }
-    
-
 
 }

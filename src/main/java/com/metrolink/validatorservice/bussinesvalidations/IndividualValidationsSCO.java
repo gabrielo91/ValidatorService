@@ -11,10 +11,16 @@ import com.metrolink.validatorservice.db.controller.DataBaseManager;
 import com.metrolink.validatorservice.db.controller.DatabaseController;
 import com.metrolink.validatorservice.db.controller.IDatabaseController;
 import com.metrolink.validatorservice.db.controller.ParametrosConf;
+import com.metrolink.validatorservice.db.daos.DAOAgendaLectura;
+import com.metrolink.validatorservice.db.daos.DAOParametrosAdmin;
 import com.metrolink.validatorservice.db.daos.DAOParametrosConf;
+import com.metrolink.validatorservice.db.daos.IDAOAgendaLectura;
+import com.metrolink.validatorservice.db.daos.IDAOParametrosAdmin;
 import com.metrolink.validatorservice.db.daos.IDAOParametrosConf;
 import com.metrolink.validatorservice.logger.DataLogger;
+import com.metrolink.validatorservice.models.AgendaLectura;
 import com.metrolink.validatorservice.models.MConfVal;
+import com.metrolink.validatorservice.models.MParametrosAdm;
 import com.metrolink.validatorservice.models.MovRegsSco;
 import com.metrolink.validatorservice.models.MovSuministros;
 import com.metrolink.validatorservice.models.MovSuministrosPK;
@@ -24,6 +30,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.DoubleStream;
 
@@ -35,6 +42,8 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
 
     private IAlarmsManager alarmsManager;
     private IDAOParametrosConf parametrosconfvaldao;
+    private IDAOAgendaLectura daoAgendaLectura;
+    private IDAOParametrosAdmin daoParametrosAdmin;
 
     public IndividualValidationsSCO(IAlarmsManager alarmsManager) {
         this.alarmsManager = alarmsManager;
@@ -50,16 +59,22 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
         parametrosconfvaldao = new DAOParametrosConf(databaseController);
         try {
             if (itinerariosSCO.size() > 0) {
-                result = true;                 
+                result = true;
                 //TODO REEMPLAZAR VALORES                
                 for (MovSuministros itinerario : itinerariosSCO) {
-                    if (Utils.esItinerarioValido(itinerario.getMovSuministrosPK(), suministrosInvalidos)) {                        
+                    if (Utils.esItinerarioValido(itinerario.getMovSuministrosPK(), suministrosInvalidos)) {
                         if (!itinerario.getMovRegsScoCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
                             MConfVal parametrosConf = parametrosconfvaldao.getParametrosConf(itinerario);
                             final int RANGO_MESES_MAXIMO = parametrosConf.getNranDesMax().intValue();
                             final int RANGO_MESES_MINIMO = parametrosConf.getNranDesMin().intValue();
-                            final double COEFICIENTE_VARIACION_MAX = parametrosConf.getNdesConCoe().doubleValue();                           
-                            List<MovRegsSco> movLectConsuAnalizables = itinerario.getMovRegsScoCollection().subList(0, RANGO_MESES_MAXIMO);
+                            final double COEFICIENTE_VARIACION_MAX = parametrosConf.getNdesConCoe().doubleValue();
+
+                            System.out.println("********************* RANGO_MESES_MAXIMO " + RANGO_MESES_MAXIMO);
+                            System.out.println("********************* RANGO_MESES_MINIMO " + RANGO_MESES_MINIMO);
+                            System.out.println("********************* COEFICIENTE_VARIACION_MAX " + COEFICIENTE_VARIACION_MAX);
+                            System.out.println("********************* getMovRegsScoCollection " + itinerario.getMovRegsScoCollection().subList(0, RANGO_MESES_MAXIMO > itinerario.getMovRegsScoCollection().size() ? itinerario.getMovRegsScoCollection().size() : RANGO_MESES_MAXIMO));
+                            List<MovRegsSco> movLectConsuAnalizables = itinerario.getMovRegsScoCollection().subList(0, RANGO_MESES_MAXIMO > itinerario.getMovRegsScoCollection().size() ? itinerario.getMovRegsScoCollection().size() : RANGO_MESES_MAXIMO);
+
                             validarAusenciaDeAnomalias(movLectConsuAnalizables);
                             if (movLectConsuAnalizables.size() >= RANGO_MESES_MINIMO) {
                                 Collections.sort(movLectConsuAnalizables, sorterByDate()); // Se organiza por fechas en orden descendente
@@ -78,7 +93,8 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
                             } else {
                                 result = result && false;
                             }
-                        } else if(!itinerario.getMovRegsScoCollection().isEmpty()){ //Analisis para consumo
+                        }
+                        /*else if(!itinerario.getMovLectConsuCollection().isEmpty()){ //Analisis para consumo
                              MConfVal parametrosConf = parametrosconfvaldao.getParametrosConf(itinerario);
                             final int RANGO_MESES_MAXIMO = parametrosConf.getNranDesMax().intValue();
                             final int RANGO_MESES_MINIMO = parametrosConf.getNranDesMin().intValue();
@@ -102,7 +118,7 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
                             } else {
                                 result = result && false;
                             }
-                        }
+                        }*/
                     } else {
                         result = result && false;
                     }
@@ -128,13 +144,21 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
 
     private void validarAusenciaDeAnomalias(List<MovRegsSco> movLectConsuAnalizables) {
         List<MovRegsSco> movLectConsuAnalizablesLocal = new ArrayList<>(movLectConsuAnalizables);
-
+        List<BigInteger> periodoanomalo = new ArrayList<>();
         for (MovRegsSco movLectConsuAnalizable : movLectConsuAnalizablesLocal) {
             String codigoAnomalia = movLectConsuAnalizable.getVccoan();
-            if (null != codigoAnomalia && !"".equals(codigoAnomalia) && !"0".equals(codigoAnomalia)) {
-                movLectConsuAnalizables.remove(movLectConsuAnalizable);
+            if (null != codigoAnomalia && !"".equals(codigoAnomalia)) {                
+                periodoanomalo.add(movLectConsuAnalizable.getNperiodo());
+            }
+            if (periodoanomalo.isEmpty()) {
+                for (BigInteger periodo : periodoanomalo) {
+                    if (periodo == movLectConsuAnalizable.getNperiodo()) {
+                        movLectConsuAnalizables.remove(movLectConsuAnalizable);
+                    }
+                }
             }
         }
+
     }
 
     private double[] obtenerDiferenciasLecturas(ArrayList<MovRegsSco> movRegsScoCollection) {

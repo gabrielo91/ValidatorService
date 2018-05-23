@@ -62,9 +62,10 @@ public class Controller {
     }
 
     public void startValidationProcess() throws Exception {
-        ArrayList<AgendaLectura> itinerariosMovLectConsu = getValuesForChecking();
-        ArrayList<AgendaLectura> itinerariosMovRegsSco = getValuesForChecking();
-        System.out.println("El tamano es: : " + itinerariosMovLectConsu.size());
+        ArrayList<AgendaLectura> itinerariosMovLectConsu = getValuesForChecking(DAOAgendaLectura.CONSULTA_MOV_LECT_CONSU);
+        ArrayList<AgendaLectura> itinerariosMovRegsSco = getValuesForChecking(DAOAgendaLectura.CONSULTA_MOV_REGS_SCO);
+        System.out.println("El tamano es itinerariosMovLectConsu: " + itinerariosMovLectConsu.size());
+        System.out.println("El tamano es itinerariosMovRegsSco: " + itinerariosMovRegsSco.size());
         AgendaStack.getInstance().setAgendaValues(itinerariosMovLectConsu);
         lockUnlockSuministros(DAOSuministros.BLOQUEADO);
         performIndividualValidations();
@@ -80,8 +81,9 @@ public class Controller {
      * This method gets the needed value to analyze
      *
      * @return
+     * @param TIPO_CONSULTA
      */
-    public ArrayList<AgendaLectura> getValuesForChecking() throws Exception {
+    public ArrayList<AgendaLectura> getValuesForChecking(int TIPO_CONSULTA) throws Exception {
 
         ArrayList<AgendaLectura> itinerarios = null;
         IDatabaseController databaseController = new DatabaseController(preferencesManager);
@@ -94,7 +96,7 @@ public class Controller {
         Date startingDate = new Date();
         Date endingDate = Utils.addDays(startingDate, diasABuscar);//addDays
         startingDate = Utils.addDays(startingDate, - UN_DIA);       
-        itinerarios = daoAgendaLectura.listAgendaBetweenDates(startingDate, endingDate, DAOAgendaLectura.CONSULTA_MOV_LECT_CONSU);
+        itinerarios = daoAgendaLectura.listAgendaBetweenDates(startingDate, endingDate, TIPO_CONSULTA);
         //itinerarios = daoAgendaLectura.listAgendaBetweenDates(Utils.addDays(startingDate, -14), Utils.addDays(endingDate, -14), DAOAgendaLectura.CONSULTA_MOV_LECT_CONSU);
         return itinerarios;
     }
@@ -161,7 +163,7 @@ public class Controller {
             Class validations = generalValidationsClass.getClass();
             
             for (Method bussinesValidation : IIndividualValidationsSCO.class.getMethods()) {
-               // System.out.println("La validacion a ejecutar es: " + bussinesValidation.getName());
+               System.out.println("La validacion a ejecutar es: " + bussinesValidation.getName());
                 Method validation = validations.getMethod(bussinesValidation.getName(), List.class, List.class);
                 validation.invoke(generalValidationsClass, intinerario.getListaSuministros(), suministrosInvalidos);
             }
