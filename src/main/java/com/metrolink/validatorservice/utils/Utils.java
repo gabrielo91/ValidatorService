@@ -54,4 +54,11 @@ public class Utils {
         }
         return itinerarioValido;
     }
+
+    public static Date addMonths(Date date, int months) {
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        cal.add(Calendar.MONTH, months);
+        return cal.getTime();
+    }
 }

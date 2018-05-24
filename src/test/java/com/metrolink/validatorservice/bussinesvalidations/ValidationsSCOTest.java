@@ -211,7 +211,7 @@ public class ValidationsSCOTest {
         IPreferencesManager preferencesManager = new PreferencesManager(configFilePath);
         IDatabaseController databaseController = new DatabaseController(preferencesManager);
         IDAOParametrosConf daoParametrosConf = new DAOParametrosConf(databaseController);
-        parametrosConf = daoParametrosConf.getParametrosConf().get(0);//necesaria para inicialziar los valores
+//        parametrosConf = daoParametrosConf.getParametrosConf().get(0);//necesaria para inicialziar los valores
     }
     
 }
