@@ -51,7 +51,7 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
         try {
             if (itinerariosSCO.size() > 0) {
                 result = true;                 
-                //TODO REEMPLAZAR VALORES                
+
                 for (MovSuministros itinerario : itinerariosSCO) {
                     if (Utils.esItinerarioValido(itinerario.getMovSuministrosPK(), suministrosInvalidos)) {                        
                         if (!itinerario.getMovRegsScoCollection().isEmpty() && itinerario.getVctipoVal().equals(MovSuministros.TIPO_LECTURA)) {
