@@ -95,13 +95,15 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
                                 result = result && false;
                             }
                         }
-                        /*else if(!itinerario.getMovLectConsuCollection().isEmpty()){ //Analisis para consumo
+                        else if(!itinerario.getMovLectConsuCollection().isEmpty()){ //Analisis para consumo
                              MConfVal parametrosConf = parametrosconfvaldao.getParametrosConf(itinerario);
                             final int RANGO_MESES_MAXIMO = parametrosConf.getNranDesMax().intValue();
                             final int RANGO_MESES_MINIMO = parametrosConf.getNranDesMin().intValue();
                             final double COEFICIENTE_VARIACION_MAX = parametrosConf.getNdesConCoe().doubleValue();
                             List<MovRegsSco> movLectConsuAnalizables = itinerario.getMovRegsScoCollection().subList(0, RANGO_MESES_MAXIMO);
                             validarAusenciaDeAnomalias(movLectConsuAnalizables);
+                            getMovLectConsuAnalizables(RANGO_MESES_MAXIMO, itinerario.getTsfla(), movLectConsuAnalizables);
+                            
                             if (movLectConsuAnalizables.size() >= RANGO_MESES_MINIMO) {
                                 Collections.sort(movLectConsuAnalizables, sorterByDate()); // Se organiza por fechas en orden descendente
 
@@ -119,7 +121,7 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
                             } else {
                                 result = result && false;
                             }
-                        }*/
+                        }
                     } else {
                         result = result && false;
                     }
@@ -151,7 +153,7 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
                       
             String codigoAnomalia = movLectConsuAnalizable.getVccoan();
             if (null != codigoAnomalia && !"".equals(codigoAnomalia)) {  
-                if(!periodosanomalos.contains(movLectConsuAnalizable.getNperiodo())){
+                if(!periodosanomalos.contains(movLectConsuAnalizable.getNperiodo().intValue())){
                     periodosanomalos.add(movLectConsuAnalizable.getNperiodo().intValue());
                 }
             }            

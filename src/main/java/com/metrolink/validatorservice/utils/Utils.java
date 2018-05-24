@@ -61,4 +61,14 @@ public class Utils {
         cal.add(Calendar.MONTH, months);
         return cal.getTime();
     }
+
+    public static boolean arrayContains(List<Integer> periodosanomalos, BigInteger nperiodo) {
+        boolean result = false;
+        
+        for (Integer periodosanomalo : periodosanomalos) {
+            result = periodosanomalo.intValue() == nperiodo.intValue();
+        
+        }
+        return result;
+    }
 }
