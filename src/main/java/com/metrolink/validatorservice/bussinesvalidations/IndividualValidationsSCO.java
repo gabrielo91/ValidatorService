@@ -145,20 +145,27 @@ public class IndividualValidationsSCO implements IIndividualValidationsSCO {
 
     private void validarAusenciaDeAnomalias(List<MovRegsSco> movLectConsuAnalizables) {
         List<MovRegsSco> movLectConsuAnalizablesLocal = new ArrayList<>(movLectConsuAnalizables);
-        List<BigInteger> periodoanomalo = new ArrayList<>();
+        List<BigInteger> periodosanomalos = new ArrayList<>();
+        
         for (MovRegsSco movLectConsuAnalizable : movLectConsuAnalizablesLocal) {
+                      
             String codigoAnomalia = movLectConsuAnalizable.getVccoan();
-            if (null != codigoAnomalia && !"".equals(codigoAnomalia)) {                
-                periodoanomalo.add(movLectConsuAnalizable.getNperiodo());
-            }
-            if (periodoanomalo.isEmpty()) {
-                for (BigInteger periodo : periodoanomalo) {
-                    if (periodo == movLectConsuAnalizable.getNperiodo()) {
-                        movLectConsuAnalizables.remove(movLectConsuAnalizable);
-                    }
-                }
-            }
+            if (null != codigoAnomalia && !"".equals(codigoAnomalia)) {   
+                periodosanomalos.add(movLectConsuAnalizable.getNperiodo());
+            }            
         }
+        
+        for (MovRegsSco movLectConsuAnalizable : movLectConsuAnalizablesLocal) {
+                      
+            if (periodosanomalos.isEmpty()) {
+                if (Utils.arrayContains(periodosanomalos, movLectConsuAnalizable.getNperiodo())) {
+                    movLectConsuAnalizables.remove(movLectConsuAnalizable);
+                }
+            }          
+        }
+        
+        
+        
 
     }
 
